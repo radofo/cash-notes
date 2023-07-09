@@ -50,13 +50,15 @@
 
 {#if isLoaded}
 	{#if user}
-		<h2>Hello {user.email}</h2>
+		<h2 class="mx-5 font-bold underline">Hello {user.email}</h2>
 		<button on:click={logout}>Logout</button>
-		<div style="display: flex; flex-direction: column;">
-			<input type="text" bind:value={cashGroupName} />
-			<input type="number" bind:value={cashGroupBudget} />
+		<div class="flex flex-col items-center gap-3">
+			<input class="border" type="text" bind:value={cashGroupName} />
+			<input class="border" type="number" bind:value={cashGroupBudget} />
 			<input type="checkbox" bind:value={cashGroupIsSaving} />
-			<button on:click={saveCashGroup}>Save Cash Group</button>
+			<button class="rounded-lg bg-slate-100 p-2 font-poppins" on:click={saveCashGroup}
+				>Save Cash Group</button
+			>
 		</div>
 	{:else}
 		<h2>Please Login</h2>
