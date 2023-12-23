@@ -3,12 +3,16 @@ export type CashGroup = {
 	createdAt: string;
 	name: string;
 	budget: number;
-	user_id: string;
-	isSaving: boolean;
-	isDefinedByFixedCost: boolean;
-	isRestOfSaving: boolean;
-	tags: string[];
+	owner: string;
 };
 
-export type InsertCashGroupDTO = Omit<CashGroup, 'id' | 'createdAt'>;
-export type UpdateCashGroupDTO = CashGroup;
+export type InsertCashGroupDTO = {
+	name: string;
+	budget: string;
+	owner: string;
+};
+export type UpdateCashGroupDTO = {
+	id: string;
+	name: string;
+	budget: string;
+};
