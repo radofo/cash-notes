@@ -50,7 +50,7 @@
 	};
 </script>
 
-<div class="p-4 font-poppins">
+<div class="overflow-hidden font-poppins">
 	{#if session}
 		<div class="mb-20 flex flex-row justify-between">
 			<div class="flex gap-6">
@@ -64,9 +64,9 @@
 		</div>
 		<slot />
 	{:else}
-		<div class="grid h-screen w-full place-items-center">
-			<form on:submit={handleSignIn} class="flex w-[400px] max-w-full flex-col gap-5">
-				<div class="flex flex-col gap-3">
+		<div class="grid h-screen place-items-center">
+			<form on:submit={handleSignIn} class="flex w-full flex-col gap-5 px-2 sm:w-[500px]">
+				<div class="flex flex-col gap-3 border">
 					<InputWithLabel label="E-Mail">
 						<Input inputType="text" bind:inputValue={email} />
 					</InputWithLabel>
