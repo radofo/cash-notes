@@ -11,7 +11,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <li
 	on:click={() => editCashFlow(cashFlow.id)}
-	class="flex cursor-pointer items-center justify-between border-b p-2 last:border-0"
+	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
 	<div class="flex justify-stretch gap-4">
 		<span class="grid place-items-center rounded-lg border border-dashed p-2 text-lg"
@@ -25,7 +25,7 @@
 		</div>
 	</div>
 	<div class="flex items-center">
-		<span class="pr-3 text-lg">
+		<span class="text-lg">
 			{cashFlow.amount.toFixed(2).replace('.', ',')} €
 		</span>
 	</div>

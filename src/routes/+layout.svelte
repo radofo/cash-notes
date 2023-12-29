@@ -54,8 +54,8 @@
 	{#if session}
 		<div class="mb-10 flex flex-row justify-between p-4">
 			<div class="flex gap-6">
-				<a class=" text-slate-800 hover:text-green-800" href="/"> Home </a>
-				<a class="text-slate-800 hover:text-green-800" href="/budgets"> Budgets </a>
+				<a class="hover:text-green-800" href="/"> Home </a>
+				<a class="hover:text-green-800" href="/budgets"> Budgets </a>
 			</div>
 			<div class="flex gap-2">
 				<!-- <h2 class="mx-5 font-normal underline">{session?.user?.email}</h2> -->
