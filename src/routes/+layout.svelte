@@ -52,7 +52,7 @@
 
 <div class="overflow-hidden font-poppins">
 	{#if session}
-		<div class="mb-20 flex flex-row justify-between p-4">
+		<div class="mb-10 flex flex-row justify-between p-4">
 			<div class="flex gap-6">
 				<a class=" text-slate-800 hover:text-green-800" href="/"> Home </a>
 				<a class="text-slate-800 hover:text-green-800" href="/budgets"> Budgets </a>

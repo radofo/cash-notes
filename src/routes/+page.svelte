@@ -33,6 +33,7 @@
 	let showModal: boolean = false;
 	let loading: boolean = true;
 	let modalLoading: boolean = false;
+	let modalDeleteLoading: boolean = false;
 
 	let cfId: string = '';
 	let cfName: string = '';
@@ -62,10 +63,13 @@
 	}
 
 	async function deleteCashFlowHandler(id: string) {
+		modalDeleteLoading = true;
 		const wasDeleteSuccess = await deleteCashFlow(id, supabase);
 		if (wasDeleteSuccess) {
 			cashFlows = cashFlows.filter((cashFlow) => cashFlow.id !== id);
 		}
+		modalDeleteLoading = false;
+		showModal = false;
 	}
 
 	async function editCashFlowHandler(id: string) {
@@ -158,11 +162,7 @@
 			{:else}
 				<ul class="w-full list-none">
 					{#each sortedCashFlows as cashFlow}
-						<CashFlowItem
-							editCashFlow={editCashFlowHandler}
-							deleteCashFlow={deleteCashFlowHandler}
-							{cashFlow}
-						/>
+						<CashFlowItem editCashFlow={editCashFlowHandler} {cashFlow} />
 					{/each}
 				</ul>
 			{/if}
@@ -194,16 +194,29 @@
 					<Input inputType="date" bind:inputValue={cfDate} />
 				</InputWithLabel>
 			</div>
-			<Button variant="success" type="submit">
-				{#if modalLoading}
-					<div class="grid place-items-center">
-						<!-- <span class="loading loading-spinner loading-md" /> -->
-						<IconLoader class="animate-spin text-center" />
-					</div>
-				{:else}
-					Speichern
+			<div class="flex flex-col gap-2">
+				<Button variant="success" type="submit">
+					{#if modalLoading}
+						<div class="grid place-items-center">
+							<!-- <span class="loading loading-spinner loading-md" /> -->
+							<IconLoader class="animate-spin text-center" />
+						</div>
+					{:else}
+						Speichern
+					{/if}
+				</Button>
+				{#if cfId}
+					<Button on:btnclick={() => deleteCashFlowHandler(cfId)} variant="error" type="button">
+						{#if modalDeleteLoading}
+							<div class="grid place-items-center">
+								<IconLoader class="animate-spin text-center" />
+							</div>
+						{:else}
+							Löschen
+						{/if}
+					</Button>
 				{/if}
-			</Button>
+			</div>
 		</form>
 	</Modal>
 </DefaultPageContent>
