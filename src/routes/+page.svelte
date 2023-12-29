@@ -19,6 +19,7 @@
 	import CashFlowItem from '../components/CashFlowItem.svelte';
 	import MonthSelector from '../components/MonthSelector.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
+	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
 
 	export let data: PageData;
 	let { supabase, session } = data;
@@ -151,6 +152,7 @@
 		<MonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
+		<MonthlyBudgets {cashFlows} {cashGroups} />
 		<div class="flex flex-col items-stretch justify-between gap-2">
 			<Button variant="default" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}
