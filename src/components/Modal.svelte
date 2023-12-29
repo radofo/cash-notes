@@ -8,6 +8,7 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <dialog
 	bind:this={dialog}
 	on:close={() => (showModal = false)}
@@ -17,7 +18,6 @@
 	<div class="flex flex-col gap-4 p-6" on:click|stopPropagation>
 		<slot name="header" />
 		<slot />
-		<!-- <Button on:btnclick={() => dialog.close()}>Save</Button> -->
 	</div>
 </dialog>
 

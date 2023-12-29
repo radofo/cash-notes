@@ -5,12 +5,19 @@
 	export let hint: string = '';
 </script>
 
-{#if inputType === 'text' || inputType === 'number'}
+{#if inputType === 'text'}
 	<input
-		class="w-full shrink rounded-lg border p-2 pl-3{textAlign}"
+		class="w-full rounded-lg border p-2 pl-3 {textAlign}"
 		type="text"
 		placeholder={hint}
 		bind:value={inputValue}
+	/>
+{:else if inputType === 'number'}
+	<input
+		bind:value={inputValue}
+		step=".01"
+		type="number"
+		class="w-full rounded-lg border p-2 {textAlign}"
 	/>
 {:else if inputType === 'date'}
 	<input

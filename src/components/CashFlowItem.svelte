@@ -26,7 +26,7 @@
 	</div>
 	<div class="flex items-center">
 		<span class="pr-3 text-lg">
-			{cashFlow.amount} €
+			{cashFlow.amount.toFixed(2).replace('.', ',')} €
 		</span>
 	</div>
 </li>

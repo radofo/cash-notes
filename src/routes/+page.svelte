@@ -90,7 +90,7 @@
 			const updatedCashFlow = await updateCashFlow(
 				{
 					id: cfId,
-					amount: Number.parseInt(cfAmount),
+					amount: Number.parseFloat(cfAmount),
 					name: cfName,
 					cash_group_id: cfGroup.id,
 					date: cfDate
@@ -115,7 +115,7 @@
 			modalLoading = true;
 			const newCashFlow = await insertCashFlow(
 				{
-					amount: Number.parseInt(cfAmount),
+					amount: parseFloat(cfAmount),
 					name: cfName,
 					cash_group_id: cfGroup.id,
 					date: cfDate,
