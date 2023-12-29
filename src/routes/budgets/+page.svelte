@@ -121,7 +121,7 @@
 		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
 			<H1>Budgets</H1>
 			{#if loading}
-				<div class="grid place-items-center">
+				<div class="mt-10 grid place-items-center">
 					<IconLoader class="animate-spin text-center" />
 				</div>
 			{:else if !cashGroups.length}
