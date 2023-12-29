@@ -66,7 +66,7 @@
 	{:else}
 		<div class="grid h-screen place-items-center">
 			<form on:submit={handleSignIn} class="flex w-full flex-col gap-5 px-2 sm:w-[500px]">
-				<div class="flex flex-col gap-3 border">
+				<div class="flex flex-col gap-3">
 					<InputWithLabel label="E-Mail">
 						<Input inputType="text" bind:inputValue={email} />
 					</InputWithLabel>
