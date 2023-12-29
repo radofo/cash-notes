@@ -120,22 +120,22 @@
 	<DefaultPageContent>
 		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
 			<H1>Budgets</H1>
-			{#if loading}
-				<div class="mt-10 grid place-items-center">
-					<IconLoader class="animate-spin text-center" />
-				</div>
-			{:else if !cashGroups.length}
-				<div class="mt-8 text-center">Noch keine Budgets erstellt</div>
-			{:else}
-				<div class="mt-9 flex w-full flex-col gap-5">
-					<Button variant="default" on:btnclick={() => (showModal = true)}>Neues Budget</Button>
+			<div class="mt-9 flex w-full flex-col gap-5">
+				<Button variant="default" on:btnclick={() => (showModal = true)}>Neues Budget</Button>
+				{#if loading}
+					<div class="mt-10 grid place-items-center">
+						<IconLoader class="animate-spin text-center" />
+					</div>
+				{:else if !cashGroups.length}
+					<div class="mt-8 text-center">Noch keine Budgets erstellt</div>
+				{:else}
 					<ul class="w-full list-none">
 						{#each cashGroups as cashGroup}
 							<BudgetListItem on:itemClicked={(e) => openModalInEditMode(e.detail)} {cashGroup} />
 						{/each}
 					</ul>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 		<Modal bind:showModal>
 			<h2 class="mb-3 text-center text-xl font-semibold" slot="header">
