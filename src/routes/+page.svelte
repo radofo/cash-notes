@@ -158,7 +158,7 @@
 					<IconLoader class="animate-spin text-center" />
 				</div>
 			{:else if !sortedCashFlows.length}
-				<div class="mt-8 text-center text-lg">Noch keine Einträge für diesen Monat</div>
+				<div class="mt-8 text-center">Noch keine Einträge für diesen Monat</div>
 			{:else}
 				<ul class="w-full list-none">
 					{#each sortedCashFlows as cashFlow}

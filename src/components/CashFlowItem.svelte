@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { IconLoader, IconPencil, IconX } from '@tabler/icons-svelte';
 	import type { CashFlow } from '../types/supabase';
 
 	export let cashFlow: CashFlow;
