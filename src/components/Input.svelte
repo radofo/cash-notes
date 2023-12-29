@@ -1,20 +1,21 @@
 <script lang="ts">
 	export let inputValue: string;
-	export let inputType: 'text' | 'number';
+	export let inputType: 'text' | 'number' | 'date';
+	export let textAlign: 'text-right' | 'text-left' = 'text-left';
 	export let hint: string = '';
 </script>
 
-{#if inputType === 'text'}
+{#if inputType === 'text' || inputType === 'number'}
 	<input
-		class="w-full shrink rounded-lg border p-2 pl-3 text-lg"
+		class="w-full shrink rounded-lg border p-2 pl-3{textAlign}"
 		type="text"
 		placeholder={hint}
 		bind:value={inputValue}
 	/>
-{:else if inputType === 'number'}
+{:else if inputType === 'date'}
 	<input
-		class="w-full shrink rounded-lg border p-2 text-right text-lg"
-		type="text"
+		type="date"
+		class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
 		placeholder={hint}
 		bind:value={inputValue}
 	/>

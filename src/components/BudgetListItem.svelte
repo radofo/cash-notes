@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { CashGroup, UpdateCashGroupDTO } from '../supabaseTypes';
+	import type { CashGroup, CashGroupUpdate } from '../types/supabase';
 	import { IconX, IconPencil } from '@tabler/icons-svelte';
 	import BudgetListItemEdit from './BudgetListItemEdit.svelte';
 
 	export let cashGroup: CashGroup;
 	export let deleteCashGroup: (id: string) => Promise<void>;
-	export let updateCashGroup: (dto: UpdateCashGroupDTO) => void;
+	export let updateCashGroup: (dto: CashGroupUpdate) => void;
 	export let setIsEditing: (isEditing: string) => void;
 	export let isEditing: boolean;
 </script>

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CashGroup, InsertCashGroupDTO, UpdateCashGroupDTO } from '../supabaseTypes';
+import type { CashGroup, CashGroupInsert, CashGroupUpdate } from '../types/supabase';
 
 export async function insertCashGroup(
-	dto: InsertCashGroupDTO,
+	dto: CashGroupInsert,
 	supabase: SupabaseClient
 ): Promise<CashGroup> {
 	const { data } = await supabase.from('cash_group').insert([dto]).select();
@@ -10,7 +10,7 @@ export async function insertCashGroup(
 }
 
 export async function updateCashGroup(
-	dto: UpdateCashGroupDTO,
+	dto: CashGroupUpdate,
 	supabase: SupabaseClient
 ): Promise<CashGroup> {
 	const { data } = await supabase
@@ -26,7 +26,7 @@ export async function deleteCashGroup(id: string, supabase: SupabaseClient): Pro
 	return res.status === 204;
 }
 
-export async function getAllUserCashGroups(supabase: SupabaseClient): Promise<CashGroup[]> {
+export async function getCashGroups(supabase: SupabaseClient): Promise<CashGroup[]> {
 	const { data } = await supabase.from('cash_group').select();
 
 	return data ?? [];

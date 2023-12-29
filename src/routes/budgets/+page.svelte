@@ -1,16 +1,17 @@
 <script lang="ts">
-	import type { CashGroup, InsertCashGroupDTO, UpdateCashGroupDTO } from '../../supabaseTypes';
+	import type { CashGroup, CashGroupInsert, CashGroupUpdate } from '../../types/supabase';
 	import {
 		deleteCashGroup,
-		getAllUserCashGroups,
+		getCashGroups,
 		insertCashGroup,
 		updateCashGroup
 	} from '../../network/cash_group';
-	import type { PageData } from '../cash-group/$types';
+	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import BudgetListItem from '../../components/BudgetListItem.svelte';
-	import BudgetListItemEdit from '../../components/BudgetListItemEdit.svelte';
 	import BudgetListItemCreate from '../../components/BudgetListItemCreate.svelte';
+	import DefaultPageContent from '../../components/DefaultPageContent.svelte';
+	import H1 from '../../components/H1.svelte';
 
 	export let data: PageData;
 
@@ -22,10 +23,10 @@
 	let rowInEditMode: string = '';
 
 	onMount(async () => {
-		cashGroups = await getAllUserCashGroups(supabase);
+		cashGroups = await getCashGroups(supabase);
 	});
 
-	async function updateCashGroupHandler(dto: UpdateCashGroupDTO) {
+	async function updateCashGroupHandler(dto: CashGroupUpdate) {
 		const updatedCashGroup = await updateCashGroup(dto, supabase);
 		if (updatedCashGroup) {
 			cashGroups = cashGroups.map((cashGroup) => {
@@ -41,7 +42,7 @@
 		rowInEditMode = '';
 	}
 
-	async function insertCashGroupHandler({ budget, name }: InsertCashGroupDTO) {
+	async function insertCashGroupHandler({ budget, name }: CashGroupInsert) {
 		if (user?.id) {
 			const newCashGroup = await insertCashGroup(
 				{
@@ -70,8 +71,8 @@
 </script>
 
 {#if user}
-	<div class="flex flex-col items-center gap-20 font-poppins">
-		<h1 class="text-6xl font-semibold text-slate-800">Budgets</h1>
+	<DefaultPageContent>
+		<H1>Budgets</H1>
 		<ul class="w-[500px] max-w-[90%] list-none [&>*:first-child]:mb-3">
 			<BudgetListItemCreate {user} insertCashGroup={insertCashGroupHandler} />
 			{#each cashGroups as cashGroup}
@@ -84,5 +85,5 @@
 				/>
 			{/each}
 		</ul>
-	</div>
+	</DefaultPageContent>
 {/if}

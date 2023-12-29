@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import '../app.css';
+	import { IconCash, IconHome, IconHome2, IconLogout, IconMoneybag } from '@tabler/icons-svelte';
 
 	export let data: PageData;
 
@@ -36,16 +37,16 @@
 	};
 </script>
 
-<div class="p-4">
+<div class="p-4 font-poppins">
 	{#if session}
 		<div class="mb-20 flex flex-row justify-between">
 			<div class="flex gap-6">
-				<a class="text-slate-800 hover:text-green-800" href="/">Transactions</a>
-				<a class="text-slate-800 hover:text-green-800" href="/budgets">Budgets</a>
+				<a class=" text-slate-800 hover:text-green-800" href="/"> Home </a>
+				<a class="text-slate-800 hover:text-green-800" href="/budgets"> Budgets </a>
 			</div>
 			<div class="flex gap-2">
-				<h2 class="mx-5 font-normal underline">{session?.user?.email}</h2>
-				<button on:click={handleSignOut}>Sign out</button>
+				<!-- <h2 class="mx-5 font-normal underline">{session?.user?.email}</h2> -->
+				<button on:click={handleSignOut}> <IconLogout /></button>
 			</div>
 		</div>
 		<slot />
