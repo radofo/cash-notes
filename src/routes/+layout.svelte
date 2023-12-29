@@ -3,7 +3,17 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import '../app.css';
-	import { IconCash, IconHome, IconHome2, IconLogout, IconMoneybag } from '@tabler/icons-svelte';
+	import {
+		IconCash,
+		IconHome,
+		IconHome2,
+		IconLoader,
+		IconLogout,
+		IconMoneybag
+	} from '@tabler/icons-svelte';
+	import InputWithLabel from '../components/InputWithLabel.svelte';
+	import Input from '../components/Input.svelte';
+	import Button from '../components/Button.svelte';
 
 	export let data: PageData;
 
@@ -12,6 +22,7 @@
 
 	let email: string;
 	let password: string;
+	let loading: boolean = false;
 
 	onMount(() => {
 		const {
@@ -26,10 +37,12 @@
 	});
 
 	const handleSignIn = async () => {
+		loading = true;
 		await supabase.auth.signInWithPassword({
 			email,
 			password
 		});
+		loading = false;
 	};
 
 	const handleSignOut = async () => {
@@ -51,10 +64,26 @@
 		</div>
 		<slot />
 	{:else}
-		<p>Please Login</p>
-		<input name="email" bind:value={email} />
-		<input type="password" name="password" bind:value={password} />
-
-		<button on:click={handleSignIn}>Sign in</button>
+		<div class="grid h-screen w-full place-items-center">
+			<form on:submit={handleSignIn} class="flex w-[400px] max-w-full flex-col gap-5">
+				<div class="flex flex-col gap-3">
+					<InputWithLabel label="E-Mail">
+						<Input inputType="text" bind:inputValue={email} />
+					</InputWithLabel>
+					<InputWithLabel label="Password">
+						<Input inputType="password" bind:inputValue={password} />
+					</InputWithLabel>
+				</div>
+				<Button type="submit">
+					{#if loading}
+						<div class="grid place-items-center">
+							<IconLoader class="animate-spin text-center" />
+						</div>
+					{:else}
+						Login
+					{/if}
+				</Button>
+			</form>
+		</div>
 	{/if}
 </div>

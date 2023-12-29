@@ -197,6 +197,7 @@
 			<Button variant="success" type="submit">
 				{#if modalLoading}
 					<div class="grid place-items-center">
+						<!-- <span class="loading loading-spinner loading-md" /> -->
 						<IconLoader class="animate-spin text-center" />
 					</div>
 				{:else}
