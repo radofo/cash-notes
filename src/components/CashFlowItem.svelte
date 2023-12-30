@@ -14,18 +14,18 @@
 	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
 	<div class="flex justify-stretch gap-4">
-		<span class="grid place-items-center rounded-lg border border-dashed p-2 text-lg"
+		<span class="text-md grid place-items-center rounded-lg border border-dashed p-2"
 			>{new Date(cashFlow.date).getDate()}</span
 		>
 		<div class="flex flex-col">
-			<span class="text-lg">
+			<span class="text-md">
 				{cashFlow.name}
 			</span>
 			<span class="text-slate-500">{cashFlow.cash_group?.name ?? 'Sonstige'}</span>
 		</div>
 	</div>
 	<div class="flex items-center">
-		<span class="text-lg">
+		<span class="text-md">
 			{cashFlow.amount.toFixed(2).replace('.', ',')} €
 		</span>
 	</div>
