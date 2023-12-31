@@ -69,7 +69,7 @@
 				</div>
 				<slot />
 			</div>
-			<div class="flex justify-between border-t py-4">
+			<div class="flex justify-between border-t pb-6">
 				<a href="/" class="px-8 py-4" class:active={$page.url.pathname === '/'}>
 					<IconHome2 size={iconSize} />
 				</a>
