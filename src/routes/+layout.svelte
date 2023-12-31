@@ -19,7 +19,7 @@
 
 	export let data: PageData;
 
-	let iconSize = 28;
+	let iconSize = 30;
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 
@@ -69,7 +69,7 @@
 				</div>
 				<slot />
 			</div>
-			<div class="flex justify-between border-t px-20">
+			<div class="flex justify-between border-t py-4">
 				<a href="/" class="px-8 py-4" class:active={$page.url.pathname === '/'}>
 					<IconHome2 size={iconSize} />
 				</a>
@@ -108,7 +108,8 @@
 
 <style>
 	.active {
-		border-top: 2px solid rgb(30 58 138);
+		/* border-top: 2px solid rgb(30 58 138); */
+		color: rgb(30 58 138);
 		/* background-color: rgb(219 234 254) */
 	}
 </style>
