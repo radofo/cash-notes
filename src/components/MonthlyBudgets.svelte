@@ -38,7 +38,7 @@
 				<span>{info.spent} / {info.limit}</span>
 			</div>
 			<progress
-				class="progress-info progress w-full"
+				class="progress-info progress w-full bg-slate-200"
 				value={Math.max(0, info.spent / info.limit) * 100}
 				max="100"
 			/>

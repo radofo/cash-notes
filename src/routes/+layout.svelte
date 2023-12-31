@@ -9,20 +9,28 @@
 		IconHome2,
 		IconLoader,
 		IconLogout,
-		IconMoneybag
+		IconMoneybag,
+		IconUser
 	} from '@tabler/icons-svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import Input from '../components/Input.svelte';
 	import Button from '../components/Button.svelte';
+	import { page } from '$app/stores';
 
 	export let data: PageData;
 
+	let iconSize = 28;
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 
 	let email: string;
 	let password: string;
 	let loading: boolean = false;
+
+	$: {
+		let x = $page.url.pathname;
+		console.log('x:', x);
+	}
 
 	onMount(() => {
 		const {
@@ -50,40 +58,57 @@
 	};
 </script>
 
-<div class="overflow-hidden font-poppins">
-	{#if session}
-		<div class="mb-10 flex flex-row justify-between p-4">
-			<div class="flex gap-6">
-				<a class="hover:text-green-800" href="/"> Home </a>
-				<a class="hover:text-green-800" href="/budgets"> Budgets </a>
-			</div>
-			<div class="flex gap-2">
-				<!-- <h2 class="mx-5 font-normal underline">{session?.user?.email}</h2> -->
-				<button on:click={handleSignOut}> <IconLogout /></button>
-			</div>
-		</div>
-		<slot />
-	{:else}
-		<div class="grid h-screen place-items-center">
-			<form on:submit={handleSignIn} class="flex w-full flex-col gap-5 px-2 sm:w-[500px]">
-				<div class="flex flex-col gap-3">
-					<InputWithLabel label="E-Mail">
-						<Input inputType="text" bind:inputValue={email} />
-					</InputWithLabel>
-					<InputWithLabel label="Password">
-						<Input inputType="password" bind:inputValue={password} />
-					</InputWithLabel>
+<div class="flex items-center justify-center overflow-hidden font-poppins">
+	<div class="relative flex h-screen w-[600px] max-w-full flex-col overflow-hidden border">
+		{#if session}
+			<div class="flex-1 overflow-y-scroll">
+				<div class="mb-4 flex flex-row justify-end p-4">
+					<div class="flex gap-2">
+						<button on:click={handleSignOut}> <IconLogout /></button>
+					</div>
 				</div>
-				<Button type="submit">
-					{#if loading}
-						<div class="grid place-items-center">
-							<IconLoader class="animate-spin text-center" />
-						</div>
-					{:else}
-						Login
-					{/if}
-				</Button>
-			</form>
-		</div>
-	{/if}
+				<slot />
+			</div>
+			<div class="flex justify-between border-t px-20">
+				<a href="/" class="px-8 py-4" class:active={$page.url.pathname === '/'}>
+					<IconHome2 size={iconSize} />
+				</a>
+				<a class="px-8 py-4" class:active={$page.url.pathname === '/budgets'} href="/budgets">
+					<IconMoneybag size={iconSize} />
+				</a>
+				<a class="px-8 py-4" class:active={$page.url.pathname === '/profile'} href="/profile">
+					<IconUser size={iconSize} /></a
+				>
+			</div>
+		{:else}
+			<div class="grid h-screen place-items-center">
+				<form on:submit={handleSignIn} class="flex w-full flex-col gap-5 px-2 sm:w-[500px]">
+					<div class="flex flex-col gap-3">
+						<InputWithLabel label="E-Mail">
+							<Input inputType="text" bind:inputValue={email} />
+						</InputWithLabel>
+						<InputWithLabel label="Password">
+							<Input inputType="password" bind:inputValue={password} />
+						</InputWithLabel>
+					</div>
+					<Button type="submit">
+						{#if loading}
+							<div class="grid place-items-center">
+								<IconLoader class="animate-spin text-center" />
+							</div>
+						{:else}
+							Login
+						{/if}
+					</Button>
+				</form>
+			</div>
+		{/if}
+	</div>
 </div>
+
+<style>
+	.active {
+		border-top: 2px solid rgb(30 58 138);
+		/* background-color: rgb(219 234 254) */
+	}
+</style>
