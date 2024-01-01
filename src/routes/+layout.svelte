@@ -52,21 +52,12 @@
 		});
 		loading = false;
 	};
-
-	const handleSignOut = async () => {
-		await supabase.auth.signOut();
-	};
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
-	<div class="relative flex h-screen w-[600px] max-w-full flex-col overflow-hidden">
+	<div class="h-dvh relative flex h-screen w-[600px] max-w-full flex-col overflow-hidden border">
 		{#if session}
 			<div class="flex-1 overflow-y-scroll pt-8">
-				<!-- <div class="mb-4 flex flex-row justify-end p-4">
-					<div class="flex gap-2">
-						<button on:click={handleSignOut}> <IconLogout /></button>
-					</div>
-				</div> -->
 				<slot />
 			</div>
 			<div class="flex justify-between border-t pb-6">
