@@ -55,7 +55,7 @@
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
-	<div class="h-dvh relative flex h-screen w-[600px] max-w-full flex-col overflow-hidden border">
+	<div class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-hidden border">
 		{#if session}
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
