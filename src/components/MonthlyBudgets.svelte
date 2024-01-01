@@ -1,47 +1,61 @@
 <script lang="ts">
+	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { CashFlow, CashGroup } from '../types/supabase';
+	import ProgressElement from './ProgressElement.svelte';
 
 	export let cashGroups: CashGroup[];
 	export let cashFlows: CashFlow[];
-	let progress: Map<string, { spent: number; limit: number }>;
+	let progressWithBudget: Map<string, BudgetProgress>;
+	let progressNoBudget: Map<string, BudgetProgress>;
 
 	$: {
-		const newProgress = new Map<string, { spent: number; limit: number }>();
+		const newProgressNoBudget = new Map<string, BudgetProgress>();
+		const newProgressWithBudget = new Map<string, BudgetProgress>();
 		for (const cashFlow of cashFlows) {
 			const cashGroup = cashFlow.cash_group;
 			if (!cashGroup) continue;
 
-			const cashGroupName = cashGroup.name;
-
-			if (cashGroupName) {
-				const alreadySpent = newProgress.get(cashGroupName ?? '')?.spent ?? 0;
-				newProgress.set(cashGroupName, {
-					limit: cashGroup.budget,
-					spent: alreadySpent + cashFlow.amount
-				});
+			if (cashGroup.name) {
+				const newSpent =
+					newProgressWithBudget.get(cashGroup.name ?? '')?.spent ?? 0 + cashFlow.amount;
+				if (cashGroup.budget) {
+					newProgressWithBudget.set(cashGroup.name, {
+						limit: cashGroup.budget,
+						spent: newSpent
+					});
+				} else {
+					newProgressNoBudget.set(cashGroup.name, {
+						limit: null,
+						spent: newSpent
+					});
+				}
 			}
 		}
 		for (const cashGroup of cashGroups) {
-			if (!newProgress.has(cashGroup.name)) {
-				newProgress.set(cashGroup.name, { spent: 0, limit: cashGroup.budget });
+			if (!newProgressWithBudget.has(cashGroup.name) && cashGroup.budget) {
+				newProgressWithBudget.set(cashGroup.name, { spent: 0, limit: cashGroup.budget });
 			}
 		}
-		progress = newProgress;
+		progressWithBudget = sortBudgets(newProgressWithBudget);
+		progressNoBudget = sortBudgets(newProgressNoBudget);
+	}
+
+	function sortBudgets(progresses: BudgetProgressMap): BudgetProgressMap {
+		return new Map(
+			[...progresses].sort((a, b) => {
+				const aSpent = a[1]?.spent ?? 0;
+				const bSpent = b[1]?.spent ?? 0;
+				return bSpent - aSpent;
+			})
+		);
 	}
 </script>
 
 <ul class="flex flex-col gap-4">
-	{#each [...progress] as [name, info]}
-		<li class="flex flex-col">
-			<div class="flex flex-row justify-between">
-				<span>{name}</span>
-				<span>{info.spent} / {info.limit}</span>
-			</div>
-			<progress
-				class="progress-info progress w-full bg-slate-200"
-				value={Math.max(0, info.spent / info.limit) * 100}
-				max="100"
-			/>
-		</li>
+	{#each [...progressWithBudget] as [name, info]}
+		<ProgressElement {name} {info} />
+	{/each}
+	{#each [...progressNoBudget] as [name, info]}
+		<ProgressElement {name} {info} />
 	{/each}
 </ul>

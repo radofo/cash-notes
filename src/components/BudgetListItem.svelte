@@ -14,6 +14,6 @@
 >
 	<span class="border border-white border-opacity-0 text-lg">{cashGroup?.name}</span>
 	<div class="flex items-center">
-		<span class="pr-3 text-lg">{cashGroup?.budget}€</span>
+		<span class="pr-3 text-lg">{cashGroup?.budget ? `${cashGroup.budget} €` : '-'}</span>
 	</div>
 </li>

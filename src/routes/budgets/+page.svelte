@@ -56,7 +56,7 @@
 		modalLoading = true;
 		const updatedCashGroup = await updateCashGroup(
 			{
-				budget: editBudgetAmount,
+				budget: editBudgetAmount === '' ? null : editBudgetAmount,
 				name: editBudgetName,
 				id: editBudgetId
 			},
@@ -82,7 +82,7 @@
 		if (user?.id) {
 			const newCashGroup = await insertCashGroup(
 				{
-					budget: editBudgetAmount,
+					budget: editBudgetAmount === '' ? null : editBudgetAmount,
 					name: editBudgetName,
 					owner: user?.id
 				},
@@ -110,7 +110,7 @@
 
 	function openModalInEditMode(cashGroup: CashGroup) {
 		editBudgetName = cashGroup.name;
-		editBudgetAmount = cashGroup.budget.toString();
+		editBudgetAmount = cashGroup.budget?.toString() ?? '';
 		editBudgetId = cashGroup.id;
 		showModal = true;
 	}
@@ -119,15 +119,15 @@
 {#if user}
 	<DefaultPageContent>
 		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
-			<H1>Budgets</H1>
+			<H1>Kategorien</H1>
 			<div class="mt-9 flex w-full flex-col gap-5">
-				<Button variant="default" on:btnclick={() => (showModal = true)}>Neues Budget</Button>
+				<Button variant="default" on:btnclick={() => (showModal = true)}>Neue Kategorie</Button>
 				{#if loading}
 					<div class="mt-10 grid place-items-center">
 						<IconLoader class="animate-spin text-center" />
 					</div>
 				{:else if !cashGroups.length}
-					<div class="mt-8 text-center">Noch keine Budgets erstellt</div>
+					<div class="mt-8 text-center">Noch keine Kategorie erstellt</div>
 				{:else}
 					<ul class="w-full list-none">
 						{#each cashGroups as cashGroup}
@@ -149,7 +149,7 @@
 					<InputWithLabel label="Name">
 						<Input inputType="text" bind:inputValue={editBudgetName} />
 					</InputWithLabel>
-					<InputWithLabel label="Betrag">
+					<InputWithLabel label="Budget (optional)">
 						<Input inputType="number" bind:inputValue={editBudgetAmount} />
 					</InputWithLabel>
 				</div>

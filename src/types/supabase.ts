@@ -3,19 +3,19 @@ export type CashGroup = {
 	id: string;
 	createdAt: string;
 	name: string;
-	budget: number;
+	budget: number | null;
 	owner: string;
 };
 
 export type CashGroupInsert = {
 	name: string;
-	budget: string;
+	budget: string | null;
 	owner: string;
 };
 export type CashGroupUpdate = {
 	id: string;
 	name: string;
-	budget: string;
+	budget: string | null;
 };
 
 /** Cash Flow */
