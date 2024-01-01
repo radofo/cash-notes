@@ -55,9 +55,21 @@
 			resetModal();
 		}
 	}
-	$: sortedCashFlows = cashFlows.sort((a: CashFlow, b: CashFlow) =>
-		new Date(a.date) > new Date(b.date) ? -1 : 1
-	);
+	$: sortedCashFlows = cashFlows.sort((a: CashFlow, b: CashFlow) => {
+		const dateA = new Date(a.date);
+		const dateB = new Date(b.date);
+		const createdA = new Date(a.createdAt);
+		const createdB = new Date(b.createdAt);
+		if (dateA > dateB) {
+			return -1;
+		} else if (dateB > dateA) {
+			return 1;
+		} else if (dateB === dateA) {
+			return createdA > createdB ? -1 : 1;
+		}
+
+		return 0;
+	});
 
 	function oncfGroupChange(newGroupName: string) {
 		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);

@@ -121,7 +121,7 @@
 		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
 			<H1>Kategorien</H1>
 			<div class="mt-9 flex w-full flex-col gap-5">
-				<Button variant="default" on:btnclick={() => (showModal = true)}>Neue Kategorie</Button>
+				<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Kategorie</Button>
 				{#if loading}
 					<div class="mt-10 grid place-items-center">
 						<IconLoader class="animate-spin text-center" />

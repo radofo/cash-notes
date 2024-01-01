@@ -27,7 +27,10 @@ export async function deleteCashGroup(id: string, supabase: SupabaseClient): Pro
 }
 
 export async function getCashGroups(supabase: SupabaseClient): Promise<CashGroup[]> {
-	const { data } = await supabase.from('cash_group').select();
+	const { data } = await supabase
+		.from('cash_group')
+		.select()
+		.order('budget', { ascending: false, nullsFirst: false });
 
 	return data ?? [];
 }

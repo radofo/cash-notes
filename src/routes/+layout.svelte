@@ -3,15 +3,7 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import '../app.css';
-	import {
-		IconCash,
-		IconHome,
-		IconHome2,
-		IconLoader,
-		IconLogout,
-		IconMoneybag,
-		IconUser
-	} from '@tabler/icons-svelte';
+	import { IconHome2, IconLoader, IconMoneybag, IconUser } from '@tabler/icons-svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import Input from '../components/Input.svelte';
 	import Button from '../components/Button.svelte';
@@ -59,14 +51,20 @@
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
 			</div>
-			<div class="flex justify-between border-t pb-6">
-				<a href="/" class="px-8 py-4" class:active={$page.url.pathname === '/'}>
+			<div class="flex justify-between border-t px-8 pb-5">
+				<a href="/" class="px-8 py-4 {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<IconHome2 size={iconSize} />
 				</a>
-				<a class="px-8 py-4" class:active={$page.url.pathname === '/budgets'} href="/budgets">
+				<a
+					class="px-8 py-4 {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
+					href="/budgets"
+				>
 					<IconMoneybag size={iconSize} />
 				</a>
-				<a class="px-8 py-4" class:active={$page.url.pathname === '/profile'} href="/profile">
+				<a
+					href="/profile"
+					class="px-8 py-4 {$page.url.pathname === '/profile' ? 'text-green-700' : ''}"
+				>
 					<IconUser size={iconSize} /></a
 				>
 			</div>
@@ -95,11 +93,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	.active {
-		/* border-top: 2px solid rgb(30 58 138); */
-		color: rgb(30 58 138);
-		/* background-color: rgb(219 234 254) */
-	}
-</style>
