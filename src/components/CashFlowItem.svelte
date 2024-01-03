@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { CashFlow } from '../types/supabase';
+	import { formatCurrency } from '../utils/currency';
 
 	export let cashFlow: CashFlow;
 	export let editCashFlow: (id: string) => Promise<void>;
-
-	let deleteLoading: boolean = false;
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -26,7 +25,7 @@
 	</div>
 	<div class="flex items-center">
 		<span class="text-md">
-			{cashFlow.amount.toFixed(2).replace('.', ',')} €
+			{formatCurrency(cashFlow.amount)} €
 		</span>
 	</div>
 </li>

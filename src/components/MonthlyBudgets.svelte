@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { CashFlow, CashGroup } from '../types/supabase';
+	import { formatCurrency } from '../utils/currency';
 	import ProgressElement from './ProgressElement.svelte';
 
 	export let cashGroups: CashGroup[];
 	export let cashFlows: CashFlow[];
 	let progressWithBudget: Map<string, BudgetProgress>;
 	let progressNoBudget: Map<string, BudgetProgress>;
+	let totalSpent = 0;
 
 	$: {
 		const newProgressNoBudget = new Map<string, BudgetProgress>();
@@ -16,20 +18,23 @@
 			if (!cashGroup) continue;
 
 			if (cashGroup.name) {
-				const newSpent =
-					newProgressWithBudget.get(cashGroup.name ?? '')?.spent ?? 0 + cashFlow.amount;
 				if (cashGroup.budget) {
+					const newSpent =
+						(newProgressWithBudget.get(cashGroup.name ?? '')?.spent ?? 0) + cashFlow.amount;
 					newProgressWithBudget.set(cashGroup.name, {
 						limit: cashGroup.budget,
 						spent: newSpent
 					});
 				} else {
+					const newSpent =
+						(newProgressNoBudget.get(cashGroup.name ?? '')?.spent ?? 0) + cashFlow.amount;
 					newProgressNoBudget.set(cashGroup.name, {
 						limit: null,
 						spent: newSpent
 					});
 				}
 			}
+			totalSpent += cashFlow.amount;
 		}
 		for (const cashGroup of cashGroups) {
 			if (!newProgressWithBudget.has(cashGroup.name) && cashGroup.budget) {
@@ -58,4 +63,8 @@
 	{#each [...progressNoBudget] as [name, info]}
 		<ProgressElement {name} {info} />
 	{/each}
+	<div class="flex items-center justify-between border-t border-dashed py-3">
+		<span>Insgesamt ausgegeben</span>
+		<span>{formatCurrency(totalSpent)} €</span>
+	</div>
 </ul>
