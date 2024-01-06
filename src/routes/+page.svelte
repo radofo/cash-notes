@@ -152,8 +152,8 @@
 		cfDate = dateToDateString(new Date());
 	}
 
-	async function getNewMonthData(month: number, year: number) {
-		if (month && year) {
+	async function getNewMonthData(month?: number, year?: number) {
+		if (month !== undefined && year !== undefined) {
 			cashFlows = await getCashFlows(supabase, month, year);
 		}
 	}
@@ -212,7 +212,6 @@
 				<Button variant="success" type="submit">
 					{#if modalLoading}
 						<div class="grid place-items-center">
-							<!-- <span class="loading loading-spinner loading-md" /> -->
 							<IconLoader class="animate-spin text-center" />
 						</div>
 					{:else}

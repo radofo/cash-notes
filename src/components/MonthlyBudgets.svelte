@@ -13,6 +13,7 @@
 	$: {
 		const newProgressNoBudget = new Map<string, BudgetProgress>();
 		const newProgressWithBudget = new Map<string, BudgetProgress>();
+		totalSpent = 0;
 		for (const cashFlow of cashFlows) {
 			const cashGroup = cashFlow.cash_group;
 			if (!cashGroup) continue;

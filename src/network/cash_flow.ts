@@ -42,7 +42,7 @@ export async function getCashFlows(
 		.from('cash_flow')
 		.select('*, cash_group(*)')
 		.gte('date', dateToDateString(thisMonthDate.toDate()))
-		.lte('date', dateToDateString(nextMonthDate.toDate()))
+		.lt('date', dateToDateString(nextMonthDate.toDate()))
 		.order('date', { ascending: false, nullsFirst: false })
 		.order('created_at', { ascending: false, nullsFirst: false });
 

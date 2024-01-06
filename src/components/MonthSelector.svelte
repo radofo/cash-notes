@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
 	import { IconChevronDown } from '@tabler/icons-svelte';
+	import Button from './Button.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -41,6 +42,10 @@
 	function onYearChange(newYear: string) {
 		selectedYear = Number.parseInt(newYear);
 	}
+
+	function submitNewMonth() {
+		showModal = false;
+	}
 </script>
 
 <div class="flex cursor-pointer items-center gap-2">
@@ -50,7 +55,7 @@
 		<IconChevronDown />
 	</button>
 	<Modal bind:showModal>
-		<form class="flex justify-center gap-2 text-lg">
+		<form on:submit={submitNewMonth} class="flex justify-center gap-4 text-lg">
 			<select on:change={(e) => onMonthChange(e?.currentTarget?.value)}>
 				{#each months as month, index}
 					<option selected={index === selectedMonth}>{month}</option>
@@ -61,6 +66,7 @@
 					<option selected={year === selectedYear}>{year}</option>
 				{/each}
 			</select>
+			<Button type="submit" variant="default">Wählen</Button>
 		</form>
 	</Modal>
 </div>
