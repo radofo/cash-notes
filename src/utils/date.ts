@@ -1,3 +1,7 @@
+import dayjs from 'dayjs';
+import objectSupport from 'dayjs/plugin/objectSupport';
+dayjs.extend(objectSupport);
+
 export function dateToDateString(date: Date): string {
 	let month = '' + (date.getMonth() + 1);
 	let day = '' + date.getDate();
@@ -9,14 +13,53 @@ export function dateToDateString(date: Date): string {
 	return [year, month, day].join('-');
 }
 
-export function getSurroundingYears(year: number): number[] {
-	const final: number[] = [];
-	for (let i = 5; i > 0; i--) {
-		final.push(year - i);
+export function getMonthAndYearFromDateString(
+	dateString: string
+): { month: number; year: number } | undefined {
+	const parts = dateString.split('-');
+	const monthString = parts[1];
+	const yearString = parts[0];
+	if (monthString && yearString) {
+		return {
+			month: parseInt(monthString) - 1,
+			year: parseInt(yearString)
+		};
 	}
-	final.push(year);
-	for (let i = 1; i < 10; i++) {
-		final.push(year + i);
+}
+
+export function monthToDateString(month: number, year: number): string {
+	return dateToDateString(
+		dayjs({
+			year,
+			month,
+			day: 1
+		}).toDate()
+	);
+}
+
+export function getSurroundingYears(referenceYear: number, minus = 5, plus = 10): number[] {
+	const final: number[] = [];
+	for (let i = minus; i > 0; i--) {
+		final.push(referenceYear - i);
+	}
+	final.push(referenceYear);
+	for (let i = 1; i < plus; i++) {
+		final.push(referenceYear + i);
 	}
 	return final;
 }
+
+export const months = [
+	'Januar',
+	'Februar',
+	'März',
+	'April',
+	'Mai',
+	'Juni',
+	'Juli',
+	'August',
+	'September',
+	'Oktober',
+	'November',
+	'Dezember'
+];

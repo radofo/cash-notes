@@ -17,7 +17,7 @@
 	} from '../network/cash_flow';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import CashFlowItem from '../components/CashFlowItem.svelte';
-	import MonthSelector from '../components/MonthSelector.svelte';
+	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
 
@@ -161,7 +161,7 @@
 
 <DefaultPageContent>
 	<div class="flex w-[600px] max-w-full flex-col gap-10 px-4">
-		<MonthSelector
+		<ModalMonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
 		<MonthlyBudgets {cashFlows} {cashGroups} />

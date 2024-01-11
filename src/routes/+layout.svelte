@@ -3,7 +3,14 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import '../app.css';
-	import { IconHome2, IconLoader, IconMoneybag, IconUser } from '@tabler/icons-svelte';
+	import {
+		IconCalendar,
+		IconHome2,
+		IconLoader,
+		IconMoneybag,
+		IconRefresh,
+		IconUser
+	} from '@tabler/icons-svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import Input from '../components/Input.svelte';
 	import Button from '../components/Button.svelte';
@@ -59,7 +66,7 @@
 					class="px-8 py-4 {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
 					href="/budgets"
 				>
-					<IconMoneybag size={iconSize} />
+					<IconCalendar size={iconSize} />
 				</a>
 				<a
 					href="/profile"

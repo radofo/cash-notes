@@ -25,6 +25,6 @@
 
 <button
 	{type}
-	class="{variantClasses} text-md rounded-lg p-2 pl-3 pr-3 font-poppins font-medium leading-7"
+	class="{variantClasses} text-md flex items-center justify-center gap-2 rounded-lg p-2 pl-3 pr-3 font-poppins font-medium leading-7"
 	on:click={() => dispatch('btnclick')}><slot /></button
 >

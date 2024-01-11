@@ -1,29 +1,14 @@
 <script lang="ts">
-	import { getSurroundingYears } from '../utils/date';
+	import { getSurroundingYears, months } from '../utils/date';
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
 	import { IconChevronDown } from '@tabler/icons-svelte';
 	import Button from './Button.svelte';
+	import FullMonthSelector from './FullMonthSelector.svelte';
 
 	const dispatch = createEventDispatcher();
 
-	const months = [
-		'Januar',
-		'Februar',
-		'März',
-		'April',
-		'Mai',
-		'Juni',
-		'Juli',
-		'August',
-		'September',
-		'Oktober',
-		'November',
-		'Dezember'
-	];
-	const years = getSurroundingYears(new Date().getFullYear());
 	let showModal = false;
-
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
 
@@ -31,16 +16,6 @@
 		if (!showModal) {
 			dispatch('monthChanged', { selectedMonth, selectedYear });
 		}
-	}
-
-	function onMonthChange(newMonth: string) {
-		const newMonthIndex = months.indexOf(newMonth);
-		if (newMonthIndex > -1) {
-			selectedMonth = newMonthIndex;
-		}
-	}
-	function onYearChange(newYear: string) {
-		selectedYear = Number.parseInt(newYear);
 	}
 
 	function submitNewMonth() {
@@ -56,16 +31,14 @@
 	</button>
 	<Modal bind:showModal>
 		<form on:submit={submitNewMonth} class="flex justify-center gap-4 text-lg">
-			<select on:change={(e) => onMonthChange(e?.currentTarget?.value)}>
-				{#each months as month, index}
-					<option selected={index === selectedMonth}>{month}</option>
-				{/each}
-			</select>
-			<select on:change={(e) => onYearChange(e?.currentTarget?.value)}>
-				{#each years as year}
-					<option selected={year === selectedYear}>{year}</option>
-				{/each}
-			</select>
+			<FullMonthSelector
+				on:monthChanged={(e) => (selectedMonth = e.detail)}
+				on:yearChanged={(e) => (selectedYear = e.detail)}
+				{selectedMonth}
+				{selectedYear}
+				{months}
+				years={getSurroundingYears(new Date().getFullYear())}
+			/>
 			<Button type="submit" variant="default">Wählen</Button>
 		</form>
 	</Modal>

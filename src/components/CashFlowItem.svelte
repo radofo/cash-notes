@@ -4,6 +4,16 @@
 
 	export let cashFlow: CashFlow;
 	export let editCashFlow: (id: string) => Promise<void>;
+
+	let cfDate: string = '';
+
+	$: {
+		if (cashFlow.date) {
+			let day = new Date(cashFlow.date).getDate().toString();
+			if (day.length < 2) day = '0' + day;
+			cfDate = day;
+		}
+	}
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -13,8 +23,7 @@
 	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
 	<div class="flex justify-stretch gap-4">
-		<span class="text-md grid place-items-center rounded-lg border border-dashed p-2"
-			>{new Date(cashFlow.date).getDate()}</span
+		<span class="text-md grid place-items-center rounded-lg border border-dotted p-2">{cfDate}</span
 		>
 		<div class="flex flex-col">
 			<span class="text-md">

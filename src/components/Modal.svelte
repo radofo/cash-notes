@@ -12,6 +12,7 @@
 <dialog
 	bind:this={dialog}
 	on:close={() => (showModal = false)}
+	on:focus
 	on:click|self={() => dialog.close()}
 >
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -24,7 +25,7 @@
 <style>
 	dialog {
 		max-width: 90%;
-		width: 400px;
+		width: 500px;
 		border-radius: 20px;
 		border: none;
 		padding: 0;

@@ -13,7 +13,7 @@
 	onMount(() => {
 		if (cashGroupToBeUpdated) {
 			cashGroupName = cashGroupToBeUpdated.name;
-			cashGroupBudget = cashGroupToBeUpdated.budget.toString();
+			cashGroupBudget = cashGroupToBeUpdated.budget?.toString() ?? '';
 		}
 	});
 
