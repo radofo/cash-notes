@@ -181,7 +181,6 @@
 				{:else if !cashGroups.length}
 					<div class="mt-8 text-center">Noch keine Kategorie erstellt</div>
 				{:else}
-					<!-- Income List -->
 					<div class="mt-4 flex flex-col gap-8">
 						<ListSection heading="Einnahmen">
 							<ListItem itemType="main">
@@ -218,7 +217,6 @@
 								</div>
 							{/if}
 						</ListSection>
-						<!-- Expense List -->
 						<ListSection heading="Ausgaben">
 							{#each cashGroupMap as [cashGroupId, cashGroupDetails]}
 								{#if cashGroupId !== INCOME_ID}
