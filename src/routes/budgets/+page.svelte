@@ -11,10 +11,13 @@
 	import { getRecCashFlows } from '../../network/rec_cash_flow';
 	import List from '../../components/List.svelte';
 	import ListItem from '../../components/ListItem.svelte';
-	import { displayCurrency, getActiveTimeframe, getCashGroupTotal } from '../../utils/recurring';
+	import { getActiveTimeframe } from '../../utils/recurring';
 	import { INCOME_ID, type CashGroupMap } from '../../types/recurring';
 	import ModalMonthlyEdit from '../../components/ModalMonthlyEdit.svelte';
 	import ModalMonthlyCreate from '../../components/ModalMonthlyCreate.svelte';
+	import { displayCurrency } from '../../utils/currency';
+	import ListTotal from '../../components/ListTotal.svelte';
+	import ListSection from '../../components/ListSection.svelte';
 
 	export let data: PageData;
 
@@ -25,16 +28,18 @@
 	let cashGroups: CashGroup[] = [];
 	let recCashFlows: RecCashFlow[] = [];
 	let cashGroupMap: CashGroupMap;
+	let monthlyCashFlowToEdit: RecCashFlow | undefined;
 	let totalSpendings: number;
 	let totalEarnings: number;
+	let fixCost: number = 0;
+	let budgetedCost: number = 0;
 	let savings: number;
 
 	let showModal: boolean = false;
 	let loading: boolean = false;
 	let budgetToEdit: CashGroup | undefined;
-	let showInsertModal = false;
-	let showEditModal = false;
-	let monthlyCashFlowToEdit: RecCashFlow | undefined;
+	let showInsertModal: boolean = false;
+	let showEditModal: boolean = false;
 
 	$: {
 		if (!showModal) {
@@ -55,12 +60,16 @@
 
 	$: {
 		const newCashGroupMap: CashGroupMap = new Map();
+		let newBudgetedCost = 0;
 		for (const cashGroup of cashGroups) {
 			newCashGroupMap.set(cashGroup.id, {
 				recurringCashFlows: [],
 				cashGroup: { group: cashGroup, total: cashGroup.budget ?? 0 }
 			});
+			newBudgetedCost += cashGroup.budget ?? 0;
 		}
+		budgetedCost = newBudgetedCost;
+		let newFixCost = 0;
 		for (const recCashFlow of recCashFlows) {
 			const { isIncome, cash_group } = recCashFlow;
 			const activeTimeframe = getActiveTimeframe(recCashFlow);
@@ -77,6 +86,8 @@
 				});
 			} else if (cash_group) {
 				const currentCashGroupDetails = newCashGroupMap.get(cash_group.id);
+				const recurringAmount = activeTimeframe?.amount ?? 0;
+				newFixCost += recurringAmount;
 				newCashGroupMap.set(cash_group.id, {
 					recurringCashFlows: [
 						...(currentCashGroupDetails?.recurringCashFlows ?? []),
@@ -85,13 +96,31 @@
 					cashGroup: {
 						group: cash_group,
 						total:
-							cash_group.budget ??
-							(currentCashGroupDetails?.cashGroup.total ?? 0) + (activeTimeframe?.amount ?? 0)
+							cash_group.budget ?? (currentCashGroupDetails?.cashGroup.total ?? 0) + recurringAmount
 					}
 				});
 			}
+			fixCost = newFixCost;
 		}
 		cashGroupMap = newCashGroupMap;
+		// const filteredCashGroupMap: CashGroupMap = new Map();
+		// for (const [key, groupDetails] of newCashGroupMap) {
+		// 	if (key === INCOME_ID) {
+		// 		filteredCashGroupMap.set(key, groupDetails);
+		// 	}
+		// 	const hasBudget =
+		// 		groupDetails.cashGroup.total !== undefined && groupDetails.cashGroup.total !== 0;
+		// 	const hasRecurring = groupDetails.recurringCashFlows.length;
+		// 	if (
+		// 		(hideNoBudget && !hasBudget) ||
+		// 		(expenseFilter === 'withRecurring' && !hasRecurring) ||
+		// 		(expenseFilter === 'withoutRecurring' && hasRecurring)
+		// 	) {
+		// 		continue;
+		// 	}
+		// 	filteredCashGroupMap.set(key, groupDetails);
+		// }
+		// cashGroupMap = filteredCashGroupMap;
 	}
 
 	onMount(async () => {
@@ -137,10 +166,14 @@
 		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
 			<H1>Mtl. Planung</H1>
 			<div class="mt-9 flex w-full flex-col gap-5">
-				<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Kategorie</Button>
-				<Button variant="success" on:btnclick={() => (showInsertModal = true)}
-					>Neue mtl. Einnahme/Ausgabe</Button
-				>
+				<div class="flex justify-stretch gap-1">
+					<Button fullWidth variant="success" on:btnclick={() => (showModal = true)}
+						>Neue Kategorie</Button
+					>
+					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
+						>Neue mtl. Zahlung</Button
+					>
+				</div>
 				{#if loading}
 					<div class="mt-10 grid place-items-center">
 						<IconLoader class="animate-spin text-center" />
@@ -148,96 +181,88 @@
 				{:else if !cashGroups.length}
 					<div class="mt-8 text-center">Noch keine Kategorie erstellt</div>
 				{:else}
-					<List>
-						<ListItem itemType="main">
-							<span class="border border-white border-opacity-0">Einnahmen</span>
-							<div class="flex items-center">
-								<span class="pr-3"
-									>{displayCurrency(cashGroupMap.get(INCOME_ID)?.cashGroup.total)}</span
-								>
-							</div>
-						</ListItem>
-						{#if (cashGroupMap.get(INCOME_ID)?.recurringCashFlows ?? []).length}
-							<div class="mb-2">
-								<List>
-									{#each cashGroupMap.get(INCOME_ID)?.recurringCashFlows ?? [] as incomeCashFlow}
-										<ListItem
-											itemType="sub"
-											on:itemClicked={() => openEditModal(incomeCashFlow.recCashFlow)}
-										>
-											<span class="border border-white border-opacity-0"
-												>{incomeCashFlow.recCashFlow.name}</span
-											>
-											<div class="flex items-center">
-												<span class="pr-3"
-													>{displayCurrency(incomeCashFlow.activeTimeframe?.amount)}</span
-												>
-											</div>
-										</ListItem>
-									{/each}
-								</List>
-							</div>
-						{/if}
-						{#each cashGroupMap as [cashGroupId, cashGroupDetails]}
-							{#if cashGroupId !== INCOME_ID}
-								<ListItem
-									itemType="main"
-									on:itemClicked={(e) => openModalInEditMode(cashGroupDetails.cashGroup.group)}
-								>
-									<span class="border border-white border-opacity-0"
-										>{cashGroupDetails.cashGroup?.group?.name}</span
+					<!-- Income List -->
+					<div class="mt-4 flex flex-col gap-8">
+						<ListSection heading="Einnahmen">
+							<ListItem itemType="main">
+								<span class="border border-white border-opacity-0">Alle Einnahmen</span>
+								<div class="flex items-center">
+									<span class=""
+										>{displayCurrency({
+											amount: cashGroupMap.get(INCOME_ID)?.cashGroup.total
+										})}</span
 									>
-									<div class="flex items-center">
-										<span class="pr-3">{displayCurrency(cashGroupDetails.cashGroup.total)}</span>
-									</div>
-								</ListItem>
-								{#if cashGroupDetails.recurringCashFlows.length}
-									<div class="mb-2">
-										<List>
-											{#each cashGroupDetails.recurringCashFlows as cashFlow}
-												<ListItem
-													itemType="sub"
-													on:itemClicked={() => openEditModal(cashFlow.recCashFlow)}
+								</div>
+							</ListItem>
+							{#if (cashGroupMap.get(INCOME_ID)?.recurringCashFlows ?? []).length}
+								<div class="">
+									<List>
+										{#each cashGroupMap.get(INCOME_ID)?.recurringCashFlows ?? [] as incomeCashFlow}
+											<ListItem
+												itemType="sub"
+												on:itemClicked={() => openEditModal(incomeCashFlow.recCashFlow)}
+											>
+												<span class="border border-white border-opacity-0"
+													>{incomeCashFlow.recCashFlow.name}</span
 												>
-													<span class="border border-white border-opacity-0"
-														>{cashFlow?.recCashFlow.name}</span
+												<div class="flex items-center">
+													<span class=""
+														>{displayCurrency({
+															amount: incomeCashFlow.activeTimeframe?.amount
+														})}</span
 													>
-													<div class="flex items-center">
-														<span class="pr-3"
-															>{displayCurrency(cashFlow.activeTimeframe?.amount)}</span
-														>
-													</div>
-												</ListItem>
-												<!-- {/if} -->
-											{/each}
-										</List>
-									</div>
-								{/if}
+												</div>
+											</ListItem>
+										{/each}
+									</List>
+								</div>
 							{/if}
-						{/each}
-						<div class="mt-2 flex flex-col gap-1">
-							<hr class="border" />
-							<hr class="border" />
-						</div>
-						<div class="mt-3 flex items-center justify-between pl-1 pr-4 font-medium">
-							<div>Total Einnahmen</div>
-							<span>{displayCurrency(totalEarnings)} </span>
-						</div>
-						<div class="mt-3 flex flex-col gap-1">
-							<hr class="border" />
-						</div>
-						<div class="mt-3 flex items-center justify-between pl-1 pr-4 font-medium">
-							<div>Total Ausgaben</div>
-							<span>{displayCurrency(totalSpendings)} </span>
-						</div>
-						<div class="mt-3 flex flex-col gap-1">
-							<hr class="border" />
-						</div>
-						<div class="mt-3 flex items-center justify-between pl-1 pr-4 font-medium">
-							<div>Überschuss</div>
-							<span>{displayCurrency(savings)} </span>
-						</div>
-					</List>
+						</ListSection>
+						<!-- Expense List -->
+						<ListSection heading="Ausgaben">
+							{#each cashGroupMap as [cashGroupId, cashGroupDetails]}
+								{#if cashGroupId !== INCOME_ID}
+									<ListItem
+										itemType="main"
+										on:itemClicked={(e) => openModalInEditMode(cashGroupDetails.cashGroup.group)}
+									>
+										<span class="border border-white border-opacity-0"
+											>{cashGroupDetails.cashGroup?.group?.name}</span
+										>
+										<div class="flex items-center">
+											<span class=""
+												>{displayCurrency({ amount: cashGroupDetails.cashGroup.total })}</span
+											>
+										</div>
+									</ListItem>
+									{#if cashGroupDetails.recurringCashFlows.length}
+										<div class="">
+											<List>
+												{#each cashGroupDetails.recurringCashFlows as cashFlow}
+													<ListItem
+														itemType="sub"
+														on:itemClicked={() => openEditModal(cashFlow.recCashFlow)}
+													>
+														<span class="border border-white border-opacity-0"
+															>{cashFlow?.recCashFlow.name}</span
+														>
+														<div class="flex items-center">
+															<span class=""
+																>{displayCurrency({
+																	amount: cashFlow.activeTimeframe?.amount
+																})}</span
+															>
+														</div>
+													</ListItem>
+												{/each}
+											</List>
+										</div>
+									{/if}
+								{/if}
+							{/each}
+						</ListSection>
+						<ListTotal {budgetedCost} {fixCost} {totalEarnings} {totalSpendings} {savings} />
+					</div>
 				{/if}
 			</div>
 		</div>

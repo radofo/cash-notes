@@ -9,9 +9,6 @@ import type {
 import dayjs from 'dayjs';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
 
-export function displayCurrency(amount?: number): string {
-	return `${amount !== 0 && amount !== undefined ? amount.toString() + ' €' : '-'}`;
-}
 export function getCashGroupTotal(recCashFlows: RecCashFlow[], cashGroup?: CashGroup): number {
 	if (cashGroup?.budget) return cashGroup.budget;
 
