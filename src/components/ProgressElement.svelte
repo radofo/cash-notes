@@ -4,6 +4,7 @@
 
 	export let name: string;
 	export let info: BudgetProgress;
+	export let colorClass: string = 'progress-success';
 </script>
 
 <li class="flex w-full flex-col">
@@ -15,7 +16,7 @@
 		>
 	</div>
 	<progress
-		class="progress-success progress w-full bg-slate-200 {info.limit ? '' : 'opacity-30'}"
+		class="{colorClass} progress w-full bg-slate-200 {info.limit ? '' : 'opacity-30'}"
 		value={(info?.limit ?? 0) > 0 ? Math.max(0, info.spent / (info.limit ?? 0)) * 100 : 100}
 		max="100"
 	/>

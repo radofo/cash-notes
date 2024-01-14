@@ -14,6 +14,8 @@
 	let budgetProgress: BudgetProgress;
 	let noBudgetSpendings: number;
 
+	$: totalSpent = budgetProgress.spent + noBudgetSpendings + fixCostTotal;
+
 	$: {
 		const newProgressNoBudget = new Map<string, BudgetProgress>();
 		const newProgressWithBudget = new Map<string, BudgetProgress>();
@@ -74,10 +76,18 @@
 			{#each [...progressWithBudget] as [name, info]}
 				<ProgressElement {name} {info} />
 			{/each}
-			<ProgressElement name="Alle Budgets" info={budgetProgress} />
+			<div class="flex flex-col gap-4 border-t border-dashed pt-3">
+				<ProgressElement name="Alle Budgets" info={budgetProgress} />
+				{#if fixCostTotal > 0 || noBudgetSpendings > 0}
+					<ProgressElement
+						name="Alle Ausgaben / Einnahmen"
+						info={{ limit: totalIncome, spent: totalSpent }}
+					/>
+				{/if}
+			</div>
 		</ul>
 	</div>
-	{#if fixCostTotal > 0 || noBudgetSpendings > 0}
+	<!-- {#if fixCostTotal > 0 || noBudgetSpendings > 0}
 		{#if noBudgetSpendings > 0}
 			<div class="flex flex-col gap-2 border-t border-dashed pt-3">
 				<ul class="flex flex-col gap-4">
@@ -99,13 +109,6 @@
 		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
 			<span>Insg. Einnahmen</span>
 			<span>{displayCurrency({ amount: totalIncome })}</span>
-			<!-- <span
-				>{displayCurrency({
-					amount: budgetProgress.spent + noBudgetSpendings + fixCostTotal
-				})} / {displayCurrency({
-					amount: totalIncome
-				})}</span
-			> -->
 		</div>
 		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
 			<span>Insg. Ausgaben</span>
@@ -123,5 +126,5 @@
 				})}</span
 			>
 		</div>
-	{/if}
+	{/if} -->
 </div>

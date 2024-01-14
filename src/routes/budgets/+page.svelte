@@ -133,7 +133,7 @@
 						>+ Budget</Button
 					>
 					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
-						>+ Fixkosten/Einnahmen</Button
+						>+ mtl. Zahlung</Button
 					>
 				</div>
 				{#if loading}

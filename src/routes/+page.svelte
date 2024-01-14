@@ -33,6 +33,8 @@
 	let recCashFlows: RecCashFlow[] = [];
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
+	$: cashFlowFilters = cashGroups.map((cg) => cg.name);
+	let selectedFilter: string | null = null;
 
 	let showModal: boolean = false;
 	let loading: boolean = true;
@@ -74,6 +76,11 @@
 
 		return 0;
 	});
+
+	$: filteredCashFlows =
+		selectedFilter === null
+			? sortedCashFlows
+			: sortedCashFlows.filter((cf) => cf.cash_group?.name === selectedFilter);
 
 	function oncfGroupChange(newGroupName: string) {
 		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
@@ -161,6 +168,8 @@
 			cashFlows = await getCashFlows(supabase, month, year);
 		}
 	}
+
+	const activeFilterStyles = 'bg-slate-600 text-slate-50';
 </script>
 
 <DefaultPageContent>
@@ -177,7 +186,7 @@
 			{cashFlows}
 			{cashGroups}
 		/>
-		<div class="flex flex-col items-stretch justify-between gap-4">
+		<div class="flex flex-col items-stretch justify-between gap-10">
 			<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}
 				<div class="mt-8 grid place-items-center">
@@ -186,11 +195,30 @@
 			{:else if !sortedCashFlows.length}
 				<div class="mt-8 text-center">Noch keine Einträge für diesen Monat</div>
 			{:else}
-				<ul class="w-full list-none">
-					{#each sortedCashFlows as cashFlow}
-						<CashFlowItem editCashFlow={editCashFlowHandler} {cashFlow} />
+				<div class="text-md flex flex-wrap justify-center gap-2">
+					<button
+						on:click={() => (selectedFilter = null)}
+						class="rounded-full bg-slate-50 px-4 py-1 {!selectedFilter ? activeFilterStyles : ''}"
+						>Alle</button
+					>
+					{#each cashFlowFilters as filter}
+						<button
+							on:click={() => (selectedFilter = filter)}
+							class="rounded-full bg-slate-50 px-4 py-2 {selectedFilter === filter
+								? activeFilterStyles
+								: ''}">{filter}</button
+						>
 					{/each}
-				</ul>
+				</div>
+				{#if !filteredCashFlows.length}
+					<div class="mt-8 text-center">Noch keine Einträge für dieses Budget</div>
+				{:else}
+					<ul class="w-full list-none">
+						{#each filteredCashFlows as cashFlow}
+							<CashFlowItem editCashFlow={editCashFlowHandler} {cashFlow} />
+						{/each}
+					</ul>
+				{/if}
 			{/if}
 		</div>
 	</div>
