@@ -186,7 +186,7 @@
 			{cashFlows}
 			{cashGroups}
 		/>
-		<div class="flex flex-col items-stretch justify-between gap-10">
+		<div class="flex flex-col items-stretch justify-between gap-6">
 			<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}
 				<div class="mt-8 grid place-items-center">
