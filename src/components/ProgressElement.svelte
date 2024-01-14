@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { BudgetProgress } from '../types/budget';
-	import { formatCurrency } from '../utils/currency';
+	import { displayCurrency, formatCurrency } from '../utils/currency';
 
 	export let name: string;
 	export let info: BudgetProgress;
 </script>
 
-<li class="flex flex-col">
+<li class="flex w-full flex-col">
 	<div class="flex flex-row justify-between">
 		<span>{name}</span>
-		<span>{formatCurrency(info.spent)} {info.limit ? `/ ${formatCurrency(info.limit)}` : ''}</span>
+		<span
+			>{formatCurrency(info.spent)}
+			{info.limit ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
+		>
 	</div>
 	<progress
 		class="progress-success progress w-full bg-slate-200 {info.limit ? '' : 'opacity-30'}"

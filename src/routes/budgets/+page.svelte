@@ -130,10 +130,10 @@
 			<div class="mt-9 flex w-full flex-col gap-5">
 				<div class="flex justify-stretch gap-1">
 					<Button fullWidth variant="success" on:btnclick={() => (showModal = true)}
-						>Neue Kategorie</Button
+						>+ Kategorie</Button
 					>
 					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
-						>Neue mtl. Zahlung</Button
+						>+ Fixkosten</Button
 					>
 				</div>
 				{#if loading}
