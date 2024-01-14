@@ -198,14 +198,14 @@
 				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-4">
 					<button
 						on:click={() => (selectedFilter = null)}
-						class="whitespace-nowrap rounded-xl bg-slate-50 p-3 {!selectedFilter
+						class="whitespace-nowrap rounded-full bg-slate-50 p-3 {!selectedFilter
 							? activeFilterStyles
 							: ''}">Alle</button
 					>
 					{#each cashFlowFilters as filter}
 						<button
 							on:click={() => (selectedFilter = filter)}
-							class="whitespace-nowrap rounded-xl bg-slate-50 p-3 {selectedFilter === filter
+							class="whitespace-nowrap rounded-full bg-slate-50 p-3 {selectedFilter === filter
 								? activeFilterStyles
 								: ''}">{filter}</button
 						>
