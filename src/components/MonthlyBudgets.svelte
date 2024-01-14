@@ -97,12 +97,29 @@
 			</div>
 		{/if}
 		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
-			<span>Insgesamt</span>
-			<span
+			<span>Insg. Einnahmen</span>
+			<span>{displayCurrency({ amount: totalIncome })}</span>
+			<!-- <span
 				>{displayCurrency({
 					amount: budgetProgress.spent + noBudgetSpendings + fixCostTotal
 				})} / {displayCurrency({
 					amount: totalIncome
+				})}</span
+			> -->
+		</div>
+		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
+			<span>Insg. Ausgaben</span>
+			<span
+				>{displayCurrency({
+					amount: budgetProgress.spent + noBudgetSpendings + fixCostTotal
+				})}</span
+			>
+		</div>
+		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
+			<span>Aktueller Überschuss</span>
+			<span
+				>{displayCurrency({
+					amount: totalIncome - (budgetProgress.spent + noBudgetSpendings + fixCostTotal)
 				})}</span
 			>
 		</div>
