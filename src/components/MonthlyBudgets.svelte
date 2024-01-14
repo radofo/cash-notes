@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { CashFlow, CashGroup } from '../types/supabase';
-	import { formatCurrency, displayCurrency } from '../utils/currency';
+	import { displayCurrency } from '../utils/currency';
 	import ProgressElement from './ProgressElement.svelte';
 
 	export let cashGroups: CashGroup[];
 	export let cashFlows: CashFlow[];
+	export let fixCostTotal: number;
+	export let totalIncome: number;
+
 	let progressWithBudget: Map<string, BudgetProgress>;
 	let progressNoBudget: Map<string, BudgetProgress>;
 	let budgetProgress: BudgetProgress;
@@ -74,20 +77,34 @@
 			<ProgressElement name="Alle Budgets" info={budgetProgress} />
 		</ul>
 	</div>
-	{#if noBudgetSpendings > 0}
-		<div class="flex flex-col gap-2 border-t border-dashed pt-3">
-			<ul class="flex flex-col">
-				{#each [...progressNoBudget] as [name, info]}
-					<div class="flex w-full items-center justify-between">
-						<span>{name}</span>
-						<span>{displayCurrency({ amount: info.spent })}</span>
-					</div>
-				{/each}
-			</ul>
-		</div>
+	{#if fixCostTotal > 0 || noBudgetSpendings > 0}
+		{#if noBudgetSpendings > 0}
+			<div class="flex flex-col gap-2 border-t border-dashed pt-3">
+				<ul class="flex flex-col gap-4">
+					{#each [...progressNoBudget] as [name, info]}
+						<div class="flex w-full items-center justify-between">
+							<span>{name}</span>
+							<span>{displayCurrency({ amount: info.spent })}</span>
+						</div>
+					{/each}
+				</ul>
+			</div>
+		{/if}
+		{#if fixCostTotal > 0}
+			<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3">
+				<span>Fixkosten</span>
+				<span>{displayCurrency({ amount: fixCostTotal })}</span>
+			</div>
+		{/if}
 		<div class="flex flex-row justify-between gap-2 border-t border-dashed pt-3 font-medium">
-			<span>Insgesamt (ohne Fixkosten)</span>
-			<span>{displayCurrency({ amount: budgetProgress.spent + noBudgetSpendings })}</span>
+			<span>Insgesamt</span>
+			<span
+				>{displayCurrency({
+					amount: budgetProgress.spent + noBudgetSpendings + fixCostTotal
+				})} / {displayCurrency({
+					amount: totalIncome
+				})}</span
+			>
 		</div>
 	{/if}
 </div>

@@ -9,6 +9,32 @@ import type {
 import dayjs from 'dayjs';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
 
+export function getIncomeForMonth(
+	selectedDate: { month: number; year: number },
+	recCashFlows: RecCashFlow[]
+): number {
+	return recCashFlows.reduce((result, recCashFlow) => {
+		if (!recCashFlow.isIncome) {
+			return result;
+		}
+		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		return result + (activeTimeframe?.amount ?? 0);
+	}, 0);
+}
+
+export function getRecurringTotalForMonth(
+	selectedDate: { month: number; year: number },
+	recCashFlows: RecCashFlow[]
+): number {
+	return recCashFlows.reduce((result, recCashFlow) => {
+		if (recCashFlow.isIncome) {
+			return result;
+		}
+		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		return result + (activeTimeframe?.amount ?? 0);
+	}, 0);
+}
+
 export function addRecurringToCashGroups(
 	initializedIncomeCashGroup: CashGroupWithMeta,
 	initializedCashGroupsWithMeta: CashGroupWithMeta[],

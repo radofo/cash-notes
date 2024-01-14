@@ -6,8 +6,9 @@
 	import type { PageData } from './$types';
 	import { dateToDateString } from '../utils/date';
 	import { onMount } from 'svelte';
-	import type { CashFlow, CashGroup } from '../types/supabase';
+	import type { CashFlow, CashGroup, RecCashFlow } from '../types/supabase';
 	import { getCashGroups } from '../network/cash_group';
+	import { getRecurringTotalForMonth, getIncomeForMonth } from '../utils/recurring';
 	import {
 		deleteCashFlow,
 		getCashFlows,
@@ -20,6 +21,7 @@
 	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
+	import { getRecCashFlows } from '../network/rec_cash_flow';
 
 	export let data: PageData;
 	let { supabase, session } = data;
@@ -28,6 +30,7 @@
 
 	let cashGroups: CashGroup[] = [];
 	let cashFlows: CashFlow[] = [];
+	let recCashFlows: RecCashFlow[] = [];
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
 
@@ -46,6 +49,7 @@
 		loading = true;
 		cashGroups = await getCashGroups(supabase);
 		cashFlows = await getCashFlows(supabase, selectedMonth, selectedYear);
+		recCashFlows = await getRecCashFlows(supabase);
 		cfGroup = cashGroups?.[0];
 		loading = false;
 	});
@@ -164,7 +168,15 @@
 		<ModalMonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
-		<MonthlyBudgets {cashFlows} {cashGroups} />
+		<MonthlyBudgets
+			totalIncome={getIncomeForMonth({ month: selectedMonth, year: selectedYear }, recCashFlows)}
+			fixCostTotal={getRecurringTotalForMonth(
+				{ month: selectedMonth, year: selectedYear },
+				recCashFlows
+			)}
+			{cashFlows}
+			{cashGroups}
+		/>
 		<div class="flex flex-col items-stretch justify-between gap-4">
 			<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}
