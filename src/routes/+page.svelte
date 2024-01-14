@@ -195,17 +195,17 @@
 			{:else if !sortedCashFlows.length}
 				<div class="mt-8 text-center">Noch keine Einträge für diesen Monat</div>
 			{:else}
-				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-2">
+				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-4">
 					<button
 						on:click={() => (selectedFilter = null)}
-						class="whitespace-nowrap rounded-xl bg-slate-50 p-2 {!selectedFilter
+						class="whitespace-nowrap rounded-xl bg-slate-50 p-3 {!selectedFilter
 							? activeFilterStyles
 							: ''}">Alle</button
 					>
 					{#each cashFlowFilters as filter}
 						<button
 							on:click={() => (selectedFilter = filter)}
-							class="whitespace-nowrap rounded-xl bg-slate-50 p-2 {selectedFilter === filter
+							class="whitespace-nowrap rounded-xl bg-slate-50 p-3 {selectedFilter === filter
 								? activeFilterStyles
 								: ''}">{filter}</button
 						>
