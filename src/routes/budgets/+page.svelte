@@ -130,10 +130,10 @@
 			<div class="mt-9 flex w-full flex-col gap-5">
 				<div class="flex justify-stretch gap-1">
 					<Button fullWidth variant="success" on:btnclick={() => (showModal = true)}
-						>+ Kategorie</Button
+						>+ Budget</Button
 					>
 					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
-						>+ Fixkosten</Button
+						>+ Fixkosten/Einnahmen</Button
 					>
 				</div>
 				{#if loading}
@@ -144,7 +144,12 @@
 					<div class="mt-8 text-center">Noch keine Kategorie erstellt</div>
 				{:else}
 					<div class="mt-4 flex flex-col gap-8">
-						<ListSection heading="Einnahmen" isIncome cashGroups={[incomeCashGroup]} />
+						<ListSection
+							heading="Einnahmen"
+							isIncome
+							cashGroups={[incomeCashGroup]}
+							{openRecCashFlowEditModal}
+						/>
 						{#if recurringCashGroups.length}
 							<ListSection
 								heading="Fixkosten"
