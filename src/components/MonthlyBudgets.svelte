@@ -79,10 +79,7 @@
 			<div class="flex flex-col gap-4 border-t border-dashed pt-3">
 				<ProgressElement name="Alle Budgets" info={budgetProgress} />
 				{#if fixCostTotal > 0 || noBudgetSpendings > 0}
-					<ProgressElement
-						name="Alle Ausgaben / Einnahmen"
-						info={{ limit: totalIncome, spent: totalSpent }}
-					/>
+					<ProgressElement name="Alle Ausgaben" info={{ limit: totalIncome, spent: totalSpent }} />
 				{/if}
 			</div>
 		</ul>
