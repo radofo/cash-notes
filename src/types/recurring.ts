@@ -7,18 +7,15 @@ export type FormTimeframe = {
 	amount: string;
 };
 
-export type CashGroupMap = Map<
-	string,
-	{
-		recurringCashFlows: {
-			recCashFlow: RecCashFlow;
-			activeTimeframe?: RecTimeframe;
-		}[];
-		cashGroup: {
-			group?: CashGroup;
-			total?: number;
-		};
-	}
->;
+export type CashGroupWithMeta = {
+	cashGroup?: CashGroup;
+	recurringCashFlows: {
+		recCashFlow: RecCashFlow;
+		activeTimeframe?: RecTimeframe;
+	}[];
+	total?: number;
+};
+
+export type CashGroupMap = Map<string, CashGroupWithMeta>;
 
 export const INCOME_ID = 'income-id';

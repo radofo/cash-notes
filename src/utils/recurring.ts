@@ -1,4 +1,4 @@
-import type { FormTimeframe } from '../types/recurring';
+import type { CashGroupWithMeta, FormTimeframe } from '../types/recurring';
 import type {
 	CashGroup,
 	RecCashFlow,
@@ -8,6 +8,85 @@ import type {
 } from '../types/supabase';
 import dayjs from 'dayjs';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
+
+export function addRecurringToCashGroups(
+	initializedIncomeCashGroup: CashGroupWithMeta,
+	initializedCashGroupsWithMeta: CashGroupWithMeta[],
+	recurringCashFlows: RecCashFlow[]
+): {
+	newIncomeCashGroup: CashGroupWithMeta;
+	newBudgetCashGroups: CashGroupWithMeta[];
+	newNoBudgetCashGroups: CashGroupWithMeta[];
+	newRecurringCashGroups: CashGroupWithMeta[];
+} {
+	const newIncomeCashGroup: CashGroupWithMeta = { ...initializedIncomeCashGroup };
+	const newExpenseCashGroups: CashGroupWithMeta[] = [...initializedCashGroupsWithMeta]; // TODO: deep cloning
+
+	for (const recCashFlow of recurringCashFlows) {
+		const { isIncome, cash_group } = recCashFlow;
+		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		const activeAmount = activeTimeframe?.amount ?? 0;
+
+		if (isIncome) {
+			newIncomeCashGroup.recurringCashFlows = [
+				...newIncomeCashGroup.recurringCashFlows,
+				{ recCashFlow, activeTimeframe }
+			];
+			newIncomeCashGroup.total = (newIncomeCashGroup?.total ?? 0) + (activeTimeframe?.amount ?? 0);
+		}
+		if (cash_group) {
+			const expenseCashGroup = newExpenseCashGroups.find(
+				(ecg) => ecg.cashGroup?.id === cash_group?.id
+			);
+			// TODO: handle rec_cash_flows without a cash_group
+			if (expenseCashGroup) {
+				expenseCashGroup.recurringCashFlows.push({ recCashFlow, activeTimeframe });
+				if (!expenseCashGroup.cashGroup?.budget) {
+					expenseCashGroup.total = (expenseCashGroup.total ?? 0) + activeAmount;
+				}
+			}
+		}
+	}
+	const newBudgetCashGroups: CashGroupWithMeta[] = [];
+	const newRecurringCashGroups: CashGroupWithMeta[] = [];
+	const newNoBudgetCashGroups: CashGroupWithMeta[] = [];
+	for (const expenseGroup of newExpenseCashGroups) {
+		if (expenseGroup.cashGroup?.budget) {
+			newBudgetCashGroups.push(expenseGroup);
+		} else if (!expenseGroup.cashGroup?.budget && expenseGroup.total) {
+			newRecurringCashGroups.push(expenseGroup);
+		} else if (!expenseGroup.cashGroup?.budget && !expenseGroup.total) {
+			newNoBudgetCashGroups.push(expenseGroup);
+		}
+	}
+	return {
+		newBudgetCashGroups,
+		newIncomeCashGroup,
+		newNoBudgetCashGroups,
+		newRecurringCashGroups
+	};
+}
+
+export function initGroups(cashGroups: CashGroup[]): CashGroupWithMeta[] {
+	const initializedCashGroupsWithMeta: CashGroupWithMeta[] = [];
+
+	for (const cashGroup of cashGroups) {
+		initializedCashGroupsWithMeta.push({
+			cashGroup,
+			recurringCashFlows: [],
+			total: cashGroup.budget ?? undefined
+		});
+	}
+
+	return initializedCashGroupsWithMeta;
+}
+
+export function getCashGroupDetailsById(
+	cashGroupsDetails: CashGroupWithMeta[],
+	id: string
+): CashGroupWithMeta | undefined {
+	return cashGroupsDetails.find((cg) => cg.cashGroup?.id === id);
+}
 
 export function getCashGroupTotal(recCashFlows: RecCashFlow[], cashGroup?: CashGroup): number {
 	if (cashGroup?.budget) return cashGroup.budget;

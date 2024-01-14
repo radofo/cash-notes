@@ -10,7 +10,8 @@
 	export let savings: number;
 </script>
 
-<ListSection heading="Total">
+<div class="flex flex-col gap-2">
+	<span class="block text-center text-lg font-semibold">Total</span>
 	<ListItem itemType="main">
 		<span>Total Einnahmen</span>
 		<span>{displayCurrency({ amount: totalEarnings, forceDecimals: true })} </span>
@@ -24,11 +25,11 @@
 		<span>{displayCurrency({ amount: fixCost, sign: '-', forceDecimals: true })} </span>
 	</ListItem>
 	<ListItem itemType="sub">
-		<span>Monatliche Budgets</span>
+		<span>Budgets</span>
 		<span>{displayCurrency({ amount: budgetedCost, sign: '-', forceDecimals: true })} </span>
 	</ListItem>
 	<ListItem itemType="main">
 		<span>Überschuss</span>
 		<span>{displayCurrency({ amount: savings, forceDecimals: true })}</span>
 	</ListItem>
-</ListSection>
+</div>
