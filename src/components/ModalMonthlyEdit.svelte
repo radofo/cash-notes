@@ -194,17 +194,17 @@
 				</InputWithLabel>
 			{/if}
 			<div class="flex w-full flex-col gap-1">
-				<div class="flex gap-1">
-					<span class="w-[30%] text-sm text-slate-500"> Betrag </span>
+				<div class="flex gap-2">
+					<span class="w-[40%] text-sm text-slate-500"> Betrag </span>
 					<span class="flex-1 text-sm text-slate-500"> Gültig ab </span>
 				</div>
 				<div class="flex flex-col">
 					{#each formTimeframes as timeframe}
-						<div class="flex items-center gap-1 border-b py-2 last-of-type:border-0">
-							<div class="w-[30%]">
+						<div class="flex items-center gap-2 border-b py-2 last-of-type:border-0">
+							<div class="w-[40%]">
 								<Input inputType="text" bind:inputValue={timeframe.amount} />
 							</div>
-							<div class="flex flex-1 items-center justify-between border">
+							<div class="flex flex-1 items-center justify-between">
 								<div class="flex flex-col gap-2">
 									<FullMonthSelector
 										on:monthChanged={(e) => (timeframe.startMonth = e.detail)}
