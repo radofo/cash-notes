@@ -204,7 +204,7 @@
 							<div class="w-[30%]">
 								<Input inputType="text" bind:inputValue={timeframe.amount} />
 							</div>
-							<div class="flex flex-1 justify-between border">
+							<div class="flex flex-1 justify-between">
 								<div class="flex flex-col gap-2">
 									<FullMonthSelector
 										on:monthChanged={(e) => (timeframe.startMonth = e.detail)}
