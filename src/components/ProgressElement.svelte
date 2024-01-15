@@ -5,9 +5,10 @@
 	export let name: string;
 	export let info: BudgetProgress;
 	export let colorClass: string = 'progress-success';
+	export let fontBold: boolean = false;
 </script>
 
-<li class="flex w-full flex-col">
+<li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-norma l'}">
 	<div class="flex flex-row justify-between">
 		<span>{name}</span>
 		<span

@@ -15,6 +15,7 @@
 	let noBudgetSpendings: number;
 
 	$: totalSpent = budgetProgress.spent + noBudgetSpendings + fixCostTotal;
+	$: total = totalIncome - totalSpent;
 
 	$: {
 		const newProgressNoBudget = new Map<string, BudgetProgress>();
@@ -70,58 +71,78 @@
 	}
 </script>
 
-<div class="flex flex-col gap-4">
-	<ul class="flex flex-col gap-4">
-		<!-- <ProgressElement
-			name="Alle Budgets"
-			info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
-		/> -->
-		{#each [...progressWithBudget] as [name, info]}
-			<ProgressElement {name} {info} />
-		{/each}
-	</ul>
-	<div class="border-t border-dashed py-1">
-		{#if totalIncome > 0}
-			<div class="flex flex-row justify-between border-b border-dashed py-3 font-medium">
-				<span>Einnahmen</span>
-				<span>{displayCurrency({ amount: totalIncome, forceDecimals: true })}</span>
+<div class="carousel w-full">
+	<div id="item1" class="carousel-item flex w-full flex-col">
+		<div class="w-full rounded-lg">
+			<ul class="flex flex-col gap-4 py-4">
+				{#each [...progressWithBudget] as [name, info]}
+					<ProgressElement {name} {info} />
+				{/each}
+			</ul>
+			<div class="border-t border-dashed py-2">
+				<ProgressElement
+					fontBold
+					name="Alle Budgets"
+					info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+				/>
 			</div>
-		{/if}
-		<div class="flex flex-row justify-between border-b border-t border-dashed py-3 font-medium">
-			<span>Ausgaben</span>
-			<span>{displayCurrency({ amount: totalSpent, sign: '- ' })}</span>
-		</div>
-		{#if fixCostTotal > 0}
-			<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-				<span>Fixkosten</span>
-				<span>{displayCurrency({ amount: fixCostTotal, sign: '-', forceDecimals: true })}</span>
-			</div>
-		{/if}
-		{#if budgetProgress.spent > 0}
-			<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-				<span>Ausgaben aus Budgets</span>
-				<span
-					>{displayCurrency({ amount: budgetProgress.spent, sign: '-', forceDecimals: true })}</span
-				>
-			</div>
-		{/if}
-		{#if noBudgetSpendings > 0}
-			<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-				<span>Ausgaben ohne Budget</span>
-				<span>{displayCurrency({ amount: noBudgetSpendings, sign: '-', forceDecimals: true })}</span
-				>
-			</div>
-		{/if}
-		<div class="flex flex-row justify-between border-b border-dashed py-3 font-medium">
-			<span>Aktuelle Monatsbilanz</span>
-			<span
-				>{displayCurrency({
-					amount: totalIncome - totalSpent
-				})}</span
-			>
 		</div>
 	</div>
-	<!-- {#if fixCostTotal > 0 || noBudgetSpendings > 0}
+	<div id="item2" class="carousel-item w-full">
+		<div class="flex w-full flex-col px-3">
+			{#if totalIncome > 0}
+				<div class="flex flex-row justify-between border-b border-dashed py-3 font-medium">
+					<span>Einnahmen</span>
+					<span>{displayCurrency({ amount: totalIncome, forceDecimals: true })}</span>
+				</div>
+			{/if}
+			<div class="flex flex-row justify-between border-b border-t border-dashed py-3 font-medium">
+				<span>Ausgaben</span>
+				<span>{displayCurrency({ amount: totalSpent, sign: '- ' })}</span>
+			</div>
+			{#if fixCostTotal > 0}
+				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
+					<span>Fixkosten</span>
+					<span>{displayCurrency({ amount: fixCostTotal, sign: '-', forceDecimals: true })}</span>
+				</div>
+			{/if}
+			{#if budgetProgress.spent > 0}
+				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
+					<span>Ausgaben aus Budgets</span>
+					<span
+						>{displayCurrency({
+							amount: budgetProgress.spent,
+							sign: '-',
+							forceDecimals: true
+						})}</span
+					>
+				</div>
+			{/if}
+			{#if noBudgetSpendings > 0}
+				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
+					<span>Ausgaben ohne Budget</span>
+					<span
+						>{displayCurrency({
+							amount: noBudgetSpendings,
+							sign: '-',
+							forceDecimals: true
+						})}</span
+					>
+				</div>
+			{/if}
+			<div class="flex flex-row justify-between border-b border-dashed py-3 font-medium">
+				<span>{total < 0 ? 'Aktuelles Defizit' : 'Aktueller Überschuss'}</span>
+				<span
+					>{displayCurrency({
+						amount: total
+					})}</span
+				>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- {#if fixCostTotal > 0 || noBudgetSpendings > 0}
 		{#if noBudgetSpendings > 0}
 			<div class="flex flex-col gap-2 border-t border-dashed pt-3">
 				<ul class="flex flex-col gap-4">
@@ -161,4 +182,3 @@
 			>
 		</div>
 	{/if} -->
-</div>
