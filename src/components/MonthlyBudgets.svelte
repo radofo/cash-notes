@@ -88,7 +88,7 @@
 			</div>
 		{/if}
 		<div class="flex flex-row justify-between border-b border-t border-dashed py-3 font-medium">
-			<span>Insgesamte Ausgaben</span>
+			<span>Ausgaben</span>
 			<span>{displayCurrency({ amount: totalSpent, sign: '- ' })}</span>
 		</div>
 		{#if fixCostTotal > 0}
