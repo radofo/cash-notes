@@ -22,8 +22,9 @@
 	on:click={() => editCashFlow(cashFlow.id)}
 	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
-	<div class="flex justify-stretch gap-4">
-		<span class="text-md grid place-items-center rounded-lg border border-dotted p-2">{cfDate}</span
+	<div class="flex gap-4">
+		<span class="text-md grid w-10 place-items-center rounded-lg border border-dotted p-2"
+			>{cfDate}</span
 		>
 		<div class="flex flex-col">
 			<span class="text-md">

@@ -153,8 +153,8 @@
 	}
 	function addTimeframe() {
 		formTimeframes = [
-			{ startMonth: new Date().getMonth(), startYear: new Date().getFullYear(), amount: '' },
-			...formTimeframes
+			...formTimeframes,
+			{ startMonth: new Date().getMonth(), startYear: new Date().getFullYear(), amount: '' }
 		];
 	}
 	function removeTimeframe(toDelete: FormTimeframe) {
@@ -193,32 +193,36 @@
 					</select>
 				</InputWithLabel>
 			{/if}
-			<div class="flex flex-col gap-1">
+			<div class="flex w-full flex-col gap-1">
 				<div class="flex gap-1">
 					<span class="w-[50%] text-sm text-slate-500"> Betrag </span>
 					<span class="w-[50%] text-sm text-slate-500"> Gültig ab </span>
 				</div>
-				{#each formTimeframes as timeframe}
-					<div class="flex items-center gap-1">
-						<div class="w-[50%]">
-							<Input inputType="text" bind:inputValue={timeframe.amount} />
+				<div class="flex flex-col">
+					{#each formTimeframes as timeframe}
+						<div class="flex items-center gap-1 border-b py-2 last-of-type:border-0">
+							<div class="w-[50%]">
+								<Input inputType="text" bind:inputValue={timeframe.amount} />
+							</div>
+							<div class="flex w-[50%] justify-between">
+								<div class="flex flex-col gap-1">
+									<FullMonthSelector
+										on:monthChanged={(e) => (timeframe.startMonth = e.detail)}
+										on:yearChanged={(e) => (timeframe.startYear = e.detail)}
+										selectedMonth={timeframe.startMonth}
+										selectedYear={timeframe.startYear}
+										{months}
+										years={getSurroundingYears(new Date().getFullYear())}
+									/>
+								</div>
+								<button on:click|preventDefault={() => removeTimeframe(timeframe)}>
+									<IconX class="min-w-fit border-l pl-1 text-slate-500" size={24} />
+								</button>
+							</div>
 						</div>
-						<div class="flex w-[50%] justify-between">
-							<FullMonthSelector
-								on:monthChanged={(e) => (timeframe.startMonth = e.detail)}
-								on:yearChanged={(e) => (timeframe.startYear = e.detail)}
-								selectedMonth={timeframe.startMonth}
-								selectedYear={timeframe.startYear}
-								{months}
-								years={getSurroundingYears(new Date().getFullYear())}
-							/>
-							<button on:click|preventDefault={() => removeTimeframe(timeframe)}>
-								<IconX class="min-w-fit border-l pl-1 text-slate-500" size={24} />
-							</button>
-						</div>
-					</div>
-				{/each}
-				<Button variant="dashed" on:btnclick={addTimeframe}>+</Button>
+					{/each}
+					<Button variant="dashed" on:btnclick={addTimeframe}>+</Button>
+				</div>
 			</div>
 		</div>
 		<div class="flex flex-col gap-2">

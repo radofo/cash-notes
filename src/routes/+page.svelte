@@ -169,7 +169,7 @@
 		}
 	}
 
-	const activeFilterStyles = 'bg-slate-600 text-slate-50';
+	const activeFilterStyles = 'bg-slate-500 text-slate-50';
 </script>
 
 <DefaultPageContent>
@@ -198,21 +198,21 @@
 				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-4">
 					<button
 						on:click={() => (selectedFilter = null)}
-						class="whitespace-nowrap rounded-full bg-slate-50 p-3 {!selectedFilter
+						class="whitespace-nowrap rounded-full bg-slate-50 p-2 {!selectedFilter
 							? activeFilterStyles
 							: ''}">Alle</button
 					>
 					{#each cashFlowFilters as filter}
 						<button
 							on:click={() => (selectedFilter = filter)}
-							class="whitespace-nowrap rounded-full bg-slate-50 p-3 {selectedFilter === filter
+							class="whitespace-nowrap rounded-full bg-slate-50 p-2 {selectedFilter === filter
 								? activeFilterStyles
 								: ''}">{filter}</button
 						>
 					{/each}
 				</div>
 				{#if !filteredCashFlows.length}
-					<div class="mt-8 text-center">Noch keine Einträge für dieses Budget</div>
+					<div class="mt-8 text-center">Noch keine Einträge für diese Kategorie</div>
 				{:else}
 					<ul class="w-full list-none">
 						{#each filteredCashFlows as cashFlow}

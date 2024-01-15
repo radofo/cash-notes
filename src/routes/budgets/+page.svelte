@@ -130,7 +130,7 @@
 			<div class="mt-9 flex w-full flex-col gap-5">
 				<div class="flex justify-stretch gap-1">
 					<Button fullWidth variant="success" on:btnclick={() => (showModal = true)}
-						>+ Budget</Button
+						>+ Kategorie</Button
 					>
 					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
 						>+ mtl. Zahlung</Button
@@ -150,17 +150,9 @@
 							cashGroups={[incomeCashGroup]}
 							{openRecCashFlowEditModal}
 						/>
-						{#if recurringCashGroups.length}
-							<ListSection
-								heading="Fixkosten"
-								cashGroups={recurringCashGroups}
-								{openCashGroupEditModal}
-								{openRecCashFlowEditModal}
-							/>
-						{/if}
 						{#if budgetCashGroups.length}
 							<ListSection
-								heading="Budgets"
+								heading="Mit Budget"
 								{openCashGroupEditModal}
 								{openRecCashFlowEditModal}
 								cashGroups={budgetCashGroups}
@@ -172,6 +164,14 @@
 								{openCashGroupEditModal}
 								{openRecCashFlowEditModal}
 								cashGroups={noBudgetCashGroups}
+							/>
+						{/if}
+						{#if recurringCashGroups.length}
+							<ListSection
+								heading="Fixkosten"
+								cashGroups={recurringCashGroups}
+								{openCashGroupEditModal}
+								{openRecCashFlowEditModal}
 							/>
 						{/if}
 						<ListTotal {budgetedCost} {fixCost} {totalEarnings} {totalSpendings} {savings} />

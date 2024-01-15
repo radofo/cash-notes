@@ -108,7 +108,7 @@
 
 <Modal bind:showModal>
 	<h2 class="mb-3 text-center text-xl font-semibold" slot="header">
-		{editBudgetId ? 'Budget Bearbeiten' : 'Budget Erstellen'}
+		{editBudgetId ? 'Kategorie Bearbeiten' : 'Kategorie Erstellen'}
 	</h2>
 	<form
 		class="flex flex-col gap-5"
