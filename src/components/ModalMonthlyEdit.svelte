@@ -204,7 +204,7 @@
 							<div class="w-[30%]">
 								<Input inputType="text" bind:inputValue={timeframe.amount} />
 							</div>
-							<div class="flex flex-1 justify-between">
+							<div class="flex flex-1 items-center justify-between border">
 								<div class="flex flex-col gap-2">
 									<FullMonthSelector
 										on:monthChanged={(e) => (timeframe.startMonth = e.detail)}
@@ -215,8 +215,11 @@
 										years={getSurroundingYears(new Date().getFullYear())}
 									/>
 								</div>
-								<button on:click|preventDefault={() => removeTimeframe(timeframe)}>
-									<IconX class="min-w-fit border-l pl-1 text-slate-500" size={24} />
+								<button
+									class="border-l pl-1 text-slate-500"
+									on:click|preventDefault={() => removeTimeframe(timeframe)}
+								>
+									<IconX size={24} />
 								</button>
 							</div>
 						</div>
