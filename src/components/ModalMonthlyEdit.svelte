@@ -216,7 +216,7 @@
 									/>
 								</div>
 								<button
-									class="border-l pl-1 text-slate-500"
+									class="pl-1 text-slate-500"
 									on:click|preventDefault={() => removeTimeframe(timeframe)}
 								>
 									<IconX size={24} />
