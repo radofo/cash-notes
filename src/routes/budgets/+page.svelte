@@ -152,7 +152,7 @@
 						/>
 						{#if budgetCashGroups.length}
 							<ListSection
-								heading="Mit Budget"
+								heading="Kategorien mit Budget"
 								{openCashGroupEditModal}
 								{openRecCashFlowEditModal}
 								cashGroups={budgetCashGroups}
@@ -160,7 +160,7 @@
 						{/if}
 						{#if noBudgetCashGroups.length}
 							<ListSection
-								heading="Ohne Budget"
+								heading="Kategorien ohne Budget"
 								{openCashGroupEditModal}
 								{openRecCashFlowEditModal}
 								cashGroups={noBudgetCashGroups}
@@ -168,7 +168,7 @@
 						{/if}
 						{#if recurringCashGroups.length}
 							<ListSection
-								heading="Fixkosten"
+								heading="Kategorien mit Fixkosten"
 								cashGroups={recurringCashGroups}
 								{openCashGroupEditModal}
 								{openRecCashFlowEditModal}

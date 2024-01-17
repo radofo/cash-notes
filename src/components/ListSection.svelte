@@ -4,6 +4,7 @@
 	import { displayCurrency } from '../utils/currency';
 	import List from './List.svelte';
 	import ListItem from './ListItem.svelte';
+	import Obfuscate from './Obfuscate.svelte';
 
 	export let heading: string;
 	export let cashGroups: CashGroupWithMeta[];
@@ -24,8 +25,10 @@
 				<span class="border border-white border-opacity-0"
 					>{isIncome ? 'Alle Einnahmen' : cashGroup.cashGroup?.name}</span
 				>
-				<div class="flex items-center">
-					<span class="">{displayCurrency({ amount: cashGroup.total })}</span>
+				<div class="relative flex items-center">
+					<Obfuscate exception={!isIncome}>
+						<span class="">{displayCurrency({ amount: cashGroup.total })}</span>
+					</Obfuscate>
 				</div>
 			</ListItem>
 			{#if cashGroup.recurringCashFlows.length}
@@ -39,12 +42,14 @@
 								<span class="border border-white border-opacity-0"
 									>{cashFlow?.recCashFlow.name}</span
 								>
-								<div class="flex items-center">
-									<span class=""
-										>{displayCurrency({
-											amount: cashFlow.activeTimeframe?.amount
-										})}</span
-									>
+								<div class="relative flex items-center">
+									<Obfuscate exception={!isIncome}>
+										<span class=""
+											>{displayCurrency({
+												amount: cashFlow.activeTimeframe?.amount
+											})}</span
+										>
+									</Obfuscate>
 								</div>
 							</ListItem>
 						{/each}

@@ -33,8 +33,10 @@
 	let recCashFlows: RecCashFlow[] = [];
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
-	$: cashFlowFilters = cashGroups.map((cg) => cg.name);
 	let selectedFilter: string | null = null;
+	let totalIncome = 0;
+	let totalFixCost = 0;
+	$: cashFlowFilters = cashGroups.map((cg) => cg.name);
 
 	let showModal: boolean = false;
 	let loading: boolean = true;
@@ -55,6 +57,18 @@
 		cfGroup = cashGroups?.[0];
 		loading = false;
 	});
+
+	$: {
+		(async () => {
+			console.log('called');
+			cashFlows = await getCashFlows(supabase, selectedMonth, selectedYear);
+			totalIncome = getIncomeForMonth({ month: selectedMonth, year: selectedYear }, recCashFlows);
+			totalFixCost = getRecurringTotalForMonth(
+				{ month: selectedMonth, year: selectedYear },
+				recCashFlows
+			);
+		})();
+	}
 
 	$: {
 		if (!showModal) {
@@ -165,7 +179,8 @@
 
 	async function getNewMonthData(month?: number, year?: number) {
 		if (month !== undefined && year !== undefined) {
-			cashFlows = await getCashFlows(supabase, month, year);
+			selectedMonth = month;
+			selectedYear = year;
 		}
 	}
 
@@ -173,19 +188,11 @@
 </script>
 
 <DefaultPageContent>
-	<div class="flex w-[600px] max-w-full flex-col gap-10 px-4">
+	<div class="flex w-[600px] max-w-full flex-col gap-6 px-4">
 		<ModalMonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
-		<MonthlyBudgets
-			totalIncome={getIncomeForMonth({ month: selectedMonth, year: selectedYear }, recCashFlows)}
-			fixCostTotal={getRecurringTotalForMonth(
-				{ month: selectedMonth, year: selectedYear },
-				recCashFlows
-			)}
-			{cashFlows}
-			{cashGroups}
-		/>
+		<MonthlyBudgets {totalIncome} {totalFixCost} {cashFlows} {cashGroups} />
 		<div class="flex flex-col items-stretch justify-between gap-4">
 			<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}

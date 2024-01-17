@@ -1,3 +1,4 @@
+import type { Month } from '../types/date';
 import type { CashGroupWithMeta, FormTimeframe } from '../types/recurring';
 import type {
 	CashGroup,
@@ -6,31 +7,30 @@ import type {
 	RecTimeframeInsert,
 	RecTimeframeUpdate
 } from '../types/supabase';
-import dayjs from 'dayjs';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
+import dayjs from 'dayjs';
+import objectSupport from 'dayjs/plugin/objectSupport';
+dayjs.extend(objectSupport);
 
-export function getIncomeForMonth(
-	selectedDate: { month: number; year: number },
-	recCashFlows: RecCashFlow[]
-): number {
+export function getIncomeForMonth(referenceDate: Month, recCashFlows: RecCashFlow[]): number {
 	return recCashFlows.reduce((result, recCashFlow) => {
 		if (!recCashFlow.isIncome) {
 			return result;
 		}
-		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		const activeTimeframe = getActiveTimeframe(recCashFlow, referenceDate);
 		return result + (activeTimeframe?.amount ?? 0);
 	}, 0);
 }
 
 export function getRecurringTotalForMonth(
-	selectedDate: { month: number; year: number },
+	referenceDate: Month,
 	recCashFlows: RecCashFlow[]
 ): number {
 	return recCashFlows.reduce((result, recCashFlow) => {
 		if (recCashFlow.isIncome) {
 			return result;
 		}
-		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		const activeTimeframe = getActiveTimeframe(recCashFlow, referenceDate);
 		return result + (activeTimeframe?.amount ?? 0);
 	}, 0);
 }
@@ -128,19 +128,22 @@ export function getCashGroupTotal(recCashFlows: RecCashFlow[], cashGroup?: CashG
 		}, 0);
 }
 
-export function getActiveTimeframe(recCashFlow: RecCashFlow): RecTimeframe | undefined {
-	const now = dayjs();
+export function getActiveTimeframe(
+	recCashFlow: RecCashFlow,
+	referenceDate?: Month
+): RecTimeframe | undefined {
+	const referenceDay = referenceDate ? dayjs({ ...referenceDate, day: 1 }) : dayjs();
 	const sortedTimeframes = recCashFlow.timeframes.toSorted((a, b) => {
 		return new Date(a.start_date) > new Date(b.start_date) ? 1 : -1;
 	});
 	const oldestTimeframe = sortedTimeframes[0];
-	if (!oldestTimeframe || dayjs(oldestTimeframe.start_date).isAfter(dayjs())) {
+	if (!oldestTimeframe || dayjs(oldestTimeframe.start_date).isAfter(referenceDay, 'month')) {
 		return;
 	}
 	let activeRecTimeframe = sortedTimeframes[0];
 	for (const timeframe of sortedTimeframes) {
 		const startDate = dayjs(timeframe.start_date);
-		if (startDate.isAfter(now)) {
+		if (startDate.isAfter(referenceDay, 'month')) {
 			break;
 		}
 		activeRecTimeframe = timeframe;

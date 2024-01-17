@@ -2,6 +2,7 @@
 	import Button from '../../components/Button.svelte';
 	import DefaultPageContent from '../../components/DefaultPageContent.svelte';
 	import H1 from '../../components/H1.svelte';
+	import { obfuscate } from '../../stores/preferences';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -19,6 +20,10 @@
 		<div class="flex w-full flex-col items-center gap-6 px-4">
 			<H1>Profil</H1>
 			<Button variant="error" on:btnclick={handleSignOut}>Ausloggen</Button>
+			<div class="flex flex-row items-center gap-3">
+				<span>Sensible Daten verdecken</span>
+				<input type="checkbox" class="toggle-success toggle" bind:checked={$obfuscate} />
+			</div>
 		</div>
 	</DefaultPageContent>
 {/if}

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import type { Month } from '../types/date';
 dayjs.extend(objectSupport);
 
 export function dateToDateString(date: Date): string {
@@ -13,9 +14,7 @@ export function dateToDateString(date: Date): string {
 	return [year, month, day].join('-');
 }
 
-export function getMonthAndYearFromDateString(
-	dateString: string
-): { month: number; year: number } | undefined {
+export function getMonthAndYearFromDateString(dateString: string): Month | undefined {
 	const parts = dateString.split('-');
 	const monthString = parts[1];
 	const yearString = parts[0];
