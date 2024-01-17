@@ -150,30 +150,30 @@
 							cashGroups={[incomeCashGroup]}
 							{openRecCashFlowEditModal}
 						/>
-						{#if budgetCashGroups.length}
-							<ListSection
-								heading="Kategorien mit Budget"
-								{openCashGroupEditModal}
-								{openRecCashFlowEditModal}
-								cashGroups={budgetCashGroups}
-							/>
-						{/if}
-						{#if noBudgetCashGroups.length}
-							<ListSection
-								heading="Kategorien ohne Budget"
-								{openCashGroupEditModal}
-								{openRecCashFlowEditModal}
-								cashGroups={noBudgetCashGroups}
-							/>
-						{/if}
-						{#if recurringCashGroups.length}
-							<ListSection
-								heading="Kategorien mit Fixkosten"
-								cashGroups={recurringCashGroups}
-								{openCashGroupEditModal}
-								{openRecCashFlowEditModal}
-							/>
-						{/if}
+						<div class="flex flex-col">
+							{#if budgetCashGroups.length}
+								<ListSection
+									heading="Ausgaben"
+									{openCashGroupEditModal}
+									{openRecCashFlowEditModal}
+									cashGroups={budgetCashGroups}
+								/>
+							{/if}
+							{#if recurringCashGroups.length}
+								<ListSection
+									cashGroups={recurringCashGroups}
+									{openCashGroupEditModal}
+									{openRecCashFlowEditModal}
+								/>
+							{/if}
+							{#if noBudgetCashGroups.length}
+								<ListSection
+									{openCashGroupEditModal}
+									{openRecCashFlowEditModal}
+									cashGroups={noBudgetCashGroups}
+								/>
+							{/if}
+						</div>
 						<ListTotal {budgetedCost} {fixCost} {totalEarnings} {totalSpendings} {savings} />
 					</div>
 				{/if}

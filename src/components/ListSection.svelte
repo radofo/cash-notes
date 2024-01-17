@@ -6,7 +6,7 @@
 	import ListItem from './ListItem.svelte';
 	import Obfuscate from './Obfuscate.svelte';
 
-	export let heading: string;
+	export let heading: string | undefined = undefined;
 	export let cashGroups: CashGroupWithMeta[];
 	export let isIncome: boolean = false;
 
@@ -15,7 +15,9 @@
 </script>
 
 <div class="flex flex-col gap-2">
-	<span class="block text-center text-lg font-semibold">{heading}</span>
+	{#if heading}
+		<span class="block text-center text-lg font-semibold">{heading}</span>
+	{/if}
 	<List>
 		{#each cashGroups as cashGroup}
 			<ListItem
