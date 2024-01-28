@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { IconEye, IconEyeOff  } from "@tabler/icons-svelte";
+	import Button from "./Button.svelte";
 
 	export let inputValue: string;
 	export let inputType: 'text' | 'number' | 'date' | 'password';
@@ -47,7 +48,7 @@
           class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
           bind:value={inputValue}
         />
-        <button on:click={() => showPassword = !showPassword}>
+        <button class="flex-shrink" on:click={() => showPassword = !showPassword}>
             <IconEye class="min-w-fit pl-1 text-slate-500" size={24} />
         </button>
       {/if}
