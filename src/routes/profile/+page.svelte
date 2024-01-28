@@ -34,7 +34,7 @@
 				<span>Sensible Daten verdecken</span>
 				<input type="checkbox" class="toggle-success toggle" bind:checked={$obfuscate} />
 			</div>
-      <form class="flex flex-row items-end gap-6" on:submit={updatePassword}>
+      <form class="flex flex-row items-end gap-1 flex-1 max-w-full" on:submit={updatePassword}>
         <InputWithLabel label="Neues Passwort">
           <Input inputType="password" bind:inputValue={newPassword} />
         </InputWithLabel>
