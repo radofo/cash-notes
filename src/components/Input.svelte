@@ -32,11 +32,11 @@
 		bind:value={inputValue}
 	/>
 {:else if inputType === 'password'}
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-1 w-full shrink">
       {#if showPassword}
         <input
           type="text"
-          class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
+          class="rounded-lg border p-2 pl-3 flex-1 {textAlign}"
           bind:value={inputValue}
         />
         <button on:click={() => showPassword = !showPassword}>
@@ -45,10 +45,10 @@
       {:else}
         <input
           type="password"
-          class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
+          class="shrink rounded-lg border flex-1 p-2 pl-3 {textAlign}"
           bind:value={inputValue}
         />
-        <button class="flex-shrink" on:click={() => showPassword = !showPassword}>
+        <button class="shrink" on:click={() => showPassword = !showPassword}>
             <IconEye class="min-w-fit pl-1 text-slate-500" size={24} />
         </button>
       {/if}
