@@ -3,19 +3,12 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import '../app.css';
-	import {
-		IconCalendar,
-		IconHome2,
-		IconLoader,
-		IconMoneybag,
-		IconRefresh,
-		IconUser
-	} from '@tabler/icons-svelte';
+	import { IconCalendar, IconHome2, IconLoader, IconUser } from '@tabler/icons-svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import Input from '../components/Input.svelte';
 	import Button from '../components/Button.svelte';
 	import { page } from '$app/stores';
-
+  
 	export let data: PageData;
 
 	let iconSize = 30;
@@ -33,7 +26,7 @@
 	onMount(() => {
 		const {
 			data: { subscription }
-		} = supabase.auth.onAuthStateChange((event, _session) => {
+		} = supabase.auth.onAuthStateChange((_, _session) => {
 			if (_session?.expires_at !== session?.expires_at) {
 				invalidate('supabase:auth');
 			}
@@ -58,7 +51,7 @@
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
 			</div>
-			<div class="flex justify-between border-t px-8 pb-5">
+			<div class="pve-ijx-8 flex justify-between border-t pb-5">
 				<a href="/" class="px-8 py-4 {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<IconHome2 size={iconSize} />
 				</a>
