@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import type { PageData } from './$types';
-	import '../app.css';
-	import { IconCalendar, IconHome2, IconLoader, IconUser } from '@tabler/icons-svelte';
-	import InputWithLabel from '../components/InputWithLabel.svelte';
-	import Input from '../components/Input.svelte';
-	import Button from '../components/Button.svelte';
 	import { page } from '$app/stores';
-  
+	import { IconCalendar, IconHome2, IconLoader, IconUser } from '@tabler/icons-svelte';
+	import { onMount } from 'svelte';
+	import '../app.css';
+	import Button from '../components/Button.svelte';
+	import Input from '../components/Input.svelte';
+	import InputWithLabel from '../components/InputWithLabel.svelte';
+	import type { PageData } from './$types';
+
 	export let data: PageData;
 
 	let iconSize = 30;
@@ -51,7 +51,7 @@
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
 			</div>
-			<div class="pve-ijx-8 flex justify-between border-t pb-5">
+			<div class="flex justify-between border-t px-8 pb-5">
 				<a href="/" class="px-8 py-4 {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<IconHome2 size={iconSize} />
 				</a>
