@@ -41,7 +41,7 @@
 	}
 </script>
 
-<div class="relative flex flex-col gap-12 pb-12 pt-4">
+<div class="relative flex flex-col gap-12 pb-12">
 	<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
 	<RecurringModalAdd bind:open={showAddRecurringModal} />
 	{#if !activeRecCashFlows.length && !inActiveRecCashFlows.length && !incomeCashFlows.length}

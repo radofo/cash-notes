@@ -23,7 +23,7 @@
 
 	export let data: PageData;
 
-	let iconSize = 30;
+	let iconSize = 28;
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 
@@ -57,7 +57,7 @@
 	};
 
 	const tabElementClass = 'px-4 py-4';
-	const tabAddClass = 'px-4 py-3';
+	const tabAddClass = 'px-4 py-2';
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
@@ -68,7 +68,7 @@
 				<RecurringModalAdd bind:open={recurringModalOpen} />
 				<BudgetModalAdd bind:open={budgetModalOpen} />
 			</div>
-			<div class="flex justify-between px-2 pb-6">
+			<div class="flex justify-between px-2 pb-5">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<House size={iconSize} />
 				</a>
