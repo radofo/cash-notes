@@ -52,7 +52,7 @@
 			<IconLoader class="animate-spin text-center" />
 		</div>
 	{:else}
-		<div class="flex h-full flex-col items-center gap-8 px-1">
+		<div class="flex h-full flex-col items-center gap-8 px-2">
 			<BudgetTabs.Core>
 				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
 					<IconMoneybag size={18} />

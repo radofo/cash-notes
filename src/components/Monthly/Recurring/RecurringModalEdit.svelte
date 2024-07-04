@@ -164,20 +164,22 @@
 					bind:formTimeframes
 					bind:deletedTimeframes
 				/>
-				<div class="flex flex-col gap-2">
-					<Button variant="default" type="submit">
-						{#if modalUpdateLoading}
-							<IconLoader class="animate-spin text-center" />
-						{/if}
-						Speichern
-					</Button>
-					<Button variant="destructive" type="button" on:click={deleteRecCashFlowHandler}>
-						{#if modalDeleteLoading}
-							<IconLoader class="animate-spin text-center" />
-						{/if}
-						Löschen
-					</Button>
-				</div>
+				<Drawer.Footer>
+					<div class="flex flex-col gap-2">
+						<Button variant="default" type="submit">
+							{#if modalUpdateLoading}
+								<IconLoader class="animate-spin text-center" />
+							{/if}
+							Speichern
+						</Button>
+						<Button variant="destructive" type="button" on:click={deleteRecCashFlowHandler}>
+							{#if modalDeleteLoading}
+								<IconLoader class="animate-spin text-center" />
+							{/if}
+							Löschen
+						</Button>
+					</div>
+				</Drawer.Footer>
 			</form>
 		</div>
 	</Drawer.Content>
