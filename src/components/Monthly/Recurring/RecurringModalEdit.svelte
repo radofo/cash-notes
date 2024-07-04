@@ -148,7 +148,7 @@
 </script>
 
 <Drawer.Root bind:open>
-	<Drawer.Content class="border">
+	<Drawer.Content class="h-[90%]">
 		<Drawer.Header>
 			<Drawer.Title>Mtl. Ausgabe bearbeiten</Drawer.Title>
 		</Drawer.Header>

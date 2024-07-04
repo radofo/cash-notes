@@ -33,6 +33,7 @@
 
 	let recurringModalOpen: boolean = false;
 	let budgetModalOpen: boolean = false;
+	let isAddMenuOpen: boolean = false;
 
 	onMount(() => {
 		const {
@@ -66,25 +67,7 @@
 				<slot />
 				<RecurringModalAdd bind:open={recurringModalOpen} />
 				<BudgetModalAdd bind:open={budgetModalOpen} />
-			</div>
-			<div class="flex justify-between px-2 pb-5">
-				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
-					<House size={iconSize} />
-				</a>
-				<a
-					class="{tabElementClass} {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
-					href="/budgets"
-				>
-					<CalendarIcon size={iconSize} />
-				</a>
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger>
-						<div class={tabAddClass}>
-							<Button variant="outline" size="icon">
-								<Plus class="h-6 w-6" />
-							</Button>
-						</div>
-					</DropdownMenu.Trigger>
+				<DropdownMenu.Root bind:open={isAddMenuOpen}>
 					<DropdownMenu.Content>
 						<DropdownMenu.Item on:click={() => (budgetModalOpen = true)}>
 							<div class="flex flex-row items-center gap-4">
@@ -106,6 +89,22 @@
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
+			</div>
+			<div class="flex justify-between px-2 pb-5">
+				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
+					<House size={iconSize} />
+				</a>
+				<a
+					class="{tabElementClass} {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
+					href="/budgets"
+				>
+					<CalendarIcon size={iconSize} />
+				</a>
+				<div on:click={() => (isAddMenuOpen = true)} class={tabAddClass}>
+					<Button variant="outline" size="icon">
+						<Plus class="h-6 w-6" />
+					</Button>
+				</div>
 				<a
 					href="/"
 					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-green-700' : ''}"

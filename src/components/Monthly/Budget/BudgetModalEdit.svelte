@@ -112,7 +112,7 @@
 </script>
 
 <Drawer.Root bind:open>
-	<Drawer.Content>
+	<Drawer.Content class="h-[95%]">
 		<Drawer.Header>
 			<Drawer.Title>Budget bearbeiten</Drawer.Title>
 		</Drawer.Header>
