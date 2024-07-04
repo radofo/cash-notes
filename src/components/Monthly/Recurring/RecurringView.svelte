@@ -41,7 +41,7 @@
 	}
 </script>
 
-<div class="relative flex flex-col gap-6 pb-12">
+<div class="relative flex flex-col gap-12 pb-12 pt-4">
 	<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
 	<RecurringModalAdd bind:open={showAddRecurringModal} />
 	{#if !activeRecCashFlows.length && !inActiveRecCashFlows.length && !incomeCashFlows.length}
@@ -51,7 +51,7 @@
 	{/if}
 	{#if incomeCashFlows.length > 0}
 		<div class="flex flex-col gap-2">
-			<span class="text-md block pl-1 text-center font-bold">Monatliche Einnahmen</span>
+			<span class="text-md block pl-1 text-start font-bold">Monatliche Einnahmen</span>
 			<List>
 				{#each incomeCashFlows as incomeCashFlow}
 					<ListItem on:itemClicked={() => openEditRecurringModal(incomeCashFlow)} itemType="main">
@@ -69,7 +69,7 @@
 	{/if}
 	{#if activeRecCashFlows.length > 0}
 		<div class="flex flex-col gap-2">
-			<span class="text-md block pl-1 text-center font-bold">Monatliche Ausgaben</span>
+			<span class="text-md block pl-1 text-start font-bold">Monatliche Ausgaben</span>
 			<List>
 				{#each activeRecCashFlows as activeCashFlow}
 					<ListItem on:itemClicked={() => openEditRecurringModal(activeCashFlow)} itemType="main">
@@ -89,8 +89,8 @@
 	{/if}
 	{#if inActiveRecCashFlows.length > 0}
 		<Collapsible.Root bind:open={hiddenShown}>
-			<Collapsible.Trigger class="flex w-full flex-row items-center justify-center gap-2">
-				<span class="text-md block pl-1 text-center font-bold">Inaktiv</span>
+			<Collapsible.Trigger class="flex w-full flex-row items-center justify-start gap-2">
+				<span class="text-md block pl-1 text-start font-bold">Inaktiv</span>
 				{#if hiddenShown}
 					<ChevronUp class="h-6 w-6" />
 				{:else}

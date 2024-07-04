@@ -37,7 +37,7 @@
 <div class="flex flex-col gap-8">
 	<BudgetModalEdit {budgetToEdit} bind:open={showEditBudgetModal} />
 	<div>
-		<span class="text-md block pl-1 text-center font-bold">Budgets</span>
+		<!-- <span class="text-md block pl-1 text-start font-bold">Budgets</span> -->
 		{#if activeCashGroups.length === 0}
 			<p class="mt-3 text-center text-slate-500">Keine aktiven Budgets vorhanden</p>
 		{/if}
@@ -57,7 +57,7 @@
 	{#if inactiveCashGroups.length > 0}
 		<Collapsible.Root bind:open={hiddenShown}>
 			<Collapsible.Trigger class="flex w-full flex-row items-center justify-center gap-2">
-				<span class="text-md block pl-6 text-center font-bold">Inaktiv</span>
+				<span class="text-md block pl-6 text-start font-bold">Inaktiv</span>
 				{#if hiddenShown}
 					<ChevronUp class="h-6 w-6" />
 				{:else}
