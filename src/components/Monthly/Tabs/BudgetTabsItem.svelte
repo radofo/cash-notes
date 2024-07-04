@@ -7,7 +7,7 @@
 	on:click={() => onClick()}
 	class:bg-card={selected}
 	class:text-card-foreground={selected}
-	class="flex flex-1 items-center justify-center rounded p-2 text-center text-muted-foreground"
+	class="flex flex-1 items-center justify-center rounded p-1 text-center text-muted-foreground"
 >
 	<slot />
 </button>
