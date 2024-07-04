@@ -55,16 +55,16 @@
 		<div class="flex h-full flex-col items-center gap-8 px-2">
 			<BudgetTabs.Core>
 				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
-					<IconMoneybag size={18} />
+					<IconMoneybag size={24} />
 				</BudgetTabs.Item>
 				<BudgetTabs.Item
 					selected={currentTab === 'recurring'}
 					onClick={() => selectTab('recurring')}
 				>
-					<RefreshCcw size={18} />
+					<RefreshCcw size={24} />
 				</BudgetTabs.Item>
 				<BudgetTabs.Item selected={currentTab === 'total'} onClick={() => selectTab('total')}>
-					<List size={18} />
+					<List size={24} />
 				</BudgetTabs.Item>
 			</BudgetTabs.Core>
 			<Carousel.Root class="w-full flex-1" bind:api>
