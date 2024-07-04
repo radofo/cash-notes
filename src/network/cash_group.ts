@@ -34,13 +34,25 @@ export async function hasCashGroupElements(id: string, supabase: SupabaseClient)
 	return (cfCount !== null && cfCount > 0) || (rcfCount !== null && rcfCount > 0);
 }
 
-export async function deactivateCashGroup(id: string, supabase: SupabaseClient): Promise<boolean> {
-	const { status } = await supabase
+export async function activateCashGroup(id: string, supabase: SupabaseClient): Promise<CashGroup> {
+	const { data } = await supabase
+		.from('cash_group')
+		.update({ is_active: true })
+		.eq('id', id)
+		.select();
+	return data?.[0];
+}
+
+export async function deactivateCashGroup(
+	id: string,
+	supabase: SupabaseClient
+): Promise<CashGroup> {
+	const { data } = await supabase
 		.from('cash_group')
 		.update({ is_active: false })
 		.eq('id', id)
 		.select();
-	return status === 200;
+	return data?.[0];
 }
 
 export async function deleteCashGroup(id: string, supabase: SupabaseClient): Promise<boolean> {

@@ -1,7 +1,7 @@
 import type { CashGroup, RecCashFlow, RecTimeframe } from './supabase';
 
 export type FormTimeframe = {
-	id?: string;
+	id: string;
 	startMonth: number;
 	startYear: number;
 	amount: string;

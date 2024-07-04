@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { IconLoader } from '@tabler/icons-svelte';
+	import { onMount } from 'svelte';
 	import Button from '../components/Button.svelte';
+	import CashFlowItem from '../components/CashFlowItem.svelte';
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
 	import Input from '../components/Input.svelte';
+	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import Modal from '../components/Modal.svelte';
-	import type { PageData } from './$types';
-	import { dateToDateString } from '../utils/date';
-	import { onMount } from 'svelte';
-	import type { CashFlow, CashGroup, RecCashFlow } from '../types/supabase';
-	import { getCashGroups } from '../network/cash_group';
-	import { getRecurringTotalForMonth, getIncomeForMonth } from '../utils/recurring';
+	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
+	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
 	import {
 		deleteCashFlow,
 		getCashFlows,
@@ -16,27 +16,30 @@
 		isInMonth,
 		updateCashFlow
 	} from '../network/cash_flow';
-	import InputWithLabel from '../components/InputWithLabel.svelte';
-	import CashFlowItem from '../components/CashFlowItem.svelte';
-	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
-	import { IconLoader } from '@tabler/icons-svelte';
-	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
+	import { getCashGroups } from '../network/cash_group';
 	import { getRecCashFlows } from '../network/rec_cash_flow';
+	import type { CashFlow, CashGroup } from '../types/supabase';
+	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
+	import { dateToDateString } from '../utils/date';
+	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 	$: user = session?.user;
 
-	let cashGroups: CashGroup[] = [];
+	$: cashGroups = $cashGroupStore;
+	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
+	$: recCashFlows = $recCashFlowStore;
+	$: cashFlowFilters = activeCashGroups.map((cg) => cg.name);
+
 	let cashFlows: CashFlow[] = [];
-	let recCashFlows: RecCashFlow[] = [];
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
 	let selectedFilter: string | null = null;
 	let totalIncome = 0;
 	let totalFixCost = 0;
-	$: cashFlowFilters = cashGroups.map((cg) => cg.name);
 
 	let showModal: boolean = false;
 	let loading: boolean = true;
@@ -51,16 +54,15 @@
 
 	onMount(async () => {
 		loading = true;
-		cashGroups = await getCashGroups(supabase);
+		cashGroupStore.set(await getCashGroups(supabase));
+		recCashFlowStore.set(await getRecCashFlows(supabase));
 		cashFlows = await getCashFlows(supabase, selectedMonth, selectedYear);
-		recCashFlows = await getRecCashFlows(supabase);
-		cfGroup = cashGroups?.[0];
+		cfGroup = activeCashGroups?.[0];
 		loading = false;
 	});
 
 	$: {
 		(async () => {
-			console.log('called');
 			cashFlows = await getCashFlows(supabase, selectedMonth, selectedYear);
 			totalIncome = getIncomeForMonth({ month: selectedMonth, year: selectedYear }, recCashFlows);
 			totalFixCost = getRecurringTotalForMonth(
@@ -97,7 +99,7 @@
 			: sortedCashFlows.filter((cf) => cf.cash_group?.name === selectedFilter);
 
 	function oncfGroupChange(newGroupName: string) {
-		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
+		cfGroup = activeCashGroups.find((cashGroup) => cashGroup.name === newGroupName);
 	}
 
 	async function deleteCashFlowHandler(id: string) {
@@ -173,7 +175,7 @@
 		cfId = '';
 		cfName = '';
 		cfAmount = '';
-		cfGroup = cashGroups?.[0];
+		cfGroup = activeCashGroups?.[0];
 		cfDate = dateToDateString(new Date());
 	}
 
@@ -192,7 +194,7 @@
 		<ModalMonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
-		<MonthlyBudgets {totalIncome} {totalFixCost} {cashFlows} {cashGroups} />
+		<MonthlyBudgets {totalIncome} {totalFixCost} {cashFlows} cashGroups={activeCashGroups} />
 		<div class="flex flex-col items-stretch justify-between gap-4">
 			<Button variant="success" on:btnclick={() => (showModal = true)}>Neue Ausgabe</Button>
 			{#if loading}
@@ -247,7 +249,7 @@
 						on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
 						class="select w-full border border-slate-200 p-2 text-base"
 					>
-						{#each cashGroups as cashGroup}
+						{#each activeCashGroups as cashGroup}
 							<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
 						{/each}
 					</select>

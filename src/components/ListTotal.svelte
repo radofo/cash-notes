@@ -11,7 +11,6 @@
 </script>
 
 <div class="flex flex-col gap-2">
-	<span class="block text-center text-lg font-semibold">Total</span>
 	<ListItem itemType="main">
 		<span>Total Einnahmen</span>
 		<Obfuscate>

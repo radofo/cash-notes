@@ -5,6 +5,7 @@ export type CashGroup = {
 	name: string;
 	budget: number | null;
 	owner: string;
+	is_active: boolean;
 };
 
 export type CashGroupInsert = {
@@ -74,14 +75,14 @@ export type RecCashFlowUpdate = {
 export type RecTimeframe = {
 	id: string;
 	createdAt: string;
-	amount: number;
+	amount?: number;
 	owner: string;
 	start_date: string;
 	rec_cash_flow_id: string;
 };
 
 export type RecTimeframeInsert = {
-	amount: number;
+	amount?: number | null;
 	owner: string;
 	start_date: string;
 	rec_cash_flow_id: string;
@@ -91,6 +92,6 @@ export type RecTimeframeUpdate = {
 	id: string;
 	owner: string;
 	rec_cash_flow_id: string;
-	amount?: number;
+	amount?: number | null;
 	start_date?: string;
 };

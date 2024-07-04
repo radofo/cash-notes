@@ -1,12 +1,24 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { IconCalendar, IconHome2, IconLoader, IconUser } from '@tabler/icons-svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { IconLoader } from '@tabler/icons-svelte';
+	import {
+		CalendarIcon,
+		House,
+		PieChart,
+		Plus,
+		RefreshCcw,
+		Settings,
+		WalletCards
+	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
-	import Button from '../components/Button.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
+	import BudgetModalAdd from '../components/Monthly/Budget/BudgetModalAdd.svelte';
+	import RecurringModalAdd from '../components/Monthly/Recurring/RecurringModalAdd.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -19,9 +31,8 @@
 	let password: string;
 	let loading: boolean = false;
 
-	$: {
-		let x = $page.url.pathname;
-	}
+	let recurringModalOpen: boolean = false;
+	let budgetModalOpen: boolean = false;
 
 	onMount(() => {
 		const {
@@ -43,6 +54,9 @@
 		});
 		loading = false;
 	};
+
+	const tabElementClass = 'px-4 py-4';
+	const tabAddClass = 'px-4 py-3';
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
@@ -50,22 +64,59 @@
 		{#if session}
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
+				<RecurringModalAdd bind:open={recurringModalOpen} />
+				<BudgetModalAdd bind:open={budgetModalOpen} />
 			</div>
-			<div class="flex justify-between border-t px-8 pb-5">
-				<a href="/" class="px-8 py-4 {$page.url.pathname === '/' ? 'text-green-700' : ''}">
-					<IconHome2 size={iconSize} />
+			<div class="flex justify-between px-2 pb-5">
+				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
+					<House size={iconSize} />
 				</a>
 				<a
-					class="px-8 py-4 {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
+					class="{tabElementClass} {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
 					href="/budgets"
 				>
-					<IconCalendar size={iconSize} />
+					<CalendarIcon size={iconSize} />
+				</a>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<div class={tabAddClass}>
+							<Button variant="outline" size="icon">
+								<Plus class="h-6 w-6" />
+							</Button>
+						</div>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.Item on:click={() => (budgetModalOpen = true)}>
+							<div class="flex flex-row items-center gap-4">
+								<WalletCards size={30} />
+								<div class="flex flex-col">
+									<span class="text-base font-semibold">Budget</span>
+									<span class="text-muted-foreground">Erstelle ein neues Budget</span>
+								</div>
+							</div>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item on:click={() => (recurringModalOpen = true)}>
+							<div class="flex flex-row items-center gap-4">
+								<RefreshCcw size={28} />
+								<div class="flex flex-col">
+									<span class="text-base font-semibold">Mtl. Zahlung</span>
+									<span class="text-muted-foreground">Erstelle ein neue monatliche Zahlung</span>
+								</div>
+							</div>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+				<a
+					href="/"
+					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-green-700' : ''}"
+				>
+					<PieChart size={iconSize} />
 				</a>
 				<a
 					href="/profile"
-					class="px-8 py-4 {$page.url.pathname === '/profile' ? 'text-green-700' : ''}"
+					class="{tabElementClass} {$page.url.pathname === '/profile' ? 'text-green-700' : ''}"
 				>
-					<IconUser size={iconSize} /></a
+					<Settings size={iconSize} /></a
 				>
 			</div>
 		{:else}

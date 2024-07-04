@@ -13,11 +13,11 @@ export function displayCurrency({
 	sign,
 	forceDecimals = false
 }: {
-	amount?: number;
+	amount?: number | null;
 	sign?: string;
 	forceDecimals?: boolean;
 }): string {
-	return amount !== 0 && amount !== undefined
+	return amount !== null && amount !== undefined
 		? `${sign ?? ''}${formatCurrency(amount, forceDecimals)} €`
 		: '-';
 }

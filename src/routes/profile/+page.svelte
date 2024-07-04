@@ -12,37 +12,48 @@
 	$: ({ supabase, session } = data);
 	$: user = session?.user;
 
-  let newPassword: string = '';
+	let newPassword: string = '';
+	let newPasswordRequested: boolean = false;
 
 	const handleSignOut = async () => {
 		await supabase.auth.signOut();
 	};
 
-  async function updatePassword() {
-    await supabase.auth.updateUser({ password: newPassword})
-    newPassword = '';
-  }
+	async function updatePassword() {
+		if (!newPassword) return;
+		if (newPasswordRequested) {
+			await supabase.auth.updateUser({ password: newPassword });
+			newPassword = '';
+			newPasswordRequested = false;
+		} else {
+			newPasswordRequested = true;
+		}
+	}
 </script>
 
 {#if user}
 	<DefaultPageContent>
 		<div class="flex w-full flex-col items-center gap-6 px-4">
 			<H1>Profil</H1>
-      <div class="flex flex-col gap-6">
-			<Button variant="error" on:btnclick={handleSignOut}>Ausloggen</Button>
-			<div class="flex flex-row items-center gap-3">
-				<span>Sensible Daten verdecken</span>
-				<input type="checkbox" class="toggle-success toggle" bind:checked={$obfuscate} />
+			<div class="flex flex-col gap-6">
+				<Button variant="error" on:btnclick={handleSignOut}>Ausloggen</Button>
+				<div class="flex flex-row items-center gap-3">
+					<span>Sensible Daten verdecken</span>
+					<input type="checkbox" class="toggle toggle-success" bind:checked={$obfuscate} />
+				</div>
+				<form class="flex max-w-full flex-1 flex-row items-end gap-2" on:submit={updatePassword}>
+					<InputWithLabel label="Neues Passwort">
+						<Input inputType="password" bind:inputValue={newPassword} />
+					</InputWithLabel>
+					<Button type="submit">
+						{#if newPasswordRequested}
+							<span>Bestätigen</span>
+						{:else}
+							<span>Ändern</span>
+						{/if}
+					</Button>
+				</form>
 			</div>
-      <form class="flex flex-row items-end gap-2 flex-1 max-w-full" on:submit={updatePassword}>
-        <InputWithLabel label="Neues Passwort">
-          <Input inputType="password" bind:inputValue={newPassword} />
-        </InputWithLabel>
-        <Button type="submit">
-          Ändern
-        </Button>
-      </form>
-      </div>
 		</div>
 	</DefaultPageContent>
 {/if}

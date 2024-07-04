@@ -1,200 +1,85 @@
 <script lang="ts">
-	import type { CashGroup, RecCashFlow } from '../../types/supabase';
-	import { getCashGroups } from '../../network/cash_group';
-	import type { PageData } from './$types';
+	import { type CarouselAPI } from '$lib/components/ui/carousel/context.js';
+
+	import * as Carousel from '$lib/components/ui/carousel';
+	import { IconLoader, IconMoneybag } from '@tabler/icons-svelte';
+	import { List, RefreshCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import DefaultPageContent from '../../components/DefaultPageContent.svelte';
-	import H1 from '../../components/H1.svelte';
-	import Button from '../../components/Button.svelte';
-	import { IconLoader } from '@tabler/icons-svelte';
-	import ModalBudget from '../../components/ModalBudget.svelte';
+	import BudgetView from '../../components/Monthly/Budget/BudgetView.svelte';
+	import CarouselFullSlide from '../../components/Monthly/CarouselFullSlide.svelte';
+	import RecurringView from '../../components/Monthly/Recurring/RecurringView.svelte';
+	import * as BudgetTabs from '../../components/Monthly/Tabs';
+	import { getCashGroups } from '../../network/cash_group';
 	import { getRecCashFlows } from '../../network/rec_cash_flow';
-	import { initGroups, addRecurringToCashGroups } from '../../utils/recurring';
-	import ModalMonthlyEdit from '../../components/ModalMonthlyEdit.svelte';
-	import ModalMonthlyCreate from '../../components/ModalMonthlyCreate.svelte';
-	import ListTotal from '../../components/ListTotal.svelte';
-	import ListSection from '../../components/ListSection.svelte';
-	import type { CashGroupWithMeta } from '../../types/recurring';
+	import { cashGroupStore, recCashFlowStore } from '../../utils/cashGroup.store';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	type TabType = 'budget' | 'recurring' | 'total';
+	const tabs: TabType[] = ['budget', 'recurring', 'total'];
 
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 	$: user = session?.user;
 
-	let cashGroups: CashGroup[] = [];
-	let recCashFlows: RecCashFlow[] = [];
+	let api: CarouselAPI;
+	let currentTab: TabType = 'budget';
 
-	let recurringCashGroups: CashGroupWithMeta[] = [];
-	let budgetCashGroups: CashGroupWithMeta[] = [];
-	let noBudgetCashGroups: CashGroupWithMeta[] = [];
-	let incomeCashGroup: CashGroupWithMeta;
-
-	let totalSpendings: number;
-	let totalEarnings: number;
-	let fixCost: number = 0;
-	let budgetedCost: number = 0;
-	let savings: number;
-
-	let monthlyCashFlowToEdit: RecCashFlow | undefined;
-	let showModal: boolean = false;
-	let loading: boolean = false;
-	let budgetToEdit: CashGroup | undefined;
-	let showInsertModal: boolean = false;
-	let showEditModal: boolean = false;
-
-	onMount(async () => {
-		loading = true;
-		cashGroups = await getCashGroups(supabase);
-		recCashFlows = await getRecCashFlows(supabase);
-		loading = false;
-	});
-
-	$: {
-		if (!showModal) {
-			budgetToEdit = undefined;
-		}
-	}
-
-	$: {
-		const initializedIncomeCashGroup: CashGroupWithMeta = {
-			recurringCashFlows: [],
-			total: 0
-		};
-		const initializedCashGroupsWithMeta = initGroups(cashGroups);
-
-		const {
-			newIncomeCashGroup,
-			newBudgetCashGroups,
-			newNoBudgetCashGroups,
-			newRecurringCashGroups
-		} = addRecurringToCashGroups(
-			initializedIncomeCashGroup,
-			initializedCashGroupsWithMeta,
-			recCashFlows
-		);
-
-		incomeCashGroup = newIncomeCashGroup;
-		budgetCashGroups = newBudgetCashGroups;
-		noBudgetCashGroups = newNoBudgetCashGroups;
-		recurringCashGroups = newRecurringCashGroups;
-	}
-
-	$: {
-		totalEarnings = incomeCashGroup?.total ?? 0;
-		fixCost = recurringCashGroups.reduce((result, recurringCashGroup) => {
-			return result + (recurringCashGroup.total ?? 0);
-		}, 0);
-		budgetedCost = budgetCashGroups.reduce((result, budgetCashGroup) => {
-			return result + (budgetCashGroup.total ?? 0);
-		}, 0);
-		totalSpendings = fixCost + budgetedCost;
-		savings = totalEarnings - totalSpendings;
-	}
-
-	function openCashGroupEditModal(cashGroup?: CashGroup) {
-		if (cashGroup) {
-			budgetToEdit = cashGroup;
-			showModal = true;
-		}
-	}
-
-	function updateCashGroups(newCashGroups: CashGroup[]) {
-		cashGroups = newCashGroups;
-	}
-	function updateRecCashFlowList(updatedRecCashflow: RecCashFlow) {
-		recCashFlows = recCashFlows.map((recCf) => {
-			if (recCf.id === updatedRecCashflow.id) {
-				return updatedRecCashflow;
-			}
-			return recCf;
+	$: if (api) {
+		currentTab = tabs[api.selectedScrollSnap()];
+		api.on('select', () => {
+			currentTab = tabs[api.selectedScrollSnap()];
 		});
 	}
-	function insertRecCashFlowList(newRecCashflow: RecCashFlow) {
-		recCashFlows = [newRecCashflow, ...recCashFlows];
-	}
-	function removeRecCashFlow(id: string) {
-		recCashFlows = recCashFlows.filter((rcf) => rcf.id !== id);
+	function selectTab(name: TabType) {
+		api.scrollTo(tabs.findIndex((tab) => tab === name));
 	}
 
-	function openRecCashFlowEditModal(toEdit: RecCashFlow) {
-		monthlyCashFlowToEdit = toEdit;
-		showEditModal = true;
-	}
+	let pageLoading: boolean = true;
+
+	onMount(async () => {
+		pageLoading = true;
+		cashGroupStore.set(await getCashGroups(supabase));
+		recCashFlowStore.set(await getRecCashFlows(supabase));
+		pageLoading = false;
+	});
 </script>
 
 {#if user}
-	<DefaultPageContent>
-		<div class="flex w-full flex-col items-center gap-2 px-4 sm:w-[500px]">
-			<H1>Mtl. Planung</H1>
-			<div class="mt-9 flex w-full flex-col gap-5">
-				<div class="flex justify-stretch gap-1">
-					<Button fullWidth variant="success" on:btnclick={() => (showModal = true)}
-						>+ Kategorie</Button
-					>
-					<Button fullWidth variant="success" on:btnclick={() => (showInsertModal = true)}
-						>+ mtl. Zahlung</Button
-					>
-				</div>
-				{#if loading}
-					<div class="mt-10 grid place-items-center">
-						<IconLoader class="animate-spin text-center" />
-					</div>
-				{:else if !cashGroups.length}
-					<div class="mt-8 text-center">Noch keine Kategorie erstellt</div>
-				{:else}
-					<div class="mt-4 flex flex-col gap-8">
-						<ListSection
-							heading="Einnahmen"
-							isIncome
-							cashGroups={[incomeCashGroup]}
-							{openRecCashFlowEditModal}
-						/>
-						<div class="flex flex-col">
-							{#if budgetCashGroups.length}
-								<ListSection
-									heading="Ausgaben"
-									{openCashGroupEditModal}
-									{openRecCashFlowEditModal}
-									cashGroups={budgetCashGroups}
-								/>
-							{/if}
-							{#if recurringCashGroups.length}
-								<ListSection
-									cashGroups={recurringCashGroups}
-									{openCashGroupEditModal}
-									{openRecCashFlowEditModal}
-								/>
-							{/if}
-							{#if noBudgetCashGroups.length}
-								<ListSection
-									{openCashGroupEditModal}
-									{openRecCashFlowEditModal}
-									cashGroups={noBudgetCashGroups}
-								/>
-							{/if}
-						</div>
-						<ListTotal {budgetedCost} {fixCost} {totalEarnings} {totalSpendings} {savings} />
-					</div>
-				{/if}
-			</div>
+	{#if pageLoading}
+		<div class="mt-10 grid place-items-center">
+			<IconLoader class="animate-spin text-center" />
 		</div>
-	</DefaultPageContent>
-	<ModalBudget {updateCashGroups} {user} {supabase} bind:showModal {budgetToEdit} {cashGroups} />
-	<ModalMonthlyEdit
-		{removeRecCashFlow}
-		{updateRecCashFlowList}
-		{monthlyCashFlowToEdit}
-		{user}
-		{supabase}
-		{cashGroups}
-		bind:showModal={showEditModal}
-	/>
-	<ModalMonthlyCreate
-		{insertRecCashFlowList}
-		{user}
-		{supabase}
-		{cashGroups}
-		bind:showModal={showInsertModal}
-	/>
+	{:else}
+		<div class="flex h-full flex-col items-center gap-8 px-1">
+			<BudgetTabs.Core>
+				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
+					<IconMoneybag size={18} />
+				</BudgetTabs.Item>
+				<BudgetTabs.Item
+					selected={currentTab === 'recurring'}
+					onClick={() => selectTab('recurring')}
+				>
+					<RefreshCcw size={18} />
+				</BudgetTabs.Item>
+				<BudgetTabs.Item selected={currentTab === 'total'} onClick={() => selectTab('total')}>
+					<List size={18} />
+				</BudgetTabs.Item>
+			</BudgetTabs.Core>
+			<Carousel.Root class="w-full flex-1" bind:api>
+				<Carousel.Content class="h-full">
+					<CarouselFullSlide>
+						<BudgetView />
+					</CarouselFullSlide>
+					<CarouselFullSlide>
+						<RecurringView />
+					</CarouselFullSlide>
+					<CarouselFullSlide>
+						<!-- <TotalView {budgetedCost} {totalSpendings} {totalEarnings} {fixCost} {savings} /> -->
+					</CarouselFullSlide>
+				</Carousel.Content>
+			</Carousel.Root>
+		</div>
+	{/if}
 {/if}

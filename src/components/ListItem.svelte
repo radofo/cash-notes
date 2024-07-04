@@ -14,7 +14,7 @@
 		? 'pl-1 font-medium'
 		: itemType === 'flat'
 		? 'pl-1'
-		: 'pl-6'}  cursor-pointer items-center justify-between border-b py-2 pr-1"
+		: 'pl-6'}  cursor-pointer items-center justify-between border-b py-2 pr-1 last-of-type:border-none"
 >
 	<slot />
 </li>

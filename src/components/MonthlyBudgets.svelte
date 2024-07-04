@@ -1,9 +1,9 @@
 <script lang="ts">
+	import Obfuscate from '../components/Obfuscate.svelte';
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { CashFlow, CashGroup } from '../types/supabase';
 	import { displayCurrency } from '../utils/currency';
 	import ProgressElement from './ProgressElement.svelte';
-	import Obfuscate from '../components/Obfuscate.svelte';
 
 	export let cashGroups: CashGroup[];
 	export let cashFlows: CashFlow[];
@@ -48,7 +48,7 @@
 			}
 		}
 		for (const cashGroup of cashGroups) {
-			if (!newProgressWithBudget.has(cashGroup.name) && cashGroup.budget) {
+			if (!newProgressWithBudget.has(cashGroup.name) && cashGroup.budget !== null) {
 				newProgressWithBudget.set(cashGroup.name, { spent: 0, limit: cashGroup.budget });
 			}
 		}

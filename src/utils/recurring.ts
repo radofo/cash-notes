@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import objectSupport from 'dayjs/plugin/objectSupport';
 import type { Month } from '../types/date';
 import type { CashGroupWithMeta, FormTimeframe } from '../types/recurring';
 import type {
@@ -8,8 +10,6 @@ import type {
 	RecTimeframeUpdate
 } from '../types/supabase';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
-import dayjs from 'dayjs';
-import objectSupport from 'dayjs/plugin/objectSupport';
 dayjs.extend(objectSupport);
 
 export function getIncomeForMonth(referenceDate: Month, recCashFlows: RecCashFlow[]): number {
@@ -123,8 +123,8 @@ export function getCashGroupTotal(recCashFlows: RecCashFlow[], cashGroup?: CashG
 			Boolean(recTimeframe)
 		)
 		.map((rtf) => rtf.amount)
-		.reduce((total, curr) => {
-			return total + curr;
+		.reduce((total: number, curr) => {
+			return total + (curr ?? 0);
 		}, 0);
 }
 
@@ -180,7 +180,7 @@ export function getRecCashFlowDiff(
 		const oldTimeframe = oldTimeframeMap.get(formTfId);
 		if (!oldTimeframe) {
 			timeframeInserted.push(formToInserted(formTimeframe, userId, oldCashFlow.id));
-		} else if (formTimeframe.id && timeframeDiff(formTimeframe, oldTimeframe)) {
+		} else if (formTimeframe.id && hasTimeFrameChanged(formTimeframe, oldTimeframe)) {
 			timeframeUpdated.push(formToUpdated(formTimeframe, userId, formTimeframe.id, oldCashFlow.id));
 		}
 	}
@@ -210,7 +210,7 @@ export function formToUpdated(
 	return {
 		id,
 		owner,
-		amount: parseInt(formTimeframe.amount),
+		amount: formTimeframe.amount !== null ? parseInt(formTimeframe.amount) : null,
 		rec_cash_flow_id,
 		start_date: monthToDateString(formTimeframe.startMonth, formTimeframe.startYear)
 	};
@@ -221,18 +221,26 @@ export function formToInserted(
 	rec_cash_flow_id: string
 ): RecTimeframeInsert {
 	return {
-		amount: parseFloat(formTimeframe.amount),
+		amount: formTimeframe.amount ? parseFloat(formTimeframe.amount) : null,
 		owner,
 		rec_cash_flow_id,
 		start_date: monthToDateString(formTimeframe.startMonth, formTimeframe.startYear)
 	};
 }
 
-function timeframeDiff(formTimeframe: FormTimeframe, oldTimeframe: RecTimeframe): boolean {
+function hasTimeFrameChanged(formTimeframe: FormTimeframe, oldTimeframe: RecTimeframe): boolean {
 	const { amount, startMonth, startYear } = formTimeframe;
 	const { amount: dbAmount, start_date } = oldTimeframe;
 	const dbDate = getMonthAndYearFromDateString(start_date);
 	return (
 		parseFloat(amount) !== dbAmount || dbDate?.month !== startMonth || dbDate?.year !== startYear
 	);
+}
+
+export function sortFormTimeframes(formTimeframes: FormTimeframe[]): FormTimeframe[] {
+	return [...formTimeframes].sort((a, b) => {
+		const aDate = new Date(a.startYear, a.startMonth);
+		const bDate = new Date(b.startYear, b.startMonth);
+		return aDate > bDate ? -1 : 1;
+	});
 }

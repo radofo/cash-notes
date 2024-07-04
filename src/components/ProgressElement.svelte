@@ -13,11 +13,11 @@
 		<span>{name}</span>
 		<span
 			>{formatCurrency(info.spent)}
-			{info.limit ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
+			{info.limit !== null ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
 		>
 	</div>
 	<progress
-		class="{colorClass} progress w-full bg-slate-200 {info.limit ? '' : 'opacity-30'}"
+		class="{colorClass} progress w-full bg-slate-200 {info.limit !== null ? '' : 'opacity-30'}"
 		value={(info?.limit ?? 0) > 0 ? Math.max(0, info.spent / (info.limit ?? 0)) * 100 : 100}
 		max="100"
 	/>
