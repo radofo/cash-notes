@@ -68,7 +68,7 @@
 				<RecurringModalAdd bind:open={recurringModalOpen} />
 				<BudgetModalAdd bind:open={budgetModalOpen} />
 			</div>
-			<div class="flex justify-between px-2 pb-5">
+			<div class="flex justify-between px-2 pb-6">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<House size={iconSize} />
 				</a>
