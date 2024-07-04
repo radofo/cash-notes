@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Drawer from '$lib/components/ui/drawer';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import {
 		activateCashGroup,
@@ -12,6 +11,7 @@
 	} from '../../../network/cash_group';
 	import type { CashGroup } from '../../../types/supabase';
 	import { cashGroupStore } from '../../../utils/cashGroup.store';
+	import FormDialog from '../../FormDialog.svelte';
 	import Input from '../../Input.svelte';
 	import InputWithLabel from '../../InputWithLabel.svelte';
 
@@ -111,71 +111,62 @@
 	}
 </script>
 
-<Drawer.Root bind:open>
-	<Drawer.Content class="h-[95%]">
-		<Drawer.Header>
-			<Drawer.Title>Budget bearbeiten</Drawer.Title>
-		</Drawer.Header>
-		<div class="flex h-full w-full items-center justify-center">
-			<form
-				class="flex h-full w-[500px] max-w-full flex-col justify-between gap-5 p-2 pb-10"
-				on:submit={updateCashGroupHandler}
-			>
-				<div class="flex flex-col gap-3">
-					<InputWithLabel label="Name">
-						<Input inputType="text" bind:inputValue={editBudgetName} />
-					</InputWithLabel>
-					<InputWithLabel label="Budget Betrag (optional)">
-						<Input inputType="number" bind:inputValue={editBudgetAmount} />
-					</InputWithLabel>
-				</div>
-				<Drawer.Footer class="flex flex-col gap-2 p-0">
-					<Button type="submit">
-						{#if modalUpdateLoading}
-							<div class="grid place-items-center">
-								<IconLoader class="animate-spin text-center text-lg" />
-							</div>
-						{:else}
-							Speichern
-						{/if}
-					</Button>
-					{#if budgetToEdit?.is_active}
-						<Button
-							class="flex flex-row gap-2"
-							variant="destructive"
-							on:click={() => {
-								if (hasBudgetReferences) {
-									deactivateCashGroupHandler();
-								} else {
-									deleteCashGroupHandler();
-								}
-							}}
-							type="button"
-						>
-							{#if modalActivationLoading}
-								<div class="grid place-items-center">
-									<IconLoader class="animate-spin text-center text-lg" />
-								</div>
-							{/if}
-							{#if hasBudgetReferences}
-								Budget Deaktivieren
-							{:else}
-								Löschen
-							{/if}
-						</Button>
-					{:else}
-						<Button variant="secondary" on:click={activateCashGroupHandler} type="button">
-							{#if modalActivationLoading}
-								<div class="grid place-items-center">
-									<IconLoader class="animate-spin text-center text-lg" />
-								</div>
-							{/if}
-							Budget Aktivieren
-						</Button>
-					{/if}
-					<Drawer.Close class="p-2 text-sm">Abbrechen</Drawer.Close>
-				</Drawer.Footer>
-			</form>
+<FormDialog bind:open on:submit={updateCashGroupHandler}>
+	<span slot="header">Budget Editieren</span>
+	<div slot="content" class="flex flex-col gap-6">
+		<div class="flex flex-col gap-3">
+			<InputWithLabel label="Name">
+				<Input inputType="text" bind:inputValue={editBudgetName} />
+			</InputWithLabel>
+			<InputWithLabel label="Budget Betrag (optional)">
+				<Input inputType="number" bind:inputValue={editBudgetAmount} />
+			</InputWithLabel>
 		</div>
-	</Drawer.Content>
-</Drawer.Root>
+		<div class="flex flex-col gap-2 p-0">
+			<Button type="submit">
+				{#if modalUpdateLoading}
+					<div class="grid place-items-center">
+						<IconLoader class="animate-spin text-center text-lg" />
+					</div>
+				{:else}
+					Speichern
+				{/if}
+			</Button>
+			{#if budgetToEdit?.is_active}
+				<Button
+					class="flex flex-row gap-2"
+					variant="destructive"
+					on:click={() => {
+						if (hasBudgetReferences) {
+							deactivateCashGroupHandler();
+						} else {
+							deleteCashGroupHandler();
+						}
+					}}
+					type="button"
+				>
+					{#if modalActivationLoading}
+						<div class="grid place-items-center">
+							<IconLoader class="animate-spin text-center text-lg" />
+						</div>
+					{/if}
+					{#if hasBudgetReferences}
+						Budget Deaktivieren
+					{:else}
+						Löschen
+					{/if}
+				</Button>
+			{:else}
+				<Button variant="secondary" on:click={activateCashGroupHandler} type="button">
+					{#if modalActivationLoading}
+						<div class="grid place-items-center">
+							<IconLoader class="animate-spin text-center text-lg" />
+						</div>
+					{/if}
+					Budget Aktivieren
+				</Button>
+			{/if}
+			<!-- <Drawer.Close class="p-2 text-sm">Abbrechen</Drawer.Close> -->
+		</div>
+	</div>
+</FormDialog>

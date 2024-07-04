@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Drawer from '$lib/components/ui/drawer';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import {
 		deleteRecCashFlow,
@@ -15,6 +14,7 @@
 	import { recCashFlowStore } from '../../../utils/cashGroup.store';
 	import { getMonthAndYearFromDateString } from '../../../utils/date';
 	import { getRecCashFlowDiff } from '../../../utils/recurring';
+	import FormDialog from '../../FormDialog.svelte';
 	import RecurringFormFields from './RecurringFormFields.svelte';
 
 	export let recurringToEdit: RecCashFlow | undefined = undefined;
@@ -147,40 +147,33 @@
 	}
 </script>
 
-<Drawer.Root bind:open>
-	<Drawer.Content class="h-[90%]">
-		<Drawer.Header>
-			<Drawer.Title>Mtl. Ausgabe bearbeiten</Drawer.Title>
-		</Drawer.Header>
-		<div class="flex h-full w-full items-center justify-center">
-			<form
-				class="flex h-full w-[500px] max-w-full flex-col justify-between gap-14 p-2 pb-10"
-				on:submit={submitEditedCashFlow}
-			>
-				<RecurringFormFields
-					bind:formName
-					bind:formCashGroup
-					bind:formIsIncome
-					bind:formTimeframes
-					bind:deletedTimeframes
-				/>
-				<Drawer.Footer>
-					<div class="flex flex-col gap-2">
-						<Button variant="default" type="submit">
-							{#if modalUpdateLoading}
-								<IconLoader class="animate-spin text-center" />
-							{/if}
-							Speichern
-						</Button>
-						<Button variant="destructive" type="button" on:click={deleteRecCashFlowHandler}>
-							{#if modalDeleteLoading}
-								<IconLoader class="animate-spin text-center" />
-							{/if}
-							Löschen
-						</Button>
-					</div>
-				</Drawer.Footer>
-			</form>
+<FormDialog bind:open on:submit={submitEditedCashFlow}>
+	<span slot="header">Mtl. Zahlung bearbeiten</span>
+	<div slot="content">
+		<div class="flex flex-col gap-6">
+			<RecurringFormFields
+				bind:formName
+				bind:formCashGroup
+				bind:formIsIncome
+				bind:formTimeframes
+				bind:deletedTimeframes
+			/>
+			<div>
+				<div class="flex flex-col gap-2">
+					<Button variant="default" type="submit">
+						{#if modalUpdateLoading}
+							<IconLoader class="animate-spin text-center" />
+						{/if}
+						Speichern
+					</Button>
+					<Button variant="destructive" type="button" on:click={deleteRecCashFlowHandler}>
+						{#if modalDeleteLoading}
+							<IconLoader class="animate-spin text-center" />
+						{/if}
+						Löschen
+					</Button>
+				</div>
+			</div>
 		</div>
-	</Drawer.Content>
-</Drawer.Root>
+	</div>
+</FormDialog>
