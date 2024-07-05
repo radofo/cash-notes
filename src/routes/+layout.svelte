@@ -6,6 +6,7 @@
 	import { IconLoader } from '@tabler/icons-svelte';
 	import {
 		ArrowRightLeft,
+		HandCoins,
 		House,
 		PieChart,
 		Plus,
@@ -15,6 +16,7 @@
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
+	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import BudgetModalAdd from '../components/Monthly/Budget/BudgetModalAdd.svelte';
@@ -33,6 +35,7 @@
 
 	let recurringModalOpen: boolean = false;
 	let budgetModalOpen: boolean = false;
+	let cashFlowModalOpen: boolean = false;
 	let isAddMenuOpen: boolean = false;
 
 	onMount(() => {
@@ -67,6 +70,7 @@
 				<slot />
 				<RecurringModalAdd bind:open={recurringModalOpen} />
 				<BudgetModalAdd bind:open={budgetModalOpen} />
+				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
 			</div>
 			<div class="flex justify-between px-2 pb-5">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
@@ -100,6 +104,15 @@
 								<div class="flex flex-col">
 									<span class="text-base font-semibold">Mtl. Zahlung</span>
 									<span class="text-muted-foreground">Erstelle ein neue monatliche Zahlung</span>
+								</div>
+							</div>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item on:click={() => (cashFlowModalOpen = true)}>
+							<div class="flex flex-row items-center gap-4">
+								<HandCoins size={28} />
+								<div class="flex flex-col">
+									<span class="text-base font-semibold">Ausgabe</span>
+									<span class="text-muted-foreground">Erstelle ein einfache Ausgabe</span>
 								</div>
 							</div>
 						</DropdownMenu.Item>
