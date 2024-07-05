@@ -5,7 +5,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import {
-		CalendarIcon,
+		ArrowRightLeft,
 		House,
 		PieChart,
 		Plus,
@@ -76,7 +76,7 @@
 					class="{tabElementClass} {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
 					href="/budgets"
 				>
-					<CalendarIcon size={iconSize} />
+					<ArrowRightLeft size={iconSize} />
 				</a>
 				<DropdownMenu.Root bind:open={isAddMenuOpen}>
 					<DropdownMenu.Trigger class={tabAddClass}>

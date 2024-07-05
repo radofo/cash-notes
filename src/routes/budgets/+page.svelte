@@ -2,8 +2,8 @@
 	import { type CarouselAPI } from '$lib/components/ui/carousel/context.js';
 
 	import * as Carousel from '$lib/components/ui/carousel';
-	import { IconLoader, IconMoneybag } from '@tabler/icons-svelte';
-	import { List, RefreshCcw } from 'lucide-svelte';
+	import { IconLoader } from '@tabler/icons-svelte';
+	import { List, RefreshCcw, WalletCards } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import BudgetModalEdit from '../../components/Monthly/Budget/BudgetModalEdit.svelte';
 	import BudgetView from '../../components/Monthly/Budget/BudgetView.svelte';
@@ -91,7 +91,7 @@
 			<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
 			<BudgetTabs.Core>
 				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
-					<IconMoneybag size={20} />
+					<WalletCards size={20} />
 				</BudgetTabs.Item>
 				<BudgetTabs.Item
 					selected={currentTab === 'recurring'}
