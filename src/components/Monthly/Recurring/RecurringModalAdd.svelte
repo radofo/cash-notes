@@ -7,7 +7,7 @@
 	import type { CashGroup, RecTimeframeInsert } from '../../../types/supabase';
 	import { recCashFlowStore } from '../../../utils/cashGroup.store';
 	import { formToInserted } from '../../../utils/recurring';
-	import FormDialog from '../../FormDialog.svelte';
+	import FormDialog from '../../FormDialog/FormDialog.svelte';
 	import RecurringFormFields from './RecurringFormFields.svelte';
 
 	export let open: boolean;
@@ -72,17 +72,15 @@
 
 <FormDialog bind:open on:submit={submitNewRecurringCashFlow}>
 	<span slot="header">Neue mtl. Zahlung</span>
-	<div slot="content">
-		<div class="flex flex-col gap-6">
-			<RecurringFormFields bind:formName bind:formCashGroup bind:formIsIncome bind:formTimeframes />
-			<div class="flex flex-col gap-2">
-				<Button variant="default" type="submit">
-					{#if modalCreateLoading}
-						<IconLoader class="animate-spin text-center" />
-					{/if}
-					Speichern
-				</Button>
-			</div>
+	<div slot="content" class="flex h-full flex-col justify-between">
+		<RecurringFormFields bind:formName bind:formCashGroup bind:formIsIncome bind:formTimeframes />
+		<div class="flex flex-col gap-2">
+			<Button variant="default" type="submit">
+				{#if modalCreateLoading}
+					<IconLoader class="animate-spin text-center" />
+				{/if}
+				Speichern
+			</Button>
 		</div>
 	</div>
 </FormDialog>

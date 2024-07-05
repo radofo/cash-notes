@@ -4,7 +4,7 @@
 	import { IconLoader } from '@tabler/icons-svelte';
 	import { insertCashGroup } from '../../../network/cash_group';
 	import { cashGroupStore } from '../../../utils/cashGroup.store';
-	import FormDialog from '../../FormDialog.svelte';
+	import FormDialog from '../../FormDialog/FormDialog.svelte';
 	import Input from '../../Input.svelte';
 	import InputWithLabel from '../../InputWithLabel.svelte';
 
@@ -53,27 +53,25 @@
 
 <FormDialog bind:open on:submit={insertCashGroupHandler}>
 	<span slot="header">Neues Budget Erstellen</span>
-	<div slot="content">
-		<div class="flex flex-col gap-6">
-			<div class="flex flex-col gap-3">
-				<InputWithLabel label="Name">
-					<Input inputType="text" bind:inputValue={newBudgetName} />
-				</InputWithLabel>
-				<InputWithLabel label="Budget Betrag (optional)">
-					<Input inputType="number" bind:inputValue={newBudgetAmount} />
-				</InputWithLabel>
-			</div>
-			<div class="flex flex-col gap-2 p-0">
-				<Button type="submit">
-					{#if modalCreateLoading}
-						<div class="grid place-items-center">
-							<IconLoader class="animate-spin text-center text-lg" />
-						</div>
-					{:else}
-						Speichern
-					{/if}
-				</Button>
-			</div>
+	<div slot="content" class="flex h-full flex-col justify-between">
+		<div class="flex flex-col gap-3">
+			<InputWithLabel label="Name">
+				<Input inputType="text" bind:inputValue={newBudgetName} />
+			</InputWithLabel>
+			<InputWithLabel label="Budget Betrag (optional)">
+				<Input inputType="number" bind:inputValue={newBudgetAmount} />
+			</InputWithLabel>
+		</div>
+		<div class="flex flex-col gap-2 p-0">
+			<Button type="submit">
+				{#if modalCreateLoading}
+					<div class="grid place-items-center">
+						<IconLoader class="animate-spin text-center text-lg" />
+					</div>
+				{:else}
+					Speichern
+				{/if}
+			</Button>
 		</div>
 	</div>
 </FormDialog>

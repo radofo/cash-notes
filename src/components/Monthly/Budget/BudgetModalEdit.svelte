@@ -11,7 +11,7 @@
 	} from '../../../network/cash_group';
 	import type { CashGroup } from '../../../types/supabase';
 	import { cashGroupStore } from '../../../utils/cashGroup.store';
-	import FormDialog from '../../FormDialog.svelte';
+	import FormDialog from '../../FormDialog/FormDialog.svelte';
 	import Input from '../../Input.svelte';
 	import InputWithLabel from '../../InputWithLabel.svelte';
 
@@ -113,7 +113,7 @@
 
 <FormDialog bind:open on:submit={updateCashGroupHandler}>
 	<span slot="header">Budget Editieren</span>
-	<div slot="content" class="flex flex-col gap-6">
+	<div slot="content" class="flex h-full flex-col justify-between">
 		<div class="flex flex-col gap-3">
 			<InputWithLabel label="Name">
 				<Input inputType="text" bind:inputValue={editBudgetName} />

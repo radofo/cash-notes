@@ -5,27 +5,40 @@
 	import { IconLoader, IconMoneybag } from '@tabler/icons-svelte';
 	import { List, RefreshCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import BudgetModalEdit from '../../components/Monthly/Budget/BudgetModalEdit.svelte';
 	import BudgetView from '../../components/Monthly/Budget/BudgetView.svelte';
 	import CarouselFullSlide from '../../components/Monthly/CarouselFullSlide.svelte';
+	import RecurringModalEdit from '../../components/Monthly/Recurring/RecurringModalEdit.svelte';
 	import RecurringView from '../../components/Monthly/Recurring/RecurringView.svelte';
 	import * as BudgetTabs from '../../components/Monthly/Tabs';
 	import { getCashGroups } from '../../network/cash_group';
 	import { getRecCashFlows } from '../../network/rec_cash_flow';
+	import type { CashGroup, RecCashFlow } from '../../types/supabase';
 	import { cashGroupStore, recCashFlowStore } from '../../utils/cashGroup.store';
 	import type { PageData } from './$types';
 
+	// Props
 	export let data: PageData;
 
-	type TabType = 'budget' | 'recurring' | 'total';
-	const tabs: TabType[] = ['budget', 'recurring', 'total'];
+	// Page
+	let pageLoading: boolean = true;
+	onMount(async () => {
+		pageLoading = true;
+		cashGroupStore.set(await getCashGroups(supabase));
+		recCashFlowStore.set(await getRecCashFlows(supabase));
+		pageLoading = false;
+	});
 
+	// Supabase
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 	$: user = session?.user;
 
+	// Tab Management
+	type TabType = 'budget' | 'recurring' | 'total';
+	const tabs: TabType[] = ['budget', 'recurring', 'total'];
 	let api: CarouselAPI;
 	let currentTab: TabType = 'budget';
-
 	$: if (api) {
 		currentTab = tabs[api.selectedScrollSnap()];
 		api.on('select', () => {
@@ -36,14 +49,35 @@
 		api.scrollTo(tabs.findIndex((tab) => tab === name));
 	}
 
-	let pageLoading: boolean = true;
+	// Budget Edit Modal
+	let showEditBudgetModal: boolean = false;
+	let budgetToEdit: CashGroup | undefined;
+	$: {
+		if (!showEditBudgetModal) {
+			budgetToEdit = undefined;
+		}
+	}
+	function openCashGroupEditModal(cashGroup?: CashGroup) {
+		if (cashGroup) {
+			budgetToEdit = cashGroup;
+			showEditBudgetModal = true;
+		}
+	}
 
-	onMount(async () => {
-		pageLoading = true;
-		cashGroupStore.set(await getCashGroups(supabase));
-		recCashFlowStore.set(await getRecCashFlows(supabase));
-		pageLoading = false;
-	});
+	// Recurring Edit Modal
+	let showEditRecurringModal: boolean = false;
+	let recurringToEdit: RecCashFlow | undefined;
+	$: {
+		if (!showEditRecurringModal) {
+			recurringToEdit = undefined;
+		}
+	}
+	function openEditRecurringModal(recurringCf?: RecCashFlow) {
+		if (recurringCf) {
+			recurringToEdit = recurringCf;
+			showEditRecurringModal = true;
+		}
+	}
 </script>
 
 {#if user}
@@ -53,6 +87,8 @@
 		</div>
 	{:else}
 		<div class="flex h-full flex-col items-center gap-8 px-3">
+			<BudgetModalEdit {budgetToEdit} bind:open={showEditBudgetModal} />
+			<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
 			<BudgetTabs.Core>
 				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
 					<IconMoneybag size={20} />
@@ -70,10 +106,10 @@
 			<Carousel.Root class="w-full flex-1" bind:api>
 				<Carousel.Content class="h-full">
 					<CarouselFullSlide>
-						<BudgetView />
+						<BudgetView {openCashGroupEditModal} />
 					</CarouselFullSlide>
 					<CarouselFullSlide>
-						<RecurringView />
+						<RecurringView {openEditRecurringModal} />
 					</CarouselFullSlide>
 					<CarouselFullSlide>
 						<!-- <TotalView {budgetedCost} {totalSpendings} {totalEarnings} {fixCost} {savings} /> -->

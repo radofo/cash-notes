@@ -7,8 +7,8 @@
 	import { getActiveTimeframe } from '../../../utils/recurring';
 	import List from '../../List.svelte';
 	import ListItem from '../../ListItem.svelte';
-	import RecurringModalAdd from './RecurringModalAdd.svelte';
-	import RecurringModalEdit from './RecurringModalEdit.svelte';
+
+	export let openEditRecurringModal: (recurringCf?: RecCashFlow) => void;
 
 	$: recCashFlows = $recCashFlowStore;
 	$: incomeCashFlows = recCashFlows.filter((rec) => rec.isIncome);
@@ -20,9 +20,6 @@
 		costCashFlow.filter((rec) => getActiveTimeframe(rec)?.amount === null)
 	);
 
-	let showEditRecurringModal: boolean = false;
-	let showAddRecurringModal: boolean = false;
-	let recurringToEdit: RecCashFlow | undefined;
 	let hiddenShown = false;
 
 	function sortCashFlows(cashFlows: RecCashFlow[]) {
@@ -32,18 +29,9 @@
 				: -1
 		);
 	}
-
-	function openEditRecurringModal(recurringCf?: RecCashFlow) {
-		if (recurringCf) {
-			recurringToEdit = recurringCf;
-			showEditRecurringModal = true;
-		}
-	}
 </script>
 
 <div class="relative flex flex-col gap-12 pb-12">
-	<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
-	<RecurringModalAdd bind:open={showAddRecurringModal} />
 	{#if !activeRecCashFlows.length && !inActiveRecCashFlows.length && !incomeCashFlows.length}
 		<div class="flex flex-col gap-2">
 			<span class="text-md block pl-1 text-center">Keine wiederkehrenden Zahlungen</span>

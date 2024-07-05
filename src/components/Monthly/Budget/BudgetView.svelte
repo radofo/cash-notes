@@ -6,36 +6,18 @@
 	import { displayCurrency } from '../../../utils/currency';
 	import List from '../../List.svelte';
 	import ListItem from '../../ListItem.svelte';
-	import BudgetModalEdit from './BudgetModalEdit.svelte';
+
+	export let openCashGroupEditModal: (cashGroup: CashGroup) => void;
 
 	// Store Values
 	$: cashGroups = $cashGroupStore;
 	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
 	$: inactiveCashGroups = cashGroups.filter((cashGroup) => !cashGroup.is_active);
 
-	// Modals Management
-	let showEditBudgetModal: boolean = false;
-	let budgetToEdit: CashGroup | undefined;
-	let hiddenShown = false;
-
-	// Derived
-	$: {
-		if (!showEditBudgetModal) {
-			budgetToEdit = undefined;
-		}
-	}
-
-	// Functions
-	function openCashGroupEditModal(cashGroup?: CashGroup) {
-		if (cashGroup) {
-			budgetToEdit = cashGroup;
-			showEditBudgetModal = true;
-		}
-	}
+	let showHiddenCashGroups = false;
 </script>
 
 <div class="flex flex-col gap-8">
-	<BudgetModalEdit {budgetToEdit} bind:open={showEditBudgetModal} />
 	<div class="flex flex-col gap-2">
 		{#if activeCashGroups.length === 0}
 			<p class="mt-3 text-center text-slate-500">Keine aktiven Budgets vorhanden</p>
@@ -54,10 +36,10 @@
 		</List>
 	</div>
 	{#if inactiveCashGroups.length > 0}
-		<Collapsible.Root bind:open={hiddenShown}>
+		<Collapsible.Root bind:open={showHiddenCashGroups}>
 			<Collapsible.Trigger class="flex w-full flex-row items-center justify-center gap-2">
 				<span class="text-md block pl-6 text-start font-semibold">Inaktiv</span>
-				{#if hiddenShown}
+				{#if showHiddenCashGroups}
 					<ChevronUp class="h-6 w-6" />
 				{:else}
 					<ChevronDown class="h-6 w-6" />
