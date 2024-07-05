@@ -11,6 +11,7 @@
 	import RecurringModalEdit from '../../components/Monthly/Recurring/RecurringModalEdit.svelte';
 	import RecurringView from '../../components/Monthly/Recurring/RecurringView.svelte';
 	import * as BudgetTabs from '../../components/Monthly/Tabs';
+	import TotalView from '../../components/Monthly/TotalView.svelte';
 	import { getCashGroups } from '../../network/cash_group';
 	import { getRecCashFlows } from '../../network/rec_cash_flow';
 	import type { CashGroup, RecCashFlow } from '../../types/supabase';
@@ -36,9 +37,9 @@
 
 	// Tab Management
 	type TabType = 'budget' | 'recurring' | 'total';
-	const tabs: TabType[] = ['budget', 'recurring', 'total'];
+	const tabs: TabType[] = ['total', 'budget', 'recurring'];
 	let api: CarouselAPI;
-	let currentTab: TabType = 'budget';
+	let currentTab: TabType = 'total';
 	$: if (api) {
 		currentTab = tabs[api.selectedScrollSnap()];
 		api.on('select', () => {
@@ -90,6 +91,9 @@
 			<BudgetModalEdit {budgetToEdit} bind:open={showEditBudgetModal} />
 			<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
 			<BudgetTabs.Core>
+				<BudgetTabs.Item selected={currentTab === 'total'} onClick={() => selectTab('total')}>
+					<List size={20} />
+				</BudgetTabs.Item>
 				<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
 					<WalletCards size={20} />
 				</BudgetTabs.Item>
@@ -99,20 +103,17 @@
 				>
 					<RefreshCcw size={20} />
 				</BudgetTabs.Item>
-				<BudgetTabs.Item selected={currentTab === 'total'} onClick={() => selectTab('total')}>
-					<List size={20} />
-				</BudgetTabs.Item>
 			</BudgetTabs.Core>
 			<Carousel.Root class="w-full flex-1" bind:api>
 				<Carousel.Content class="h-full">
+					<CarouselFullSlide>
+						<TotalView />
+					</CarouselFullSlide>
 					<CarouselFullSlide>
 						<BudgetView {openCashGroupEditModal} />
 					</CarouselFullSlide>
 					<CarouselFullSlide>
 						<RecurringView {openEditRecurringModal} />
-					</CarouselFullSlide>
-					<CarouselFullSlide>
-						<!-- <TotalView {budgetedCost} {totalSpendings} {totalEarnings} {fixCost} {savings} /> -->
 					</CarouselFullSlide>
 				</Carousel.Content>
 			</Carousel.Root>
