@@ -72,7 +72,7 @@
 				<BudgetModalAdd bind:open={budgetModalOpen} />
 				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
 			</div>
-			<div class="flex justify-between px-2 pb-5">
+			<div class="flex justify-between border-t px-2 pb-5">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<House size={iconSize} />
 				</a>
