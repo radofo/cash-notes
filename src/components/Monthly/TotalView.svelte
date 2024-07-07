@@ -2,4 +2,7 @@
 	import TotalTable from '../Total/TotalTable.svelte';
 </script>
 
-<TotalTable />
+<div class="flex flex-col gap-2">
+	<span class="text-md block text-start font-bold">Geplante monatliche Finanzen</span>
+	<TotalTable />
+</div>

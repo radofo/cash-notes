@@ -22,18 +22,21 @@
 		{#if activeCashGroups.length === 0}
 			<p class="mt-3 text-center text-slate-500">Keine aktiven Budgets vorhanden</p>
 		{/if}
-		<List>
-			{#each activeCashGroups as cashGroup}
-				<ListItem on:itemClicked={() => openCashGroupEditModal?.(cashGroup)} itemType="main">
-					<span class="border border-white border-opacity-0">
-						{cashGroup.name}
-					</span>
-					<div class="relative flex items-center">
-						<span class="">{displayCurrency({ amount: cashGroup.budget })}</span>
-					</div>
-				</ListItem>
-			{/each}
-		</List>
+		<div class="flex flex-col gap-2">
+			<span class="text-md block pl-1 text-start font-bold">Alle Budgets</span>
+			<List>
+				{#each activeCashGroups as cashGroup}
+					<ListItem on:itemClicked={() => openCashGroupEditModal?.(cashGroup)} itemType="main">
+						<span class="border border-white border-opacity-0">
+							{cashGroup.name}
+						</span>
+						<div class="relative flex items-center">
+							<span class="">{displayCurrency({ amount: cashGroup.budget })}</span>
+						</div>
+					</ListItem>
+				{/each}
+			</List>
+		</div>
 	</div>
 	{#if inactiveCashGroups.length > 0}
 		<Collapsible.Root bind:open={showHiddenCashGroups}>

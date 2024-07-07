@@ -128,6 +128,25 @@ export function getCashGroupTotal(recCashFlows: RecCashFlow[], cashGroup?: CashG
 		}, 0);
 }
 
+export function getRecurringAmount(recCashFlow: RecCashFlow): number {
+	const activeTimeframe = getActiveTimeframe(recCashFlow);
+	return activeTimeframe?.amount ?? 0;
+}
+
+export function sortCashFlowsByAmount(cashFlows: RecCashFlow[]) {
+	return [...cashFlows].sort((recA, recB) =>
+		getRecurringAmount(recA) > getRecurringAmount(recB) ? -1 : 1
+	);
+}
+
+export function sortCashFlowsByBudgetName(cashFlows: RecCashFlow[]) {
+	return [...cashFlows].sort((recA, recB) =>
+		(recA.cash_group?.name?.toLowerCase() ?? '') > (recB.cash_group?.name?.toLowerCase() ?? '')
+			? 1
+			: -1
+	);
+}
+
 export function getActiveTimeframe(
 	recCashFlow: RecCashFlow,
 	referenceDate?: Month

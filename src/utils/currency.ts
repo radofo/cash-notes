@@ -18,6 +18,6 @@ export function displayCurrency({
 	forceDecimals?: boolean;
 }): string {
 	return amount !== null && amount !== undefined
-		? `${sign ?? ''}${formatCurrency(amount, forceDecimals)} €`
+		? `${sign ? `${sign}` : ''}${formatCurrency(amount, forceDecimals)} €`
 		: '-';
 }

@@ -4,7 +4,7 @@
 	import type { RecCashFlow } from '../../../types/supabase';
 	import { recCashFlowStore } from '../../../utils/cashGroup.store';
 	import { displayCurrency } from '../../../utils/currency';
-	import { getActiveTimeframe } from '../../../utils/recurring';
+	import { getActiveTimeframe, sortCashFlowsByBudgetName } from '../../../utils/recurring';
 	import List from '../../List.svelte';
 	import ListItem from '../../ListItem.svelte';
 
@@ -13,32 +13,24 @@
 	$: recCashFlows = $recCashFlowStore;
 	$: incomeCashFlows = recCashFlows.filter((rec) => rec.isIncome);
 	$: costCashFlow = recCashFlows.filter((rec) => !rec.isIncome);
-	$: activeRecCashFlows = sortCashFlows(
+	$: activeRecCashFlows = sortCashFlowsByBudgetName(
 		costCashFlow.filter((rec) => getActiveTimeframe(rec)?.amount !== null)
 	);
-	$: inActiveRecCashFlows = sortCashFlows(
+	$: inActiveRecCashFlows = sortCashFlowsByBudgetName(
 		costCashFlow.filter((rec) => getActiveTimeframe(rec)?.amount === null)
 	);
 
 	let hiddenShown = false;
-
-	function sortCashFlows(cashFlows: RecCashFlow[]) {
-		return [...cashFlows].sort((recA, recB) =>
-			(recA.cash_group?.name?.toLowerCase() ?? '') > (recB.cash_group?.name?.toLowerCase() ?? '')
-				? 1
-				: -1
-		);
-	}
 </script>
 
-<div class="relative flex flex-col gap-12 pb-12">
+<div class="relative flex flex-col gap-8 pb-12">
 	{#if !activeRecCashFlows.length && !inActiveRecCashFlows.length && !incomeCashFlows.length}
 		<div class="flex flex-col gap-2">
 			<span class="text-md block pl-1 text-center">Keine wiederkehrenden Zahlungen</span>
 		</div>
 	{/if}
 	{#if incomeCashFlows.length > 0}
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-1">
 			<span class="text-md block pl-1 text-start font-bold">Monatliche Einnahmen</span>
 			<List>
 				{#each incomeCashFlows as incomeCashFlow}
