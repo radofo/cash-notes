@@ -81,9 +81,9 @@
 		}
 
 		return {
-			incomes: { total: incomeTotal, open: false, recurring: incomesRecurring },
+			incomes: { total: incomeTotal, open: true, recurring: incomesRecurring },
 			expenses: {
-				open: false,
+				open: true,
 				total: fixedCostTotal + budgetsTotal,
 				fixedCosts: { total: fixedCostTotal, open: false, budgets: fixedCostMap },
 				budgets: { total: budgetsTotal, open: false, budgets: budgetsMap }
