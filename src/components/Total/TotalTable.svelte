@@ -1,30 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { CashGroup, RecCashFlow } from '../../types/supabase';
+	import type { TableOpenState } from '../../types/recurring';
 	import { cashGroupStore, recCashFlowStore } from '../../utils/cashGroup.store';
 	import { displayCurrency } from '../../utils/currency';
 	import {
 		getActiveTimeframe,
 		getRecurringAmount,
+		getTotalTableData,
 		sortCashFlowsByAmount
 	} from '../../utils/recurring';
 	import SumItem from './SumItem.svelte';
 	import TotalItem from './TotalItem.svelte';
 	import TotalSection from './TotalSection.svelte';
-
-	type TotalTableT = {
-		incomes: { total: number; open: boolean; recurring: RecCashFlow[] };
-		expenses: {
-			total: number;
-			open: boolean;
-			fixedCosts: {
-				total: number;
-				open: boolean;
-				budgets: Map<string, { open: boolean; recCashFlows: RecCashFlow[] }>;
-			};
-			budgets: { total: number; open: boolean; budgets: Map<string, number> };
-		};
-	};
 
 	$: cashGroups = $cashGroupStore;
 	$: activeCashGroups = cashGroups.filter((group) => group.is_active);
@@ -32,71 +19,28 @@
 	$: activeRecurring = sortCashFlowsByAmount(
 		recurring.filter((rec) => getActiveTimeframe(rec)?.amount !== null)
 	);
-	let totalTableData: TotalTableT;
+
+	$: totalTableData = getTotalTableData(activeRecurring, activeCashGroups);
+	let tableOpenStates: TableOpenState;
 
 	onMount(() => {
-		totalTableData = getTotalTableData(activeRecurring, activeCashGroups);
-	});
-
-	function getTotalTableData(
-		thisMonthsRecurring: RecCashFlow[],
-		cashGroups: CashGroup[]
-	): TotalTableT {
-		// Incomes
-		const incomesRecurring = thisMonthsRecurring.filter(
-			(rec) => rec.isIncome && getActiveTimeframe(rec) !== undefined
-		);
-		const incomeTotal = incomesRecurring.reduce((acc, rec) => {
-			const activeTimeframe = getActiveTimeframe(rec);
-			return acc + (activeTimeframe?.amount ?? 0);
-		}, 0);
-
-		// Fixed Cost
-		const expensesRecurring = thisMonthsRecurring.filter((rec) => !rec.isIncome);
-		const fixedCostMap = new Map<string, { open: boolean; recCashFlows: RecCashFlow[] }>();
-		let fixedCostTotal = 0;
-		for (const recCashFlow of expensesRecurring) {
-			const activeTimeframe = getActiveTimeframe(recCashFlow);
-			if (activeTimeframe && recCashFlow.cash_group?.name) {
-				const budgetName = recCashFlow.cash_group?.name;
-				const budget = fixedCostMap.get(budgetName);
-				const budgetCashFlows = budget?.recCashFlows;
-				if (budget && budgetCashFlows) {
-					budgetCashFlows.push(recCashFlow);
-				} else {
-					fixedCostMap.set(budgetName, { open: false, recCashFlows: [recCashFlow] });
-				}
-				fixedCostTotal += activeTimeframe.amount ?? 0;
-			}
+		const fixedCostsBudgets: { [key: string]: boolean } = {};
+		for (const [key, _] of totalTableData.expenses.fixedCosts.budgets) {
+			fixedCostsBudgets[key] = false;
 		}
-
-		// Budget Total
-		const budgetedGroups = cashGroups.filter((group) => group.budget);
-		const budgetsMap = new Map<string, number>();
-		let budgetsTotal = 0;
-		for (const group of budgetedGroups) {
-			const budgetAmount = group.budget ?? 0;
-			budgetsMap.set(group.name, budgetAmount);
-			budgetsTotal += budgetAmount;
-		}
-
-		return {
-			incomes: { total: incomeTotal, open: true, recurring: incomesRecurring },
-			expenses: {
-				open: true,
-				total: fixedCostTotal + budgetsTotal,
-				fixedCosts: { total: fixedCostTotal, open: false, budgets: fixedCostMap },
-				budgets: { total: budgetsTotal, open: false, budgets: budgetsMap }
-			}
+		tableOpenStates = {
+			incomes: true,
+			expenses: true,
+			fixedCosts: false,
+			budgets: false,
+			fixedCostsBudgets
 		};
-	}
+	});
 </script>
 
-{#if !totalTableData}
-	<p>Loading...</p>
-{:else}
+{#if totalTableData && tableOpenStates}
 	<div>
-		<TotalSection bind:open={totalTableData.incomes.open}>
+		<TotalSection bind:open={tableOpenStates.incomes}>
 			<div slot="title">Einnahmen</div>
 			<span slot="total">
 				{displayCurrency({ amount: totalTableData.incomes.total, sign: '+' })}</span
@@ -110,18 +54,18 @@
 				{/each}
 			</div>
 		</TotalSection>
-		<TotalSection bind:open={totalTableData.expenses.open}>
+		<TotalSection bind:open={tableOpenStates.expenses}>
 			<div slot="title">Ausgaben</div>
 			<span slot="total"> {displayCurrency({ amount: totalTableData.expenses.total })} </span>
 			<div slot="content">
-				<TotalSection bind:open={totalTableData.expenses.fixedCosts.open}>
+				<TotalSection bind:open={tableOpenStates.fixedCosts}>
 					<div slot="title">Fixkosten</div>
 					<span slot="total">
 						{displayCurrency({ amount: totalTableData.expenses.fixedCosts.total })}
 					</span>
 					<div slot="content">
-						{#each Array.from(totalTableData.expenses.fixedCosts.budgets) as [name, { recCashFlows, open }]}
-							<TotalSection bind:open>
+						{#each Array.from(totalTableData.expenses.fixedCosts.budgets) as [name, recCashFlows]}
+							<TotalSection bind:open={tableOpenStates.fixedCostsBudgets[name]}>
 								<div slot="title">{name}</div>
 								<span slot="total">
 									{displayCurrency({
@@ -142,7 +86,7 @@
 						{/each}
 					</div>
 				</TotalSection>
-				<TotalSection bind:open={totalTableData.expenses.budgets.open}>
+				<TotalSection bind:open={tableOpenStates.budgets}>
 					<div slot="title">Budgets</div>
 					<span slot="total"
 						>{displayCurrency({ amount: totalTableData.expenses.budgets.total })}</span

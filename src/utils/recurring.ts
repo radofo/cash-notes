@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import type { Month } from '../types/date';
-import type { CashGroupWithMeta, FormTimeframe } from '../types/recurring';
+import type { CashGroupWithMeta, FormTimeframe, TotalTableT } from '../types/recurring';
 import type {
 	CashGroup,
 	RecCashFlow,
@@ -11,6 +11,57 @@ import type {
 } from '../types/supabase';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
 dayjs.extend(objectSupport);
+
+export function getTotalTableData(
+	thisMonthsRecurring: RecCashFlow[],
+	cashGroups: CashGroup[]
+): TotalTableT {
+	// Incomes
+	const incomesRecurring = thisMonthsRecurring.filter(
+		(rec) => rec.isIncome && getActiveTimeframe(rec) !== undefined
+	);
+	const incomeTotal = incomesRecurring.reduce((acc, rec) => {
+		const activeTimeframe = getActiveTimeframe(rec);
+		return acc + (activeTimeframe?.amount ?? 0);
+	}, 0);
+
+	// Fixed Cost
+	const expensesRecurring = thisMonthsRecurring.filter((rec) => !rec.isIncome);
+	const fixedCostMap = new Map<string, RecCashFlow[]>();
+	let fixedCostTotal = 0;
+	for (const recCashFlow of expensesRecurring) {
+		const activeTimeframe = getActiveTimeframe(recCashFlow);
+		if (activeTimeframe && recCashFlow.cash_group?.name) {
+			const budgetName = recCashFlow.cash_group?.name;
+			const budgetMapItem = fixedCostMap.get(budgetName);
+			if (budgetMapItem) {
+				budgetMapItem.push(recCashFlow);
+			} else {
+				fixedCostMap.set(budgetName, [recCashFlow]);
+			}
+			fixedCostTotal += activeTimeframe.amount ?? 0;
+		}
+	}
+
+	// Budget Total
+	const budgetedGroups = cashGroups.filter((group) => group.budget);
+	const budgetsMap = new Map<string, number>();
+	let budgetsTotal = 0;
+	for (const group of budgetedGroups) {
+		const budgetAmount = group.budget ?? 0;
+		budgetsMap.set(group.name, budgetAmount);
+		budgetsTotal += budgetAmount;
+	}
+
+	return {
+		incomes: { total: incomeTotal, recurring: incomesRecurring },
+		expenses: {
+			total: fixedCostTotal + budgetsTotal,
+			fixedCosts: { total: fixedCostTotal, budgets: fixedCostMap },
+			budgets: { total: budgetsTotal, budgets: budgetsMap }
+		}
+	};
+}
 
 export function getIncomeForMonth(referenceDate: Month, recCashFlows: RecCashFlow[]): number {
 	return recCashFlows.reduce((result, recCashFlow) => {
