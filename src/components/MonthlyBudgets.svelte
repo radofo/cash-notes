@@ -1,12 +1,21 @@
 <script lang="ts">
-	import Obfuscate from '../components/Obfuscate.svelte';
+	import { onMount } from 'svelte';
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
-	import type { CashFlow, CashGroup } from '../types/supabase';
+	import type { Month } from '../types/date';
+	import type { TableOpenState } from '../types/recurring';
+	import type { CashFlow, CashGroup, RecCashFlow } from '../types/supabase';
 	import { displayCurrency } from '../utils/currency';
+	import { getRealTotalData } from '../utils/recurring';
 	import ProgressElement from './ProgressElement.svelte';
+	import SumItem from './Total/SumItem.svelte';
+	import TotalItem from './Total/TotalItem.svelte';
+	import TotalSection from './Total/TotalSection.svelte';
+
+	export let recurring: RecCashFlow[];
+	export let cashFlows: CashFlow[];
+	export let month: Month;
 
 	export let cashGroups: CashGroup[];
-	export let cashFlows: CashFlow[];
 	export let totalFixCost: number;
 	export let totalIncome: number;
 
@@ -14,6 +23,24 @@
 	let progressNoBudget: Map<string, BudgetProgress>;
 	let budgetProgress: BudgetProgress;
 	let noBudgetSpendings: number;
+
+	let tableOpenStates: TableOpenState;
+	$: totalTableData = getRealTotalData(cashFlows, recurring, month);
+
+	onMount(() => {
+		const fixedCostsBudgets: { [key: string]: boolean } = {};
+		for (const [key, _] of totalTableData.expenses.fixedCosts.fixedBudgets) {
+			fixedCostsBudgets[key] = false;
+		}
+		tableOpenStates = {
+			incomes: false,
+			expenses: false,
+			fixedCosts: false,
+			budgets: false,
+			noBudgets: false,
+			fixedCostsBudgets
+		};
+	});
 
 	$: totalSpent = budgetProgress.spent + noBudgetSpendings + totalFixCost;
 	$: total = totalIncome - totalSpent;
@@ -72,25 +99,90 @@
 	}
 </script>
 
-<div class="carousel w-full">
-	<div id="item1" class="carousel-item box-border w-full p-1 py-2">
-		<div class="w-full">
-			<ul class="flex flex-col gap-4 pb-4">
-				{#each [...progressWithBudget] as [name, info]}
-					<ProgressElement {name} {info} />
-				{/each}
-			</ul>
-			<div class="border-t border-dashed py-2">
-				<ProgressElement
-					fontBold
-					name="Alle Budgets"
-					info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
-				/>
+{#if tableOpenStates}
+	<div class="carousel w-full">
+		<div id="item1" class="carousel-item box-border w-full p-1 py-2">
+			<div class="w-full">
+				<ul class="flex flex-col gap-4 pb-4">
+					{#each [...progressWithBudget] as [name, info]}
+						<ProgressElement {name} {info} />
+					{/each}
+				</ul>
+				<div class="border-t border-dashed py-2">
+					<ProgressElement
+						fontBold
+						name="Alle Budgets"
+						info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+					/>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div id="item2" class="carousel-item box-border w-full p-1 py-2">
-		<div class="flex w-full flex-col">
+		<div id="item2" class="carousel-item box-border w-full p-1 py-2">
+			<div class="w-full">
+				<TotalSection bind:open={tableOpenStates.incomes}>
+					<div slot="title">Einnahmen</div>
+					<span slot="total">
+						{displayCurrency({ amount: totalTableData.incomes, sign: '+' })}</span
+					>
+				</TotalSection>
+				<TotalSection bind:open={tableOpenStates.expenses}>
+					<div slot="title">Ausgaben</div>
+					<span slot="total"> {displayCurrency({ amount: totalTableData.expenses.total })}</span>
+					<span slot="content">
+						<TotalSection bind:open={tableOpenStates.fixedCosts}>
+							<div slot="title">Fixkosten</div>
+							<span slot="total">
+								{displayCurrency({ amount: totalTableData.expenses.fixedCosts.total })}</span
+							>
+							<span slot="content">
+								{#each Array.from(totalTableData.expenses.fixedCosts.fixedBudgets) as [name, amount]}
+									<TotalItem>
+										<span>{name}</span>
+										<span>{displayCurrency({ amount })}</span>
+									</TotalItem>
+								{/each}
+							</span>
+						</TotalSection>
+						<TotalSection bind:open={tableOpenStates.budgets}>
+							<div slot="title">In Budgets</div>
+							<span slot="total">
+								{displayCurrency({ amount: totalTableData.expenses.budgets.total })}</span
+							>
+							<span slot="content">
+								{#each Array.from(totalTableData.expenses.budgets.budgets) as [name, amount]}
+									<TotalItem>
+										<span>{name}</span>
+										<span>{displayCurrency({ amount })}</span>
+									</TotalItem>
+								{/each}
+							</span>
+						</TotalSection>
+						<TotalSection bind:open={tableOpenStates.noBudgets}>
+							<div slot="title">Ohne Budget</div>
+							<span slot="total">
+								{displayCurrency({ amount: totalTableData.expenses.noBudgets.total })}</span
+							>
+							<span slot="content">
+								{#each Array.from(totalTableData.expenses.noBudgets.budgets) as [name, amount]}
+									<TotalItem>
+										<span>{name}</span>
+										<span>{displayCurrency({ amount })}</span>
+									</TotalItem>
+								{/each}
+							</span>
+						</TotalSection>
+					</span>
+				</TotalSection>
+				<SumItem>
+					<span>Total</span>
+					<span
+						>{displayCurrency({
+							amount: totalTableData.incomes - totalTableData.expenses.total
+						})}</span
+					>
+				</SumItem>
+			</div>
+			<!-- <div class="flex w-full flex-col">
 			<div class="flex flex-row justify-between border-b border-dashed pb-3 font-medium">
 				<span>Einnahmen</span>
 				<Obfuscate>
@@ -142,6 +234,7 @@
 					>
 				</Obfuscate>
 			</div>
+		</div> -->
 		</div>
 	</div>
-</div>
+{/if}

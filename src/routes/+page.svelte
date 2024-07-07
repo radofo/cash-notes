@@ -109,7 +109,14 @@
 		<ModalMonthSelector
 			on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 		/>
-		<MonthlyBudgets {totalIncome} {totalFixCost} {cashFlows} cashGroups={activeCashGroups} />
+		<MonthlyBudgets
+			{totalIncome}
+			{totalFixCost}
+			{cashFlows}
+			recurring={recCashFlows}
+			month={{ month: selectedMonth, year: selectedYear }}
+			cashGroups={activeCashGroups}
+		/>
 		<div class="flex flex-col items-stretch justify-between gap-4">
 			{#if pageLoading}
 				<div class="mt-8 grid place-items-center">

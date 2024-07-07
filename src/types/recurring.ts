@@ -6,6 +6,20 @@ export type TableOpenState = {
 	fixedCosts: boolean;
 	fixedCostsBudgets: { [key: string]: boolean };
 	budgets: boolean;
+	noBudgets: boolean;
+};
+
+export type RealTotalTableT = {
+	incomes: number;
+	expenses: {
+		total: number;
+		fixedCosts: {
+			total: number;
+			fixedBudgets: Map<string, number>;
+		};
+		budgets: { total: number; budgets: Map<string, number> };
+		noBudgets: { total: number; budgets: Map<string, number> };
+	};
 };
 
 export type TotalTableT = {

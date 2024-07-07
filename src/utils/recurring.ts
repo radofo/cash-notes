@@ -1,8 +1,14 @@
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import type { Month } from '../types/date';
-import type { CashGroupWithMeta, FormTimeframe, TotalTableT } from '../types/recurring';
 import type {
+	CashGroupWithMeta,
+	FormTimeframe,
+	RealTotalTableT,
+	TotalTableT
+} from '../types/recurring';
+import type {
+	CashFlow,
 	CashGroup,
 	RecCashFlow,
 	RecTimeframe,
@@ -11,6 +17,61 @@ import type {
 } from '../types/supabase';
 import { getMonthAndYearFromDateString, monthToDateString } from './date';
 dayjs.extend(objectSupport);
+
+function sumUpSpendingMap(spendingMap: Map<string, number>): number {
+	return Array.from(spendingMap.values()).reduce((acc, val) => acc + val, 0);
+}
+
+export function getRealTotalData(
+	cashFlows: CashFlow[],
+	allRecCashFlows: RecCashFlow[],
+	month: Month
+): RealTotalTableT {
+	const fixedSpendings = new Map<string, number>();
+	const budgetedSpendings = new Map<string, number>();
+	const noBudgetSpendings = new Map<string, number>();
+
+	for (const recCashFlow of allRecCashFlows) {
+		const activeTimeframe = getActiveTimeframe(recCashFlow, month);
+		if (!activeTimeframe) {
+			continue;
+		}
+		const amount = activeTimeframe.amount ?? 0;
+		const cashGroupName = recCashFlow.cash_group?.name;
+		if (cashGroupName) {
+			const currentMapEntry = fixedSpendings.get(cashGroupName) ?? 0;
+			fixedSpendings.set(cashGroupName, currentMapEntry + amount);
+		}
+	}
+
+	for (const cashFlow of cashFlows) {
+		const { cash_group, amount } = cashFlow;
+		if (!cash_group) continue;
+		else if (cash_group.budget) {
+			const currentMapEntry = budgetedSpendings.get(cash_group.name) ?? 0;
+			budgetedSpendings.set(cash_group.name, currentMapEntry + amount);
+		} else {
+			const currentMapEntry = noBudgetSpendings.get(cash_group.name) ?? 0;
+			noBudgetSpendings.set(cash_group.name, currentMapEntry + amount);
+		}
+	}
+	const fixedTotal = sumUpSpendingMap(fixedSpendings);
+	const budgetedTotal = sumUpSpendingMap(budgetedSpendings);
+	const noBudgetTotal = sumUpSpendingMap(noBudgetSpendings);
+
+	return {
+		incomes: getIncomeForMonth(month, allRecCashFlows),
+		expenses: {
+			total: fixedTotal + budgetedTotal + noBudgetTotal,
+			fixedCosts: {
+				total: fixedTotal,
+				fixedBudgets: fixedSpendings
+			},
+			budgets: { total: budgetedTotal, budgets: budgetedSpendings },
+			noBudgets: { total: noBudgetTotal, budgets: noBudgetSpendings }
+		}
+	};
+}
 
 export function getTotalTableData(
 	thisMonthsRecurring: RecCashFlow[],
