@@ -2,25 +2,13 @@
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { IconLoader } from '@tabler/icons-svelte';
-	import {
-		ArrowRightLeft,
-		HandCoins,
-		House,
-		PieChart,
-		Plus,
-		RefreshCcw,
-		Settings,
-		WalletCards
-	} from 'lucide-svelte';
+	import { ArrowRightLeft, House, PieChart, Plus, Settings } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
-	import BudgetModalAdd from '../components/Monthly/Budget/BudgetModalAdd.svelte';
-	import RecurringModalAdd from '../components/Monthly/Recurring/RecurringModalAdd.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -68,56 +56,23 @@
 		{#if session}
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
-				<RecurringModalAdd bind:open={recurringModalOpen} />
-				<BudgetModalAdd bind:open={budgetModalOpen} />
 				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
 			</div>
-			<div class="flex justify-between border-t px-2 pb-5">
+			<div class="flex items-center justify-between border-t px-2 pb-5">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
 					<House size={iconSize} />
 				</a>
 				<a
-					class="{tabElementClass} {$page.url.pathname === '/budgets' ? 'text-green-700' : ''}"
+					class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
+						? 'text-green-700'
+						: ''}"
 					href="/budgets"
 				>
 					<ArrowRightLeft size={iconSize} />
 				</a>
-				<DropdownMenu.Root bind:open={isAddMenuOpen}>
-					<DropdownMenu.Trigger class={tabAddClass}>
-						<Button variant="ghost" size="icon">
-							<Plus class="h-12 w-12" />
-						</Button>
-					</DropdownMenu.Trigger>
-					<DropdownMenu.Content>
-						<DropdownMenu.Item on:click={() => (budgetModalOpen = true)}>
-							<div class="flex flex-row items-center gap-4">
-								<WalletCards size={30} />
-								<div class="flex flex-col">
-									<span class="text-base font-semibold">Budget</span>
-									<span class="text-muted-foreground">Erstelle ein neues Budget</span>
-								</div>
-							</div>
-						</DropdownMenu.Item>
-						<DropdownMenu.Item on:click={() => (recurringModalOpen = true)}>
-							<div class="flex flex-row items-center gap-4">
-								<RefreshCcw size={28} />
-								<div class="flex flex-col">
-									<span class="text-base font-semibold">Mtl. Zahlung</span>
-									<span class="text-muted-foreground">Erstelle ein neue monatliche Zahlung</span>
-								</div>
-							</div>
-						</DropdownMenu.Item>
-						<DropdownMenu.Item on:click={() => (cashFlowModalOpen = true)}>
-							<div class="flex flex-row items-center gap-4">
-								<HandCoins size={28} />
-								<div class="flex flex-col">
-									<span class="text-base font-semibold">Ausgabe</span>
-									<span class="text-muted-foreground">Erstelle ein einfache Ausgabe</span>
-								</div>
-							</div>
-						</DropdownMenu.Item>
-					</DropdownMenu.Content>
-				</DropdownMenu.Root>
+				<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
+					<Plus size={38} />
+				</Button>
 				<a
 					href="/"
 					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-green-700' : ''}"

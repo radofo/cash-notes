@@ -1,6 +1,5 @@
 <script lang="ts">
-	import * as Collapsible from '$lib/components/ui/collapsible';
-	import { ChevronDown, ChevronUp } from 'lucide-svelte';
+	import { Plus } from 'lucide-svelte';
 	import type { RecCashFlow } from '../../../types/supabase';
 	import { recCashFlowStore } from '../../../utils/cashGroup.store';
 	import { displayCurrency } from '../../../utils/currency';
@@ -9,6 +8,8 @@
 	import ListItem from '../../ListItem.svelte';
 
 	export let openEditRecurringModal: (recurringCf?: RecCashFlow) => void;
+
+	export let onRecurringAddOpen: () => void;
 
 	$: recCashFlows = $recCashFlowStore;
 	$: incomeCashFlows = recCashFlows.filter((rec) => rec.isIncome);
@@ -19,11 +20,12 @@
 	$: inActiveRecCashFlows = sortCashFlowsByBudgetName(
 		costCashFlow.filter((rec) => getActiveTimeframe(rec)?.amount === null)
 	);
-
-	let hiddenShown = false;
 </script>
 
-<div class="relative flex flex-col gap-8 pb-12">
+<div class="relative flex flex-col gap-10 pb-12">
+	<button on:click={() => onRecurringAddOpen()} class="flex justify-end">
+		<Plus size={24} />
+	</button>
 	{#if !activeRecCashFlows.length && !inActiveRecCashFlows.length && !incomeCashFlows.length}
 		<div class="flex flex-col gap-2">
 			<span class="text-md block pl-1 text-center">Keine wiederkehrenden Zahlungen</span>
@@ -68,37 +70,25 @@
 		</div>
 	{/if}
 	{#if inActiveRecCashFlows.length > 0}
-		<Collapsible.Root bind:open={hiddenShown}>
-			<Collapsible.Trigger class="flex w-full flex-row items-center justify-start gap-2">
-				<span class="text-md block pl-1 text-start font-bold">Inaktiv</span>
-				{#if hiddenShown}
-					<ChevronUp class="h-6 w-6" />
-				{:else}
-					<ChevronDown class="h-6 w-6" />
-				{/if}
-			</Collapsible.Trigger>
-			<Collapsible.Content>
-				<List>
-					{#each inActiveRecCashFlows as inActiveCashFlow}
-						<ListItem
-							on:itemClicked={() => openEditRecurringModal(inActiveCashFlow)}
-							itemType="main"
-						>
-							<div class="flex flex-col">
-								<span>{inActiveCashFlow.name}</span>
-								<span class="text-sm text-muted-foreground"
-									>{inActiveCashFlow.cash_group?.name ?? '-'}</span
-								>
-							</div>
-							<div class="relative flex items-center">
-								<span
-									>{displayCurrency({ amount: getActiveTimeframe(inActiveCashFlow)?.amount })}</span
-								>
-							</div>
-						</ListItem>
-					{/each}
-				</List>
-			</Collapsible.Content>
-		</Collapsible.Root>
+		<div class="flex flex-col gap-2">
+			<span class="text-md block text-start font-bold">Inaktive mtl. Zahlungen</span>
+			<List>
+				{#each inActiveRecCashFlows as inActiveCashFlow}
+					<ListItem on:itemClicked={() => openEditRecurringModal(inActiveCashFlow)} itemType="main">
+						<div class="flex flex-col">
+							<span>{inActiveCashFlow.name}</span>
+							<span class="text-sm text-muted-foreground"
+								>{inActiveCashFlow.cash_group?.name ?? '-'}</span
+							>
+						</div>
+						<div class="relative flex items-center">
+							<span
+								>{displayCurrency({ amount: getActiveTimeframe(inActiveCashFlow)?.amount })}</span
+							>
+						</div>
+					</ListItem>
+				{/each}
+			</List>
+		</div>
 	{/if}
 </div>
