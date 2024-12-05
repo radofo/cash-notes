@@ -4,11 +4,11 @@
 </script>
 
 <div class="flex w-full flex-col gap-8">
-	<div class="flex flex-row items-center justify-between">
-		<span class="text-md block text-start font-bold">Geplante monatliche Zahlungen</span>
-		<a href="/budgets/edit">
-			<Pen class="cursor-pointer" size={18} />
-		</a>
+	<div class="flex flex-row items-center justify-center">
+		<span class="block text-center text-lg font-bold">Geplante monatliche Zahlungen</span>
 	</div>
+	<a href="/budgets/edit" class="self-end">
+		<Pen class="cursor-pointer" size={18} />
+	</a>
 	<TotalTable />
 </div>

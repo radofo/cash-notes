@@ -103,27 +103,29 @@
 			<IconLoader class="animate-spin text-center" />
 		</div>
 	{:else}
-		<div class="flex h-full flex-col items-start gap-8 px-3">
+		<div class="flex h-full flex-col items-start gap-6 px-3">
 			<BudgetModalAdd bind:open={budgetModalOpen} />
 			<RecurringModalAdd bind:open={recurringModalOpen} />
 			<BudgetModalEdit {budgetToEdit} bind:open={showEditBudgetModal} />
 			<RecurringModalEdit {recurringToEdit} bind:open={showEditRecurringModal} />
-			<a href="/budgets" class="flex flex-row items-center">
-				<ChevronLeft size={24} />
-				<p>Übersicht</p>
-			</a>
 			<div class="flex w-full flex-col items-center gap-8">
-				<BudgetTabs.Core>
-					<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
-						<WalletCards size={20} />
-					</BudgetTabs.Item>
-					<BudgetTabs.Item
-						selected={currentTab === 'recurring'}
-						onClick={() => selectTab('recurring')}
-					>
-						<RefreshCcw size={20} />
-					</BudgetTabs.Item>
-				</BudgetTabs.Core>
+				<div class="flex w-full flex-row justify-between">
+					<a href="/budgets" class="flex flex-row items-center">
+						<ChevronLeft size={24} />
+					</a>
+					<BudgetTabs.Core>
+						<BudgetTabs.Item onClick={() => selectTab('budget')} selected={currentTab === 'budget'}>
+							<WalletCards size={20} />
+						</BudgetTabs.Item>
+						<BudgetTabs.Item
+							selected={currentTab === 'recurring'}
+							onClick={() => selectTab('recurring')}
+						>
+							<RefreshCcw size={20} />
+						</BudgetTabs.Item>
+					</BudgetTabs.Core>
+					<div />
+				</div>
 				<Carousel.Root class="w-full flex-1" bind:api>
 					<Carousel.Content class="h-full">
 						<CarouselFullSlide>
