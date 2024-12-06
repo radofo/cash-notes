@@ -29,16 +29,3 @@
 		</form>
 	</div>
 </div>
-
-<!-- <Dialog.Root bind:open>
-	<Dialog.Content>
-		<Dialog.Header>
-			<Dialog.Title>
-				<slot name="header" />
-			</Dialog.Title>
-		</Dialog.Header>
-		<form class="flex flex-col p-2 pb-2" on:submit={handleSubmit}>
-			<slot name="content" />
-		</form>
-	</Dialog.Content>
-</Dialog.Root> -->

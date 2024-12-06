@@ -21,10 +21,7 @@
 	let password: string;
 	let loading: boolean = false;
 
-	let recurringModalOpen: boolean = false;
-	let budgetModalOpen: boolean = false;
 	let cashFlowModalOpen: boolean = false;
-	let isAddMenuOpen: boolean = false;
 
 	onMount(() => {
 		const {
@@ -48,7 +45,6 @@
 	};
 
 	const tabElementClass = 'px-4 py-4';
-	const tabAddClass = 'px-4 py-2';
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
@@ -56,7 +52,9 @@
 		{#if session}
 			<div class="flex-1 overflow-y-scroll pt-8">
 				<slot />
-				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
+				{#if cashFlowModalOpen}
+					<CashFlowModalAdd bind:open={cashFlowModalOpen} />
+				{/if}
 			</div>
 			<div class="flex items-center justify-between border-t px-2 pb-5">
 				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">

@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
+	import { onMount } from 'svelte';
 	import { insertCashFlow, isInMonth } from '../../network/cash_flow';
 	import type { CashGroup } from '../../types/supabase';
 	import { cashFlowStore } from '../../utils/cashFlow.store';
@@ -28,20 +29,9 @@
 
 	let modalCreateLoading: boolean = false;
 
-	$: {
-		if (!open) {
-			resetModal();
-		} else {
-			cfGroup = activeCashGroups?.[0];
-		}
-	}
-
-	function resetModal() {
-		cfName = '';
-		cfAmount = '';
+	onMount(() => {
 		cfGroup = activeCashGroups?.[0];
-		cfDate = dateToDateString(new Date());
-	}
+	});
 
 	async function submitNewCashFlow() {
 		if (user?.id && cfGroup?.id && cfName && cfAmount) {
@@ -74,11 +64,11 @@
 </script>
 
 <FormDialog bind:open on:submit={submitNewCashFlow}>
-	<span slot="header">Neue Ausgabe Erstellen</span>
+	<span slot="header">💸 Neue Ausgabe</span>
 	<div slot="content" class="flex h-full flex-col justify-between">
 		<div class="flex flex-col gap-3">
 			<InputWithLabel label="Name">
-				<Input inputType="text" bind:inputValue={cfName} />
+				<Input autofocus={true} inputType="text" bind:inputValue={cfName} />
 			</InputWithLabel>
 			<InputWithLabel label="Betrag">
 				<Input inputType="number" bind:inputValue={cfAmount} />
