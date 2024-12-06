@@ -22,7 +22,7 @@
 	<div class="relative h-2 w-full overflow-hidden rounded bg-slate-200">
 		<div class="absolute left-0 top-0 h-2 rounded bg-sky-700" style="width: {spendingProgress}%" />
 		<div
-			class="absolute bottom-0 top-0 rounded border {monthProgress < spendingProgress
+			class="absolute bottom-0 top-0 rounded border {monthProgress > spendingProgress
 				? 'border-sky-900'
 				: 'border-slate-300'}"
 			style="left: {monthProgress}%"
