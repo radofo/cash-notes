@@ -57,12 +57,12 @@
 				{/if}
 			</div>
 			<div class="flex items-center justify-between border-t px-2 pb-5">
-				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-green-700' : ''}">
+				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-sky-700' : ''}">
 					<House size={iconSize} />
 				</a>
 				<a
 					class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
-						? 'text-green-700'
+						? 'text-sky-700'
 						: ''}"
 					href="/budgets"
 				>
@@ -73,13 +73,13 @@
 				</Button>
 				<a
 					href="/"
-					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-green-700' : ''}"
+					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-sky-700' : ''}"
 				>
 					<PieChart size={iconSize} />
 				</a>
 				<a
 					href="/profile"
-					class="{tabElementClass} {$page.url.pathname === '/profile' ? 'text-green-700' : ''}"
+					class="{tabElementClass} {$page.url.pathname === '/profile' ? 'text-sky-700' : ''}"
 				>
 					<Settings size={iconSize} /></a
 				>
