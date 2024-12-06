@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Equal } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { Month } from '../types/date';
@@ -34,7 +35,7 @@
 		}
 		tableOpenStates = {
 			incomes: false,
-			expenses: false,
+			expenses: true,
 			fixedCosts: false,
 			budgets: false,
 			noBudgets: false,
@@ -127,18 +128,23 @@
 				</TotalSection>
 				<TotalSection bind:open={tableOpenStates.expenses}>
 					<div slot="title">Ausgaben</div>
-					<span slot="total"> {displayCurrency({ amount: totalTableData.expenses.total })}</span>
+					<span slot="total">
+						{displayCurrency({ amount: totalTableData.expenses.total, sign: '-' })}</span
+					>
 					<span slot="content">
 						<TotalSection bind:open={tableOpenStates.fixedCosts}>
 							<div slot="title">Fixkosten</div>
 							<span slot="total">
-								{displayCurrency({ amount: totalTableData.expenses.fixedCosts.total })}</span
+								{displayCurrency({
+									amount: totalTableData.expenses.fixedCosts.total,
+									sign: '-'
+								})}</span
 							>
 							<span slot="content">
 								{#each Array.from(totalTableData.expenses.fixedCosts.fixedBudgets) as [name, amount]}
 									<TotalItem>
 										<span>{name}</span>
-										<span>{displayCurrency({ amount })}</span>
+										<span>{displayCurrency({ amount, sign: '-' })}</span>
 									</TotalItem>
 								{/each}
 							</span>
@@ -146,13 +152,16 @@
 						<TotalSection bind:open={tableOpenStates.budgets}>
 							<div slot="title">In Budgets</div>
 							<span slot="total">
-								{displayCurrency({ amount: totalTableData.expenses.budgets.total })}</span
+								{displayCurrency({
+									amount: totalTableData.expenses.budgets.total,
+									sign: '-'
+								})}</span
 							>
 							<span slot="content">
 								{#each Array.from(totalTableData.expenses.budgets.budgets) as [name, amount]}
 									<TotalItem>
 										<span>{name}</span>
-										<span>{displayCurrency({ amount })}</span>
+										<span>{displayCurrency({ amount, sign: '-' })}</span>
 									</TotalItem>
 								{/each}
 							</span>
@@ -160,13 +169,16 @@
 						<TotalSection bind:open={tableOpenStates.noBudgets}>
 							<div slot="title">Ohne Budget</div>
 							<span slot="total">
-								{displayCurrency({ amount: totalTableData.expenses.noBudgets.total })}</span
+								{displayCurrency({
+									amount: totalTableData.expenses.noBudgets.total,
+									sign: '-'
+								})}</span
 							>
 							<span slot="content">
 								{#each Array.from(totalTableData.expenses.noBudgets.budgets) as [name, amount]}
 									<TotalItem>
 										<span>{name}</span>
-										<span>{displayCurrency({ amount })}</span>
+										<span>{displayCurrency({ amount, sign: '-' })}</span>
 									</TotalItem>
 								{/each}
 							</span>
@@ -174,10 +186,14 @@
 					</span>
 				</TotalSection>
 				<SumItem>
-					<span>Total</span>
+					<div class="flex flex-row items-center gap-2">
+						<Equal class="h-5 w-5" />
+						<span>Total</span>
+					</div>
 					<span
 						>{displayCurrency({
-							amount: totalTableData.incomes - totalTableData.expenses.total
+							amount: Math.abs(totalTableData.incomes - totalTableData.expenses.total),
+							sign: totalTableData.incomes - totalTableData.expenses.total < 0 ? '-' : '+'
 						})}</span
 					>
 				</SumItem>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Equal } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import type { TableOpenState } from '../../types/recurring';
 	import { cashGroupStore, recCashFlowStore } from '../../utils/cashGroup.store';
@@ -33,6 +34,7 @@
 			expenses: true,
 			fixedCosts: false,
 			budgets: false,
+			noBudgets: false,
 			fixedCostsBudgets
 		};
 	});
@@ -56,12 +58,14 @@
 		</TotalSection>
 		<TotalSection bind:open={tableOpenStates.expenses}>
 			<div slot="title">Ausgaben</div>
-			<span slot="total"> {displayCurrency({ amount: totalTableData.expenses.total })} </span>
+			<span slot="total">
+				{displayCurrency({ amount: totalTableData.expenses.total, sign: '-' })}
+			</span>
 			<div slot="content">
 				<TotalSection bind:open={tableOpenStates.fixedCosts}>
 					<div slot="title">Fixkosten</div>
 					<span slot="total">
-						{displayCurrency({ amount: totalTableData.expenses.fixedCosts.total })}
+						{displayCurrency({ amount: totalTableData.expenses.fixedCosts.total, sign: '-' })}
 					</span>
 					<div slot="content">
 						{#each Array.from(totalTableData.expenses.fixedCosts.budgets) as [name, recCashFlows]}
@@ -71,14 +75,15 @@
 									{displayCurrency({
 										amount: recCashFlows.reduce((acc, rec) => {
 											return acc + getRecurringAmount(rec);
-										}, 0)
+										}, 0),
+										sign: '-'
 									})}
 								</span>
 								<div slot="content">
 									{#each recCashFlows as rec}
 										<TotalItem>
 											<span>{rec.name}</span>
-											<span>{displayCurrency({ amount: getRecurringAmount(rec) })}</span>
+											<span>{displayCurrency({ amount: getRecurringAmount(rec), sign: '-' })}</span>
 										</TotalItem>
 									{/each}
 								</div>
@@ -89,13 +94,13 @@
 				<TotalSection bind:open={tableOpenStates.budgets}>
 					<div slot="title">Budgets</div>
 					<span slot="total"
-						>{displayCurrency({ amount: totalTableData.expenses.budgets.total })}</span
+						>{displayCurrency({ amount: totalTableData.expenses.budgets.total, sign: '-' })}</span
 					>
 					<div slot="content">
 						{#each Array.from(totalTableData.expenses.budgets.budgets) as [name, amount]}
 							<TotalItem>
 								<span>{name}</span>
-								<span>{displayCurrency({ amount })}</span>
+								<span>{displayCurrency({ amount, sign: '-' })}</span>
 							</TotalItem>
 						{/each}
 					</div>
@@ -103,11 +108,14 @@
 			</div>
 		</TotalSection>
 		<SumItem>
-			<span
-				>{totalTableData.incomes.total - totalTableData.expenses.total < 0
-					? 'Verlust'
-					: 'Überschuss'}</span
-			>
+			<div class="flex flex-row items-center gap-2">
+				<Equal class="h-5 w-5" />
+				<span
+					>{totalTableData.incomes.total - totalTableData.expenses.total < 0
+						? 'Verlust'
+						: 'Überschuss'}</span
+				>
+			</div>
 			<span
 				>{displayCurrency({
 					amount: totalTableData.incomes.total - totalTableData.expenses.total
