@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getSurroundingYears, months } from '../utils/date';
-	import { createEventDispatcher } from 'svelte';
-	import Modal from './Modal.svelte';
 	import { IconChevronDown } from '@tabler/icons-svelte';
+	import { createEventDispatcher } from 'svelte';
+	import { getSurroundingYears, months } from '../utils/date';
 	import Button from './Button.svelte';
 	import FullMonthSelector from './FullMonthSelector.svelte';
+	import Modal from './Modal.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -24,7 +24,7 @@
 </script>
 
 <div class="flex cursor-pointer items-center gap-2">
-	<button class="flex items-center text-2xl font-medium" on:click={() => (showModal = true)}>
+	<button class="flex items-center text-xl font-semibold" on:click={() => (showModal = true)}>
 		{months[selectedMonth]}
 		{selectedYear}
 		<IconChevronDown />
