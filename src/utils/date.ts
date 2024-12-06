@@ -3,6 +3,12 @@ import objectSupport from 'dayjs/plugin/objectSupport';
 import type { Month } from '../types/date';
 dayjs.extend(objectSupport);
 
+export function dayOfMonthPercentage() {
+	const date = new Date();
+	const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+	return (date.getDate() / daysInMonth) * 100;
+}
+
 export function dateToDateString(date: Date): string {
 	let month = '' + (date.getMonth() + 1);
 	let day = '' + date.getDate();

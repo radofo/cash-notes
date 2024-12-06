@@ -1,14 +1,17 @@
 <script lang="ts">
 	import type { BudgetProgress } from '../types/budget';
 	import { displayCurrency, formatCurrency } from '../utils/currency';
+	import { dayOfMonthPercentage } from '../utils/date';
 
 	export let name: string;
 	export let info: BudgetProgress;
-	export let colorClass: string = 'progress-success';
 	export let fontBold: boolean = false;
+
+	let monthProgress = dayOfMonthPercentage();
+	$: spendingProgress = Math.max(0, info.spent / (info.limit ?? 1)) * 100;
 </script>
 
-<li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-norma l'}">
+<li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-normal'}">
 	<div class="flex flex-row justify-between">
 		<span>{name}</span>
 		<span
@@ -16,9 +19,16 @@
 			{info.limit !== null ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
 		>
 	</div>
-	<progress
-		class="{colorClass} progress w-full bg-slate-200 {info.limit !== null ? '' : 'opacity-30'}"
-		value={(info?.limit ?? 0) > 0 ? Math.max(0, info.spent / (info.limit ?? 0)) * 100 : 100}
-		max="100"
-	/>
+	<div class="relative h-2 w-full overflow-hidden rounded bg-slate-200">
+		<div
+			class="absolute left-0 top-0 h-2 rounded bg-green-700"
+			style="width: {spendingProgress}%"
+		/>
+		<div
+			class="absolute bottom-0 top-0 rounded border {monthProgress < spendingProgress
+				? 'border-green-900'
+				: 'border-slate-400'}"
+			style="left: {monthProgress}%"
+		/>
+	</div>
 </li>

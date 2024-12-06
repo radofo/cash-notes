@@ -101,7 +101,7 @@
 
 {#if tableOpenStates}
 	<div class="carousel w-full">
-		<div id="item1" class="carousel-item box-border w-full p-1 py-2">
+		<div id="item1" class="carousel-item box-border w-full py-2">
 			<div class="w-full">
 				<ul class="flex flex-col gap-4 pb-4">
 					{#each [...progressWithBudget] as [name, info]}
@@ -182,59 +182,6 @@
 					>
 				</SumItem>
 			</div>
-			<!-- <div class="flex w-full flex-col">
-			<div class="flex flex-row justify-between border-b border-dashed pb-3 font-medium">
-				<span>Einnahmen</span>
-				<Obfuscate>
-					<span>{displayCurrency({ amount: totalIncome, forceDecimals: true })}</span>
-				</Obfuscate>
-			</div>
-			<div class="flex flex-row justify-between border-b border-t border-dashed py-3 font-medium">
-				<span>Ausgaben</span>
-				<span>{displayCurrency({ amount: totalSpent, sign: '- ', forceDecimals: true })}</span>
-			</div>
-			{#if totalFixCost > 0}
-				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-					<span>Fixkosten</span>
-					<span>{displayCurrency({ amount: totalFixCost, sign: '-', forceDecimals: true })}</span>
-				</div>
-			{/if}
-			{#if budgetProgress.spent > 0}
-				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-					<span>Ausgaben in Budgets</span>
-					<span
-						>{displayCurrency({
-							amount: budgetProgress.spent,
-							sign: '-',
-							forceDecimals: true
-						})}</span
-					>
-				</div>
-			{/if}
-			{#if noBudgetSpendings > 0}
-				<div class="flex flex-row justify-between border-b border-dashed py-3 pl-4 font-normal">
-					<span>Ausgaben ohne Budget</span>
-					<span
-						>{displayCurrency({
-							amount: noBudgetSpendings,
-							sign: '-',
-							forceDecimals: true
-						})}</span
-					>
-				</div>
-			{/if}
-			<div class="flex flex-row justify-between border-b border-dashed py-3 font-medium">
-				<span>Total</span>
-				<Obfuscate>
-					<span
-						>{displayCurrency({
-							amount: total,
-							forceDecimals: true
-						})}</span
-					>
-				</Obfuscate>
-			</div>
-		</div> -->
 		</div>
 	</div>
 {/if}
