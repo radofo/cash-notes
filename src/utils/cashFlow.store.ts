@@ -6,7 +6,7 @@ const cashFlowStore = (() => {
 
 	function insertCashFlow(newCashFlow: CashFlow) {
 		update((cashFlows) => {
-			return [...cashFlows, newCashFlow];
+			return [newCashFlow, ...cashFlows];
 		});
 	}
 
