@@ -157,7 +157,7 @@
 			bind:formTimeframes
 			bind:deletedTimeframes
 		/>
-		<div class="flex flex-col gap-2">
+		<div class="mt-10 flex flex-col gap-2">
 			<Button variant="default" type="submit">
 				{#if modalUpdateLoading}
 					<IconLoader class="animate-spin text-center" />

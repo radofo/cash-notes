@@ -17,6 +17,12 @@
 	export let formTimeframes: FormTimeframe[];
 	export let deletedTimeframes: FormTimeframe[] | undefined = [];
 
+	$: sortedFormTimeframes = formTimeframes.sort((a, b) => {
+		const aDate = new Date(a.startYear, a.startMonth);
+		const bDate = new Date(b.startYear, b.startMonth);
+		return aDate.getTime() - bDate.getTime();
+	});
+
 	function onCashGroupChange(newGroupName: string) {
 		formCashGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
 	}
@@ -69,7 +75,7 @@
 			<span class="flex-1 text-sm text-slate-500"> Gültig ab </span>
 		</div>
 		<div class="flex flex-col gap-4">
-			{#each formTimeframes as timeframe}
+			{#each sortedFormTimeframes as timeframe}
 				<div class="flex items-center gap-2 border-b py-3 last-of-type:border-0">
 					<div class="w-[40%]">
 						<Input inputType="number" bind:inputValue={timeframe.amount} />
