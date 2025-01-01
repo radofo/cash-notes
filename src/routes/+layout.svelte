@@ -72,8 +72,8 @@
 					<Plus size={38} />
 				</Button>
 				<a
-					href="/"
-					class="{tabElementClass} {$page.url.pathname === '/analysis' ? 'text-sky-700' : ''}"
+					href="/insights"
+					class="{tabElementClass} {$page.url.pathname === '/insights' ? 'text-sky-700' : ''}"
 				>
 					<PieChart size={iconSize} />
 				</a>

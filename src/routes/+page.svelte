@@ -24,8 +24,8 @@
 
 	$: cashFlows = $cashFlowStore;
 	$: cashGroups = $cashGroupStore;
-	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
 	$: recCashFlows = $recCashFlowStore;
+	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
 	$: cashFlowFilters = activeCashGroups.map((cg) => cg.name);
 
 	// Month Selector
