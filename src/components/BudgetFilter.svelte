@@ -6,7 +6,7 @@
 	let activeFilterStyles = 'text-white bg-slate-500';
 </script>
 
-<div class="flex flex-row items-center justify-start gap-2 overflow-x-auto py-4 text-sm">
+<div class="flex flex-row items-center justify-start gap-2 overflow-x-auto text-sm">
 	<button
 		on:click={() => onFilterChange(null)}
 		class="whitespace-nowrap rounded-xl bg-slate-50 px-2 py-1.5 {!selectedFilter

@@ -1,11 +1,34 @@
 <script lang="ts">
 	import { Chart, registerables } from 'chart.js';
+	import { CalendarDays } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import BudgetFilter from '../../components/BudgetFilter.svelte';
+	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
+	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
 	import { getCashGroups } from '../../network/cash_group';
+	import type {
+		CategorySpendings,
+		CategorySpendingsStore,
+		DBSpendings,
+		MonthLabels,
+		TimeframeFilter
+	} from '../../types/analysis';
+	import {
+		createTimeframeLabel,
+		getAllCashGroups,
+		getCategoriesMeta,
+		getFullSpendingYears,
+		getSpendingsMeta,
+		getTimeframeCategorySpendings,
+		getTimeframeFilters,
+		getTotalSpendings,
+		initCategorySpendingsStore
+	} from '../../utils/analysis';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
 	import type { PageData } from './$types';
 	import CostDevelopment from './CostDevelopment.svelte';
+	import CostDistribution from './CostDistribution.svelte';
+	import InsightFacts from './InsightFacts.svelte';
 
 	Chart.register(...registerables);
 
@@ -14,55 +37,98 @@
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 
-	let selectedFilter: string | null = null;
 	let pageLoading: boolean = true;
 
+	// All Data
+	let categorySpendingsStore: CategorySpendingsStore = new Map();
 	$: cashGroups = $cashGroupStore;
-	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
-	$: cashFlowFilters = activeCashGroups.map((cg) => cg.name);
+	// Filters
+	let timeFrames: TimeframeFilter[] = [];
+	let selectedTimeframe: TimeframeFilter | undefined;
+	let allCategories: string[] = [];
+	let selectedCategory: string | null = null;
+	// Timeframe Data
+	let xAxis: MonthLabels = [];
+	let categorySpendings: CategorySpendings = new Map();
+	$: categorySpendingsMeta = getCategoriesMeta(categorySpendings);
+	$: allSpendings = getTotalSpendings(categorySpendings);
+	// Selected Cash Group Data
+	$: selectedSpendings = selectedCategory
+		? categorySpendings.get(selectedCategory) ?? []
+		: allSpendings;
+	$: selectedSpendingsMeta = selectedCategory
+		? categorySpendingsMeta.get(selectedCategory)
+		: getSpendingsMeta(allSpendings);
 
-	$: dataPointCategories = new Map<string | null, number[]>([
-		[null, generateRandomNumbersBetween(0, 600, 12)],
-		...cashFlowFilters.map((filter) => [filter, generateRandomNumbersBetween(100, 600, 12)])
-	]);
+	$: selectedBudget = selectedCategory
+		? cashGroups.find((cashGroup) => cashGroup.name === selectedCategory)?.budget
+		: cashGroups.filter((cg) => cg.is_active).reduce((acc, cg) => acc + (cg?.budget ?? 0), 0);
+
+	$: {
+		if (selectedTimeframe) {
+			const { spending, monthLabels } = getTimeframeCategorySpendings(
+				categorySpendingsStore,
+				selectedTimeframe,
+				allCategories
+			);
+			categorySpendings = spending;
+			xAxis = monthLabels;
+		} else {
+			categorySpendings = new Map();
+			xAxis = [];
+		}
+	}
 
 	onMount(async () => {
 		pageLoading = true;
+		const { data: rpcData, error } = await supabase.rpc('sum_cash_flows');
+		allCategories = getAllCashGroups(rpcData);
+		categorySpendingsStore = initCategorySpendingsStore(rpcData as DBSpendings);
+		const fullSpendingYears = getFullSpendingYears(categorySpendingsStore);
+		timeFrames = getTimeframeFilters(fullSpendingYears);
+		selectedTimeframe = timeFrames.find((timeframe) => timeframe.id === 'last_6') ?? timeFrames[0];
 		cashGroupStore.set(await getCashGroups(supabase));
 		pageLoading = false;
 	});
-
-	function generateRandomNumbersBetween(min: number, max: number, count: number) {
-		const numbers = [];
-		for (let i = 0; i < count; i++) {
-			numbers.push(Math.floor(Math.random() * (max - min + 1)) + min);
-		}
-		return numbers;
-	}
 </script>
 
-<div class="px-1">
-	<h1 class="text-center text-2xl font-bold">Kostenentwicklung</h1>
+<div class="px-2">
+	<PageHeaderCore>
+		<PageHeaderHeading slot="text">Analyse</PageHeaderHeading>
+		<div slot="actions" class="dropdown dropdown-left">
+			<div tabindex="0" role="button" class="flex flex-row items-center gap-2">
+				<CalendarDays class="" size={18} />
+				<span class="text-md mt-1 font-medium">{createTimeframeLabel(selectedTimeframe)}</span>
+			</div>
+			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+			<ul tabindex="0" class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
+				{#each timeFrames as timeframe}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+					<li on:click={() => (selectedTimeframe = timeframe)}>
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a>{createTimeframeLabel(timeframe)}</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</PageHeaderCore>
 	<BudgetFilter
-		{selectedFilter}
-		{cashFlowFilters}
-		onFilterChange={(filter) => (selectedFilter = filter)}
+		selectedFilter={selectedCategory}
+		cashFlowFilters={allCategories}
+		onFilterChange={(filter) => (selectedCategory = filter)}
 	/>
-	<CostDevelopment
-		labels={[
-			'Jan 24',
-			'Feb 24',
-			'Mär 24',
-			'Apr 24',
-			'Mai 24',
-			'Jun 24',
-			'Jul 24',
-			'Aug 24',
-			'Sep 24',
-			'Okt 24',
-			'Nov 24',
-			'Dez 24'
-		]}
-		dataPoints={dataPointCategories.get(selectedFilter) ?? []}
-	/>
+	<div class="mt-8 flex flex-col gap-12">
+		{#if selectedSpendingsMeta}
+			<InsightFacts
+				totalSpendings={selectedSpendingsMeta.total}
+				averageSpendings={selectedSpendingsMeta.average}
+				budget={selectedBudget ?? 0}
+			/>
+		{/if}
+		<CostDevelopment labels={xAxis} dataPoints={selectedSpendings} />
+		{#if selectedCategory === null}
+			<CostDistribution spendingsMeta={categorySpendingsMeta} />
+		{/if}
+	</div>
 </div>

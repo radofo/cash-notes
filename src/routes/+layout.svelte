@@ -50,7 +50,7 @@
 <div class="flex items-center justify-center overflow-hidden font-poppins">
 	<div class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-hidden">
 		{#if session}
-			<div class="flex-1 overflow-y-scroll pt-8">
+			<div class="flex-1 overflow-x-hidden overflow-y-scroll pt-8">
 				<slot />
 				{#if cashFlowModalOpen}
 					<CashFlowModalAdd bind:open={cashFlowModalOpen} />

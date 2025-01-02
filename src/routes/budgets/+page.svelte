@@ -34,7 +34,7 @@
 			<IconLoader class="animate-spin text-center" />
 		</div>
 	{:else}
-		<div class="flex h-full flex-col gap-8 px-3">
+		<div class="flex h-full flex-col px-3">
 			<PageHeaderCore>
 				<PageHeaderHeading slot="text">Monatlich</PageHeaderHeading>
 				<a slot="actions" href="/budgets/edit">
