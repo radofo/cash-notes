@@ -92,7 +92,7 @@
 	});
 </script>
 
-<div class="px-2">
+<div class="px-3">
 	<PageHeaderCore>
 		<PageHeaderHeading slot="text">Analyse</PageHeaderHeading>
 		<div slot="actions" class="dropdown dropdown-left">
