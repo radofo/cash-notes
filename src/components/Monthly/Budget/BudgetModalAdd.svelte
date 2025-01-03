@@ -63,7 +63,7 @@
 			</InputWithLabel>
 		</div>
 		<div class="flex flex-col gap-2 p-0">
-			<Button type="submit">
+			<Button class="py-6" type="submit">
 				{#if modalCreateLoading}
 					<div class="grid place-items-center">
 						<IconLoader class="animate-spin text-center text-lg" />

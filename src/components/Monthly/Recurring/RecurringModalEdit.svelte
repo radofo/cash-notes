@@ -158,7 +158,7 @@
 			bind:deletedTimeframes
 		/>
 		<div class="mt-10 flex flex-col gap-2">
-			<Button variant="default" type="submit">
+			<Button class="py-6" variant="default" type="submit">
 				{#if modalUpdateLoading}
 					<IconLoader class="animate-spin text-center" />
 				{/if}

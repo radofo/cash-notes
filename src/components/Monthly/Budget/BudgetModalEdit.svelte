@@ -123,7 +123,7 @@
 			</InputWithLabel>
 		</div>
 		<div class="flex flex-col gap-2 p-0">
-			<Button type="submit">
+			<Button class="py-6" type="submit">
 				{#if modalUpdateLoading}
 					<div class="grid place-items-center">
 						<IconLoader class="animate-spin text-center text-lg" />
@@ -134,7 +134,7 @@
 			</Button>
 			{#if budgetToEdit?.is_active}
 				<Button
-					class="flex flex-row gap-2"
+					class="flex flex-row gap-2 py-6"
 					variant="destructive"
 					on:click={() => {
 						if (hasBudgetReferences) {
