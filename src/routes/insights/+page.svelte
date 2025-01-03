@@ -16,6 +16,7 @@
 	import {
 		createTimeframeLabel,
 		getAllCashGroups,
+		getAllSpendingMonths,
 		getCategoriesMeta,
 		getFullSpendingYears,
 		getSpendingsMeta,
@@ -85,8 +86,9 @@
 		allCategories = getAllCashGroups(rpcData);
 		categorySpendingsStore = initCategorySpendingsStore(rpcData as DBSpendings);
 		const fullSpendingYears = getFullSpendingYears(categorySpendingsStore);
-		timeFrames = getTimeframeFilters(fullSpendingYears);
-		selectedTimeframe = timeFrames.find((timeframe) => timeframe.id === 'last_6') ?? timeFrames[0];
+		const fullSpendingMonths = getAllSpendingMonths(categorySpendingsStore);
+		timeFrames = getTimeframeFilters(fullSpendingYears, fullSpendingMonths);
+		selectedTimeframe = timeFrames.find((timeframe) => timeframe.id === 'last_12') ?? timeFrames[0];
 		cashGroupStore.set(await getCashGroups(supabase));
 		pageLoading = false;
 	});
@@ -121,12 +123,16 @@
 	<div class="mt-8 flex flex-col gap-12">
 		{#if selectedSpendingsMeta}
 			<InsightFacts
+				isSingleMonth={selectedTimeframe?.id.startsWith('month_') ?? false}
 				totalSpendings={selectedSpendingsMeta.total}
 				averageSpendings={selectedSpendingsMeta.average}
+				averageSpendingsTotal={selectedSpendingsMeta.averageTotal}
 				budget={selectedBudget ?? 0}
 			/>
 		{/if}
-		<CostDevelopment labels={xAxis} dataPoints={selectedSpendings} />
+		{#if !selectedTimeframe?.id.startsWith('month_')}
+			<CostDevelopment labels={xAxis} dataPoints={selectedSpendings} />
+		{/if}
 		{#if selectedCategory === null}
 			<CostDistribution spendingsMeta={categorySpendingsMeta} />
 		{/if}

@@ -17,9 +17,11 @@ export function getTimeframeCategorySpendings(
 	let relevantMonths: string[] = [];
 	if (timeframe.id.startsWith('year')) {
 		relevantMonths = getMonthLabelsForYear(timeframe.value.toString());
-	} else {
+	} else if (timeframe.id.startsWith('last')) {
 		const date = new Date();
-		relevantMonths = getMonthLabelsLastXMonths(timeframe.value, date);
+		relevantMonths = getMonthLabelsLastXMonths(parseInt(timeframe.value), date);
+	} else if (timeframe.id.startsWith('month')) {
+		relevantMonths = [timeframe.value];
 	}
 	for (const cashGroup of allCashGroups) {
 		for (const month of relevantMonths) {
@@ -64,29 +66,46 @@ export function createTimeframeLabel(filter?: TimeframeFilter): string {
 	if (!filter) return '-';
 	if (filter.id.startsWith('year')) {
 		return `Jahr ${filter.value}`;
+	} else if (filter.id.startsWith('month')) {
+		return filter.value;
 	}
 	return `Letzte ${filter.value} Monate`;
 }
 
-export function getTimeframeFilters(fullSpendingYears: number[]): TimeframeFilter[] {
-	const filters: TimeframeFilter[] = [];
+export function getTimeframeFilters(
+	fullSpendingYears: string[],
+	spendingMonths: string[]
+): TimeframeFilter[] {
+	const yearFilters: TimeframeFilter[] = [];
 	for (const year of fullSpendingYears) {
-		filters.push({ id: `year_${year}`, value: year });
+		yearFilters.push({ id: `year_${year}`, value: `${year}` });
 	}
+	const monthFilters: TimeframeFilter[] = spendingMonths.map((month) => ({
+		id: `month_${month}`,
+		value: month
+	}));
 	return [
-		...filters,
-		{ id: `last_3`, value: 3 },
-		{ id: 'last_6', value: 6 },
-		{ id: 'last_12', value: 12 }
+		...yearFilters,
+		...monthFilters,
+		{ id: 'last_6', value: '6' },
+		{ id: 'last_12', value: '12' }
 	];
 }
 
-export function getFullSpendingYears(spendingsStore: CategorySpendingsStore): number[] {
-	const fullYears = new Set<number>();
+export function getAllSpendingMonths(spendingsStore: CategorySpendingsStore): string[] {
+	const allMonths = new Set<string>();
 	for (const monthYear of spendingsStore.keys()) {
-		fullYears.add(parseInt(monthYear.slice(0, 4)));
+		allMonths.add(monthYear);
 	}
-	return Array.from(fullYears).sort((a, b) => b - a);
+	return Array.from(allMonths).sort((a, b) => b.localeCompare(a));
+}
+
+export function getFullSpendingYears(spendingsStore: CategorySpendingsStore): string[] {
+	const fullYears = new Set<string>();
+	for (const monthYear of spendingsStore.keys()) {
+		fullYears.add(monthYear.slice(0, 4));
+	}
+	return Array.from(fullYears).sort((a, b) => b.localeCompare(a));
 }
 
 export function initCategorySpendingsStore(dbSpendings: DBSpendings): CategorySpendingsStore {
@@ -123,9 +142,11 @@ export function sumUpTotalSpendings(categorySpendings: CategorySpendings): numbe
 
 export function getSpendingsMeta(totalSpendings: Spendings): SpendingsMeta {
 	if (totalSpendings.length === 0) {
-		return { total: 0, average: 0 };
+		return { total: 0, average: 0, averageTotal: 0 };
 	}
 	const total = totalSpendings.reduce((acc, value) => acc + value, 0);
 	const average = total / totalSpendings.filter((sp) => sp !== 0).length;
-	return { total, average };
+	const averageTotal = total / totalSpendings.length;
+
+	return { total, average, averageTotal };
 }

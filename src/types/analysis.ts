@@ -2,6 +2,7 @@ export type Spendings = number[];
 export type SpendingsMeta = {
 	total: number;
 	average: number;
+	averageTotal: number;
 };
 export type CategorySpendings = Map<string, Spendings>;
 export type CategorySpendingsMeta = Map<string, SpendingsMeta>;
@@ -17,5 +18,5 @@ export type CategorySpendingsStore = Map<string, Map<string, number>>;
 
 export type TimeframeFilter = {
 	id: string;
-	value: number;
+	value: string;
 };

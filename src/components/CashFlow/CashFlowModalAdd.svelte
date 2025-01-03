@@ -88,7 +88,7 @@
 			</InputWithLabel>
 		</div>
 		<div class="flex flex-col gap-2">
-			<Button variant="default" type="submit">
+			<Button class="border border-pink-600 py-6" variant="default" type="submit">
 				{#if modalCreateLoading}
 					<div class="grid place-items-center">
 						<IconLoader class="animate-spin text-center" />
