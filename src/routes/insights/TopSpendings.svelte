@@ -14,7 +14,7 @@
 	let showEditModal: boolean = false;
 
 	$: supabase = $page.data.supabase;
-	$: sortedMonths = months.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+	$: sortedMonths = [...months].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 	$: startMonth = sortedMonths[sortedMonths.length - 1];
 	$: endMonth = sortedMonths[0];
 	$: {
