@@ -15,7 +15,7 @@
 	export let cashFlowToEdit: CashFlow | undefined;
 
 	$: cashGroups = $cashGroupStore;
-	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
+	// $: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
 	$: supabase = $page.data.supabase;
 	$: user = $page.data.session.user;
 
@@ -51,7 +51,7 @@
 		cfId = '';
 		cfName = '';
 		cfAmount = '';
-		cfGroup = activeCashGroups?.[0];
+		cfGroup = cashGroups?.[0];
 		cfDate = dateToDateString(new Date());
 	}
 
@@ -91,7 +91,7 @@
 	}
 
 	function oncfGroupChange(newGroupName: string) {
-		cfGroup = activeCashGroups.find((cashGroup) => cashGroup.name === newGroupName);
+		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
 	}
 </script>
 
@@ -110,7 +110,7 @@
 					on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
 					class="select w-full border border-slate-200 p-2 text-base"
 				>
-					{#each activeCashGroups as cashGroup}
+					{#each cashGroups as cashGroup}
 						<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
 					{/each}
 				</select>
