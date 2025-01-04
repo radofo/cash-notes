@@ -13,6 +13,7 @@
 		MonthLabels,
 		TimeframeFilter
 	} from '../../types/analysis';
+	import type { CashGroup } from '../../types/supabase';
 	import {
 		createTimeframeLabel,
 		getAllCashGroups,
@@ -30,6 +31,7 @@
 	import CostDevelopment from './CostDevelopment.svelte';
 	import CostDistribution from './CostDistribution.svelte';
 	import InsightFacts from './InsightFacts.svelte';
+	import TopSpendings from './TopSpendings.svelte';
 
 	Chart.register(...registerables);
 
@@ -61,9 +63,14 @@
 		? categorySpendingsMeta.get(selectedCategory)
 		: getSpendingsMeta(allSpendings);
 
-	$: selectedBudget = selectedCategory
-		? cashGroups.find((cashGroup) => cashGroup.name === selectedCategory)?.budget
-		: cashGroups.filter((cg) => cg.is_active).reduce((acc, cg) => acc + (cg?.budget ?? 0), 0);
+	$: selectedCashGroups = selectedCategory
+		? [cashGroups.find((cg) => cg.name === selectedCategory)].filter((cg): cg is CashGroup =>
+				Boolean(cg)
+		  )
+		: cashGroups;
+	$: selectedBudget = selectedCashGroups
+		.filter((cg) => cg.is_active)
+		.reduce((acc, cg) => acc + (cg?.budget ?? 0), 0);
 
 	$: {
 		if (selectedTimeframe) {
@@ -94,13 +101,13 @@
 	});
 </script>
 
-<div class="px-3">
+<div class="px-3 pb-10">
 	<PageHeaderCore>
 		<PageHeaderHeading slot="text">Analyse</PageHeaderHeading>
 		<div slot="actions" class="dropdown dropdown-left">
 			<div tabindex="0" role="button" class="flex flex-row items-center gap-2">
-				<CalendarDays class="" size={18} />
-				<span class="text-md mt-1 font-medium">{createTimeframeLabel(selectedTimeframe)}</span>
+				<CalendarDays class="" size={16} />
+				<span class="mt-1 text-sm font-medium">{createTimeframeLabel(selectedTimeframe)}</span>
 			</div>
 			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 			<ul tabindex="0" class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
@@ -136,5 +143,6 @@
 		{#if selectedCategory === null}
 			<CostDistribution spendingsMeta={categorySpendingsMeta} />
 		{/if}
+		<TopSpendings cashGroups={selectedCashGroups.map((cg) => cg.id)} months={xAxis} />
 	</div>
 </div>

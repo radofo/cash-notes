@@ -1,8 +1,8 @@
-import type { CashFlow, CashFlowInsert, CashFlowUpdate } from '../types/supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { dateToDateString } from '../utils/date';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import type { CashFlow, CashFlowInsert, CashFlowUpdate } from '../types/supabase';
+import { dateToDateString } from '../utils/date';
 dayjs.extend(objectSupport);
 
 export async function insertCashFlow(
@@ -29,6 +29,31 @@ export async function updateCashFlow(
 export async function deleteCashFlow(id: string, supabase: SupabaseClient): Promise<boolean> {
 	const res = await supabase.from('cash_flow').delete().eq('id', id);
 	return res.status === 204;
+}
+
+export async function getTopCashFlows(props: {
+	supabase: SupabaseClient;
+	limit: number;
+	startMonth: string;
+	endMonth: string;
+	cashGroups: string[];
+}): Promise<CashFlow[]> {
+	const { supabase, limit, startMonth, endMonth, cashGroups } = props;
+	const startDate = `${startMonth}-01`;
+	const endDate = `${endMonth}-01`;
+	const nextMonthDate = dayjs(endDate).add(1, 'month').format('YYYY-MM-DD');
+
+	const { data } = await supabase
+		.from('cash_flow')
+		.select('*, cash_group(*)')
+		.in('cash_group_id', cashGroups)
+		.gte('date', startDate)
+		.lt('date', nextMonthDate)
+		.order('amount', { ascending: false, nullsFirst: false })
+		.order('created_at', { ascending: false, nullsFirst: false })
+		.limit(limit);
+
+	return data ?? [];
 }
 
 export async function getCashFlows(

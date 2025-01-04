@@ -4,14 +4,19 @@
 
 	export let cashFlow: CashFlow;
 	export let editCashFlow: (cashFlow: CashFlow) => void;
+	export let showMonth: boolean = false;
 
 	let cfDate: string = '';
+	let cfMonth: string = '';
 
 	$: {
 		if (cashFlow.date) {
 			let day = new Date(cashFlow.date).getDate().toString();
 			if (day.length < 2) day = '0' + day;
+			let month = (new Date(cashFlow.date).getMonth() + 1).toString();
+			if (month.length < 2) month = '0' + month;
 			cfDate = day;
+			cfMonth = month;
 		}
 	}
 </script>
@@ -23,7 +28,14 @@
 	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
 	<div class="flex items-start gap-2">
-		<span class="w-8 text-lg font-medium">{cfDate}</span>
+		<div class="flex flex-col">
+			{#if showMonth}
+				<span class="text-md w-8 font-medium">{cfDate}</span>
+				<span class="text-md w-8 font-medium text-slate-400">{cfMonth}</span>
+			{:else}
+				<span class="w-8 text-lg font-medium">{cfDate}</span>
+			{/if}
+		</div>
 		<div class="flex flex-col">
 			<span class="text-md">
 				{cashFlow.name}

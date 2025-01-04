@@ -86,9 +86,9 @@ export function getTimeframeFilters(
 	}));
 	return [
 		...yearFilters,
-		...monthFilters,
 		{ id: 'last_6', value: '6' },
-		{ id: 'last_12', value: '12' }
+		{ id: 'last_12', value: '12' },
+		...monthFilters
 	];
 }
 
