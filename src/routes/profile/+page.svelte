@@ -3,8 +3,6 @@
 	import DefaultPageContent from '../../components/DefaultPageContent.svelte';
 	import H1 from '../../components/H1.svelte';
 	import Input from '../../components/Input.svelte';
-	import InputWithLabel from '../../components/InputWithLabel.svelte';
-	import { obfuscate } from '../../stores/preferences';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -14,6 +12,7 @@
 
 	let newPassword: string = '';
 	let newPasswordRequested: boolean = false;
+	let toastState: 'success' | 'error' | 'idle' = 'idle';
 
 	const handleSignOut = async () => {
 		await supabase.auth.signOut();
@@ -22,7 +21,18 @@
 	async function updatePassword() {
 		if (!newPassword) return;
 		if (newPasswordRequested) {
-			await supabase.auth.updateUser({ password: newPassword });
+			const res = await supabase.auth.updateUser({ password: newPassword });
+			if (!res.error) {
+				toastState = 'success';
+				setTimeout(() => {
+					toastState = 'idle';
+				}, 3000);
+			} else {
+				toastState = 'error';
+				setTimeout(() => {
+					toastState = 'idle';
+				}, 3000);
+			}
 			newPassword = '';
 			newPasswordRequested = false;
 		} else {
@@ -35,19 +45,16 @@
 	<DefaultPageContent>
 		<div class="flex w-full flex-col items-center gap-6 px-4">
 			<H1>Profil</H1>
-			<div class="flex flex-col gap-6">
+			<div class="flex w-full flex-col gap-10">
 				<Button variant="error" on:btnclick={handleSignOut}>Ausloggen</Button>
-				<div class="flex flex-row items-center gap-3">
-					<span>Sensible Daten verdecken</span>
-					<input type="checkbox" class="toggle toggle-success" bind:checked={$obfuscate} />
-				</div>
 				<form class="flex max-w-full flex-1 flex-row items-end gap-2" on:submit={updatePassword}>
-					<InputWithLabel label="Neues Passwort">
+					<div class="flex flex-1 flex-col gap-1">
+						<span class="text-sm text-slate-500">Neues Passwort</span>
 						<Input inputType="password" bind:inputValue={newPassword} />
-					</InputWithLabel>
+					</div>
 					<Button type="submit">
 						{#if newPasswordRequested}
-							<span>Bestätigen</span>
+							<span>Neues PW Bestätigen</span>
 						{:else}
 							<span>Ändern</span>
 						{/if}
@@ -55,5 +62,19 @@
 				</form>
 			</div>
 		</div>
+		{#if toastState === 'error'}
+			<div class="toast toast-center toast-top">
+				<div class="alert alert-error">
+					<span class="text-white">Passwort konnte nicht geändert werden</span>
+				</div>
+			</div>
+		{/if}
+		{#if toastState === 'success'}
+			<div class="toast toast-center toast-top">
+				<div class="alert alert-success">
+					<span class="text-white">Passwort erfolgreich geändert</span>
+				</div>
+			</div>
+		{/if}
 	</DefaultPageContent>
 {/if}
