@@ -3,13 +3,16 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { ArrowRightLeft, House, PieChart, Plus, Settings } from 'lucide-svelte';
+	import { ArrowRightLeft, HandCoins, House, PieChart, Plus, Settings } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
 	import type { PageData } from './$types';
+	import { getFriendships } from '../network/friendship';
+	import { friendsStore } from '../stores/friends';
+	import { getProfilesFromFriendships } from '../utils/friends';
 
 	export let data: PageData;
 
@@ -31,9 +34,21 @@
 				invalidate('supabase:auth');
 			}
 		});
+		setupFriendsStore();
 
 		return () => subscription.unsubscribe();
 	});
+
+	async function setupFriendsStore() {
+		const userId = session?.user.id;
+		if (!userId) {
+			friendsStore.set([]);
+			return;
+		}
+		const friendships = await getFriendships(supabase);
+		const profiles = getProfilesFromFriendships(friendships, userId);
+		friendsStore.set(profiles);
+	}
 
 	const handleSignIn = async () => {
 		loading = true;
@@ -61,6 +76,15 @@
 					<House size={iconSize} />
 				</a>
 				<a
+					href="/debt"
+					class="{tabElementClass} {$page.url.pathname === '/debt' ? 'text-sky-700' : ''}"
+				>
+					<HandCoins size={iconSize} />
+				</a>
+				<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
+					<Plus size={38} />
+				</Button>
+				<a
 					class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
 						? 'text-sky-700'
 						: ''}"
@@ -68,21 +92,12 @@
 				>
 					<ArrowRightLeft size={iconSize} />
 				</a>
-				<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
-					<Plus size={38} />
-				</Button>
 				<a
 					href="/insights"
 					class="{tabElementClass} {$page.url.pathname === '/insights' ? 'text-sky-700' : ''}"
 				>
 					<PieChart size={iconSize} />
 				</a>
-				<a
-					href="/profile"
-					class="{tabElementClass} {$page.url.pathname === '/profile' ? 'text-sky-700' : ''}"
-				>
-					<Settings size={iconSize} /></a
-				>
 			</div>
 		{:else}
 			<div class="grid h-screen place-items-center">

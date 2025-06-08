@@ -21,3 +21,7 @@ export function displayCurrency({
 		? `${sign ? `${sign} ` : ''}${formatCurrency(amount, forceDecimals)} €`
 		: '-';
 }
+
+export function toFloat(input: string): number {
+	return Number.parseFloat(!input ? '0' : input);
+}

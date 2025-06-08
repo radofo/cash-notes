@@ -28,6 +28,8 @@ export type CashFlow = {
 	amount: number;
 	cash_group?: CashGroup;
 	owner: string;
+	debt_id?: string | null;
+	created_from_debt_id?: string | null;
 };
 
 export type CashFlowInsert = {
@@ -36,6 +38,8 @@ export type CashFlowInsert = {
 	amount: number;
 	cash_group_id: string;
 	owner: string;
+	debt_id?: string;
+	created_from_debt_id?: string;
 };
 
 export type CashFlowUpdate = {
@@ -44,6 +48,8 @@ export type CashFlowUpdate = {
 	date?: string;
 	amount?: number;
 	cash_group_id?: string;
+	debt_id?: string | null;
+	created_from_debt_id?: string | null;
 };
 
 /** Recurring Cash Flow */

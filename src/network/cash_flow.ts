@@ -17,10 +17,10 @@ export async function updateCashFlow(
 	dto: CashFlowUpdate,
 	supabase: SupabaseClient
 ): Promise<CashFlow> {
-	const { id, name, date, amount, cash_group_id } = dto;
+	const { id, name, date, amount, cash_group_id, debt_id, created_from_debt_id } = dto;
 	const { data } = await supabase
 		.from('cash_flow')
-		.update({ name, date, amount, cash_group_id })
+		.update({ name, date, amount, cash_group_id, debt_id, created_from_debt_id })
 		.eq('id', id)
 		.select('*, cash_group (*)');
 	return data?.[0];

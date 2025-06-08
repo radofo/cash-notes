@@ -6,6 +6,7 @@
 	export let textAlign: 'text-right' | 'text-left' = 'text-left';
 	export let hint: string = '';
 	export let autofocus: boolean = false;
+	export let disabled: boolean = false;
 
 	let inputRef: HTMLInputElement;
 
@@ -18,6 +19,7 @@
 
 {#if inputType === 'text'}
 	<input
+		{disabled}
 		class="w-full rounded-lg border p-2 pl-3 {textAlign}"
 		type="text"
 		placeholder={hint}
@@ -26,6 +28,7 @@
 	/>
 {:else if inputType === 'number'}
 	<input
+		{disabled}
 		bind:value={inputValue}
 		step=".01"
 		min="0"
@@ -34,6 +37,7 @@
 	/>
 {:else if inputType === 'date'}
 	<input
+		{disabled}
 		type="date"
 		class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
 		placeholder={hint}
@@ -41,6 +45,7 @@
 	/>
 {:else if inputType === 'password'}
 	<input
+		{disabled}
 		type="password"
 		class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
 		bind:value={inputValue}

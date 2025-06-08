@@ -3,6 +3,18 @@ import objectSupport from 'dayjs/plugin/objectSupport';
 import type { Month } from '../types/date';
 dayjs.extend(objectSupport);
 
+export function dateToDayAndMonthWithPadding(date: string) {
+	let day = new Date(date).getDate().toString();
+	if (day.length < 2) day = '0' + day;
+	let month = (new Date(date).getMonth() + 1).toString();
+	if (month.length < 2) month = '0' + month;
+
+	return {
+		day,
+		month
+	};
+}
+
 export function dayOfMonthPercentage() {
 	const date = new Date();
 	const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
