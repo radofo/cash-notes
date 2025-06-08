@@ -127,39 +127,41 @@
 				<Input inputType="date" bind:inputValue={cfDate} />
 			</InputWithLabel>
 			<!-- DEBT	-->
-			<div class="mt-5 flex flex-col gap-3 border-t border-dashed pt-5">
-				<InputWithLabel label="Ausgabe Für">
-					<select
-						on:change={(e) => oncfFriendChange(e?.currentTarget?.value)}
-						class="select w-full border border-slate-200 p-2 text-base"
-					>
-						{#each [noFriend, ...friends] as friend}
-							<option value={friend.id} selected={friend.id === cfFriend?.id}
-								>{friend.full_name}</option
-							>
-						{/each}
-					</select>
-				</InputWithLabel>
-				{#if cfFriend && cfFriend?.id !== noFriend.id}
-					<InputWithLabel label={friendAmountLabel}>
-						<Input inputType="number" bind:inputValue={cfFriendAmount} />
+			{#if friends.length > 0}
+				<div class="mt-5 flex flex-col gap-3 border-t border-dashed pt-5">
+					<InputWithLabel label="Ausgabe Für">
+						<select
+							on:change={(e) => oncfFriendChange(e?.currentTarget?.value)}
+							class="select w-full border border-slate-200 p-2 text-base"
+						>
+							{#each [noFriend, ...friends] as friend}
+								<option value={friend.id} selected={friend.id === cfFriend?.id}
+									>{friend.full_name}</option
+								>
+							{/each}
+						</select>
 					</InputWithLabel>
-					{#if totalAmountNumber >= friendAmountNumber}
-						<div class="inline-grid w-fit grid-cols-2 gap-x-3 gap-y-1 text-xs text-gray-600">
-							<span>Dein Anteil:</span>
-							<span>{displayCurrency({ amount: ownAmountNumber })}</span>
-							<span>{cfFriend.full_name}s Anteil:</span>
-							<span>{displayCurrency({ amount: friendAmountNumber })}</span>
-							<span class="font-medium">Gesamt:</span>
-							<span class="font-medium">{displayCurrency({ amount: totalAmountNumber })}</span>
-						</div>
-					{:else}
-						<div class="text-xs text-red-500">
-							Der Betrag für {cfFriend.full_name} darf nicht größer sein als der Gesamtbetrag.
-						</div>
+					{#if cfFriend && cfFriend?.id !== noFriend.id}
+						<InputWithLabel label={friendAmountLabel}>
+							<Input inputType="number" bind:inputValue={cfFriendAmount} />
+						</InputWithLabel>
+						{#if totalAmountNumber >= friendAmountNumber}
+							<div class="inline-grid w-fit grid-cols-2 gap-x-3 gap-y-1 text-xs text-gray-600">
+								<span>Dein Anteil:</span>
+								<span>{displayCurrency({ amount: ownAmountNumber })}</span>
+								<span>{cfFriend.full_name}s Anteil:</span>
+								<span>{displayCurrency({ amount: friendAmountNumber })}</span>
+								<span class="font-medium">Gesamt:</span>
+								<span class="font-medium">{displayCurrency({ amount: totalAmountNumber })}</span>
+							</div>
+						{:else}
+							<div class="text-xs text-red-500">
+								Der Betrag für {cfFriend.full_name} darf nicht größer sein als der Gesamtbetrag.
+							</div>
+						{/if}
 					{/if}
-				{/if}
-			</div>
+				</div>
+			{/if}
 		</div>
 		<div class="mt-7 flex flex-col gap-2">
 			<Button class="py-6" variant="default" type="submit">

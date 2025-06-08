@@ -40,7 +40,7 @@
 	async function submitNewDebt() {
 		modalAddLoading = true;
 		const friendAmountNumber = toFloat(debtTotalAmount);
-		if (friendAmountNumber > 0 && forUser?.id && fromUser?.id) {
+		if (friendAmountNumber > 0 && forUser?.id && fromUser?.id && forUser.id !== fromUser.id) {
 			const debt = await insertDebtSupabase(
 				{
 					amount: friendAmountNumber,
