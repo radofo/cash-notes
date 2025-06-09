@@ -16,6 +16,8 @@
 	import DebtActionButton from './DebtActionButton.svelte';
 	import SettlementModal from './SettlementModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
+	import { debtOverview } from '../../utils/debt.helpers';
+	import DebtStats from './DebtStats.svelte';
 
 	export let data: PageData;
 	let { supabase, session } = data;
@@ -106,6 +108,7 @@
 		<PageHeaderHeading slot="text">Schulden</PageHeaderHeading>
 	</PageHeaderCore>
 	<div class="flex flex-col gap-8 pb-7">
+		<DebtStats debts={approved} />
 		{#if allUnsettled.length === 0}
 			<div class="flex h-[70vh] w-full items-center justify-center">
 				<p class="text-slate-500">Keine Schulden vorhanden</p>

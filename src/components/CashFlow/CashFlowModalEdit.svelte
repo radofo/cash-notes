@@ -20,7 +20,7 @@
 	import { friendsStore, noFriend } from '../../stores/friends';
 	import { formatCurrency, toFloat } from '../../utils/currency';
 	import type { Profile } from '../../types/friendship';
-	import { getDebtAction } from './debt.helpers';
+	import { getDebtAction } from '../../utils/debt.helpers';
 	import DebtStatusLabel from './DebtStatusLabel.svelte';
 
 	export let open: boolean;
