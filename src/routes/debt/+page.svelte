@@ -12,11 +12,10 @@
 	import ApproveModal from './ApproveModal.svelte';
 	import { getCashGroups } from '../../network/cash_group';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
-	import { HandCoins, Handshake, Plus, PlusCircle, RotateCw } from 'lucide-svelte';
+	import { HandCoins, Handshake, Plus, RotateCw } from 'lucide-svelte';
 	import DebtActionButton from './DebtActionButton.svelte';
 	import SettlementModal from './SettlementModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
-	import { debtOverview } from '../../utils/debt.helpers';
 	import DebtStats from './DebtStats.svelte';
 
 	export let data: PageData;
@@ -84,6 +83,28 @@
 		toSettleDebts={approved}
 		bind:open={showSettlementModal}
 	/>
+	<PageHeaderCore>
+		<PageHeaderHeading slot="text">Schulden</PageHeaderHeading>
+	</PageHeaderCore>
+	<div class="flex flex-col gap-8 pb-7">
+		<DebtStats debts={[...approved, ...unapproved, ...toApprove]} />
+		{#if allUnsettled.length === 0}
+			<div class="flex h-[70vh] w-full items-center justify-center">
+				<p class="text-slate-500">Keine Schulden vorhanden</p>
+			</div>
+		{:else}
+			{#if toApprove.length > 0}
+				<ToApproveDebts toApproveDebts={toApprove} />
+			{/if}
+			{#if rejected.length > 0}
+				<RejectedDebts rejectedDebts={rejected} />
+			{/if}
+			{#if unapproved.length > 0}
+				<ProposalDebts openDebts={unapproved} />
+			{/if}
+			<UnsettledDebts unsettledDebts={approved} />
+		{/if}
+	</div>
 	<div
 		class="absolute bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-100 px-2 text-slate-700"
 	>
@@ -103,27 +124,5 @@
 		<DebtActionButton text="Neue Schuld" clickHandler={() => (showDebtAddModal = true)}>
 			<Plus size="30" />
 		</DebtActionButton>
-	</div>
-	<PageHeaderCore>
-		<PageHeaderHeading slot="text">Schulden</PageHeaderHeading>
-	</PageHeaderCore>
-	<div class="flex flex-col gap-8 pb-7">
-		<DebtStats debts={approved} />
-		{#if allUnsettled.length === 0}
-			<div class="flex h-[70vh] w-full items-center justify-center">
-				<p class="text-slate-500">Keine Schulden vorhanden</p>
-			</div>
-		{:else}
-			{#if toApprove.length > 0}
-				<ToApproveDebts toApproveDebts={toApprove} />
-			{/if}
-			{#if rejected.length > 0}
-				<RejectedDebts rejectedDebts={rejected} />
-			{/if}
-			{#if unapproved.length > 0}
-				<ProposalDebts openDebts={unapproved} />
-			{/if}
-			<UnsettledDebts unsettledDebts={approved} />
-		{/if}
 	</div>
 </div>

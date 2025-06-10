@@ -22,8 +22,9 @@
 				{debt.name}
 			</span>
 			<span class="text-slate-500">
+				{'von'}
 				{debt.from?.full_name ?? '?'}
-				{'->'}
+				{'/ für'}
 				{debt.for?.full_name ?? '?'}
 			</span>
 		</div>
