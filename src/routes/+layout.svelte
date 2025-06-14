@@ -63,41 +63,45 @@
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
-	<div class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-hidden">
+	<div
+		class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-x-hidden pb-[100px] pt-8"
+	>
 		{#if session}
-			<div class="flex-1 overflow-x-hidden overflow-y-scroll pt-8">
-				<slot />
-				{#if cashFlowModalOpen}
-					<CashFlowModalAdd bind:open={cashFlowModalOpen} />
-				{/if}
-			</div>
-			<div class="flex items-center justify-between border-t px-2 pb-5">
-				<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-sky-700' : ''}">
-					<House size={iconSize} />
-				</a>
-				<a
-					href="/debt"
-					class="{tabElementClass} {$page.url.pathname === '/debt' ? 'text-sky-700' : ''}"
+			{#if cashFlowModalOpen}
+				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
+			{/if}
+			<slot />
+			<div class="fixed bottom-0 left-0 right-0 flex justify-center">
+				<div
+					class="flex w-[600px] max-w-full items-center justify-between border-t bg-white px-2 pb-5"
 				>
-					<Users size={iconSize} />
-				</a>
-				<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
-					<Plus size={38} />
-				</Button>
-				<a
-					class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
-						? 'text-sky-700'
-						: ''}"
-					href="/budgets"
-				>
-					<ArrowRightLeft size={iconSize} />
-				</a>
-				<a
-					href="/insights"
-					class="{tabElementClass} {$page.url.pathname === '/insights' ? 'text-sky-700' : ''}"
-				>
-					<PieChart size={iconSize} />
-				</a>
+					<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-sky-700' : ''}">
+						<House size={iconSize} />
+					</a>
+					<a
+						href="/debt"
+						class="{tabElementClass} {$page.url.pathname === '/debt' ? 'text-sky-700' : ''}"
+					>
+						<Users size={iconSize} />
+					</a>
+					<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
+						<Plus size={38} />
+					</Button>
+					<a
+						class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
+							? 'text-sky-700'
+							: ''}"
+						href="/budgets"
+					>
+						<ArrowRightLeft size={iconSize} />
+					</a>
+					<a
+						href="/insights"
+						class="{tabElementClass} {$page.url.pathname === '/insights' ? 'text-sky-700' : ''}"
+					>
+						<PieChart size={iconSize} />
+					</a>
+				</div>
 			</div>
 		{:else}
 			<div class="grid h-screen place-items-center">
