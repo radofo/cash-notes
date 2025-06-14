@@ -12,7 +12,7 @@
 	import ApproveModal from './ApproveModal.svelte';
 	import { getCashGroups } from '../../network/cash_group';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
-	import { HandCoins, Handshake, Plus, RotateCw } from 'lucide-svelte';
+	import { HandCoins, Handshake, RotateCw, TicketPlus } from 'lucide-svelte';
 	import DebtActionButton from './DebtActionButton.svelte';
 	import SettlementModal from './SettlementModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
@@ -40,6 +40,8 @@
 	let showDebtAddModal = false;
 	let showDebtEditModal = false;
 	let isReloading = false;
+
+	let iconSize = 22;
 
 	onMount(async () => {
 		reloadList();
@@ -109,20 +111,20 @@
 		class="absolute bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-100 px-2 text-slate-700"
 	>
 		<DebtActionButton text="Reagieren" clickHandler={reloadList}>
-			<RotateCw size="24" class={isReloading ? 'animate-spin' : ''} />
+			<RotateCw size={iconSize} class={isReloading ? 'animate-spin' : ''} />
 		</DebtActionButton>
 		{#if toApprove.length > 0}
 			<DebtActionButton text="Reagieren" clickHandler={openApproveModal}>
-				<Handshake size="24" />
+				<Handshake size={iconSize} />
 			</DebtActionButton>
 		{/if}
 		{#if approved.length === allUnsettled.length && allUnsettled.length > 0}
 			<DebtActionButton text="Begleichen" clickHandler={openSettlementModal}>
-				<HandCoins size="24" />
+				<HandCoins size={iconSize} />
 			</DebtActionButton>
 		{/if}
 		<DebtActionButton text="Neue Schuld" clickHandler={() => (showDebtAddModal = true)}>
-			<Plus size="30" />
+			<TicketPlus size={iconSize} />
 		</DebtActionButton>
 	</div>
 </div>

@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { ArrowRightLeft, HandCoins, House, PieChart, Plus, Settings } from 'lucide-svelte';
+	import { ArrowRightLeft, HandCoins, House, PieChart, Plus, Settings, Users } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
@@ -79,7 +79,7 @@
 					href="/debt"
 					class="{tabElementClass} {$page.url.pathname === '/debt' ? 'text-sky-700' : ''}"
 				>
-					<HandCoins size={iconSize} />
+					<Users size={iconSize} />
 				</a>
 				<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
 					<Plus size={38} />
