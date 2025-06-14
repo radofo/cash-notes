@@ -23,5 +23,8 @@ export function displayCurrency({
 }
 
 export function toFloat(input: string): number {
-	return Number.parseFloat(!input ? '0' : input);
+	if (!input) return 0;
+	// Replace comma with dot to ensure proper parsing
+	const normalizedInput = input.replace(',', '.');
+	return Number.parseFloat(normalizedInput);
 }

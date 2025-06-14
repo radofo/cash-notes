@@ -15,6 +15,15 @@
 			inputRef?.focus();
 		}
 	});
+
+	// Handle comma input in number fields
+	function handleInput(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (inputType === 'number' && target.value.includes(',')) {
+			// Replace comma with dot for the input validation
+			inputValue = target.value.replace(',', '.');
+		}
+	}
 </script>
 
 {#if inputType === 'text'}
@@ -32,8 +41,10 @@
 		bind:value={inputValue}
 		step=".01"
 		min="0"
-		type="number"
+		type="text"
 		inputmode="decimal"
+		pattern="[0-9]*[.,]?[0-9]*"
+		on:input={handleInput}
 		class="w-full rounded-lg border p-2 {textAlign}"
 	/>
 {:else if inputType === 'date'}
