@@ -33,16 +33,19 @@
 		step=".01"
 		min="0"
 		type="number"
+		inputmode="decimal"
 		class="w-full rounded-lg border p-2 {textAlign}"
 	/>
 {:else if inputType === 'date'}
-	<input
-		{disabled}
-		type="date"
-		class="w-full shrink rounded-lg border p-2 pl-3 {textAlign}"
-		placeholder={hint}
-		bind:value={inputValue}
-	/>
+	<div class="relative h-[45px] w-full">
+		<input
+			{disabled}
+			type="date"
+			class="absolute bottom-0 left-0 right-0 top-0 rounded-lg border p-2 {textAlign}"
+			placeholder={hint}
+			bind:value={inputValue}
+		/>
+	</div>
 {:else if inputType === 'password'}
 	<input
 		{disabled}

@@ -173,6 +173,7 @@
 					Speichern
 				{/if}
 			</Button>
+			<Button class="py-6" variant="secondary" on:click={() => (open = false)}>Abbrechen</Button>
 		</div>
 	</div>
 </FormDialog>

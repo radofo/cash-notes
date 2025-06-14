@@ -300,6 +300,7 @@
 						Löschen{!debt ? '' : debtEditable ? ' (inkl. Schuld)' : ' (ohne Schuld)'}
 					{/if}
 				</Button>
+				<Button class="py-6" variant="secondary" on:click={() => (open = false)}>Abbrechen</Button>
 			</div>
 		{/if}
 	</div>
