@@ -23,6 +23,7 @@
 	let email: string;
 	let password: string;
 	let loading: boolean = false;
+	let toastState: 'error' | 'idle' = 'idle';
 
 	let cashFlowModalOpen: boolean = false;
 
@@ -52,10 +53,20 @@
 
 	const handleSignIn = async () => {
 		loading = true;
-		await supabase.auth.signInWithPassword({
-			email,
-			password
-		});
+		try {
+			const res = await supabase.auth.signInWithPassword({
+				email,
+				password
+			});
+			if (res.error) {
+				toastState = 'error';
+				setTimeout(() => {
+					toastState = 'idle';
+				}, 3000);
+			}
+		} catch (e) {
+			console.error(e);
+		}
 		loading = false;
 	};
 
@@ -105,6 +116,13 @@
 			</div>
 		{:else}
 			<div class="grid h-screen place-items-center">
+				{#if toastState === 'error'}
+					<div class="toast toast-center toast-top">
+						<div class="alert alert-error">
+							<span class="text-white">Anmeldung fehlgeschlagen: Falsches Passwort.</span>
+						</div>
+					</div>
+				{/if}
 				<form on:submit={handleSignIn} class="flex w-full flex-col gap-5 px-2 sm:w-[500px]">
 					<div class="flex flex-col gap-3">
 						<InputWithLabel label="E-Mail">

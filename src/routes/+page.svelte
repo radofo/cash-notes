@@ -14,6 +14,7 @@
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
 	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
 	import type { PageData } from './$types';
+	import { Settings } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -110,7 +111,7 @@
 			<ModalMonthSelector
 				on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 			/>
-			<!-- <a href="/profile"> <Settings size={28} /></a> -->
+			<a href="/profile"> <Settings size={28} /></a>
 		</div>
 		<MonthlyBudgets
 			{totalIncome}
