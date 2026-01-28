@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let styles: string = 'bg-slate-100 text-slate-700';
+	export let styles: string = 'bg-muted text-foreground';
 </script>
 
 <span class="rounded-md p-2 text-xs font-semibold {styles}">

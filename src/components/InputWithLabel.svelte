@@ -3,6 +3,6 @@
 </script>
 
 <div class="flex flex-col gap-1">
-	<span class="text-sm text-slate-500">{label}</span>
+	<span class="text-sm text-muted-foreground">{label}</span>
 	<slot />
 </div>

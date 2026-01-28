@@ -5,10 +5,10 @@
 
 	$: statusClass =
 		is_accepted === 'pending'
-			? 'bg-slate-100 text-slate-700'
+			? 'bg-surface-elevated text-foreground'
 			: is_accepted === 'accepted'
-			? 'bg-green-100 text-green-700'
-			: 'bg-red-100 text-red-700';
+			? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+			: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
 
 	$: statusTextDeutsch =
 		is_accepted === 'pending' ? 'Offen' : is_accepted === 'accepted' ? 'Akzeptiert' : 'Abgelehnt';

@@ -84,7 +84,7 @@
 			<slot />
 			<div class="fixed bottom-0 left-0 right-0 flex justify-center">
 				<div
-					class="flex w-[600px] max-w-full items-center justify-between border-t bg-white px-2 pb-5"
+					class="flex w-[600px] max-w-full items-center justify-between border-t bg-background px-2 pb-5"
 				>
 					<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-sky-700' : ''}">
 						<House size={iconSize} />

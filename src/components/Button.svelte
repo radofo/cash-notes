@@ -19,7 +19,7 @@
 			break;
 		}
 		case 'dashed': {
-			variantClasses = 'border border-slate-400 border-dashed hover:bg-slate-100';
+			variantClasses = 'border border-interactive border-dashed hover:bg-surface-hover';
 		}
 	}
 </script>

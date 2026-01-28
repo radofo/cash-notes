@@ -121,7 +121,7 @@
 				<InputWithLabel label="Budget">
 					<select
 						on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
-						class="select w-full border border-slate-200 p-2 text-base"
+						class="select w-full border border-input bg-background p-2 text-base"
 					>
 						{#each cashGroups as cashGroup}
 							<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>

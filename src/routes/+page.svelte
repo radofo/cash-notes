@@ -101,7 +101,7 @@
 		}
 	}
 
-	const activeFilterStyles = 'bg-slate-500 text-slate-50';
+	const activeFilterStyles = 'bg-chip-active text-chip-active-foreground';
 </script>
 
 <DefaultPageContent>
@@ -132,14 +132,14 @@
 				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-4">
 					<button
 						on:click={() => (selectedFilter = null)}
-						class="whitespace-nowrap rounded-full bg-slate-50 p-2 {!selectedFilter
+						class="whitespace-nowrap rounded-full bg-chip p-2 {!selectedFilter
 							? activeFilterStyles
 							: ''}">Alle</button
 					>
 					{#each cashFlowFilters as filter}
 						<button
 							on:click={() => (selectedFilter = filter)}
-							class="whitespace-nowrap rounded-full bg-slate-50 p-2 {selectedFilter === filter
+							class="whitespace-nowrap rounded-full bg-chip p-2 {selectedFilter === filter
 								? activeFilterStyles
 								: ''}">{filter}</button
 						>

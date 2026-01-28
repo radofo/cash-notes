@@ -10,7 +10,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <li
 	on:click={() => dispatch('itemClicked', cashGroup)}
-	class="flex w-full cursor-pointer items-center justify-between border-b py-3 last:border-0 hover:bg-slate-50"
+	class="flex w-full cursor-pointer items-center justify-between border-b py-3 last:border-0 hover:bg-surface-hover"
 >
 	<span class="border border-white border-opacity-0 text-lg">{cashGroup?.name}</span>
 	<div class="flex items-center">

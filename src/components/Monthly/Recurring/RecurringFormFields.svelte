@@ -58,9 +58,9 @@
 		<InputWithLabel label="Budget">
 			<select
 				on:change={(e) => onCashGroupChange(e?.currentTarget?.value)}
-				class="select w-full border border-slate-200 p-2 text-base"
+				class="select w-full border border-input bg-background p-2 text-base"
 			>
-				<option class="text-slate-500" selected={!formCashGroup?.id} disabled
+				<option class="text-muted-foreground" selected={!formCashGroup?.id} disabled
 					>-- Budget wählen --</option
 				>
 				{#each cashGroups as cashGroup}
@@ -71,8 +71,8 @@
 	{/if}
 	<div class="flex w-full flex-col gap-1">
 		<div class="flex gap-2">
-			<span class="w-[40%] text-sm text-slate-500"> Betrag </span>
-			<span class="flex-1 text-sm text-slate-500"> Gültig ab </span>
+			<span class="w-[40%] text-sm text-muted-foreground"> Betrag </span>
+			<span class="flex-1 text-sm text-muted-foreground"> Gültig ab </span>
 		</div>
 		<div class="flex flex-col gap-4">
 			{#each sortedFormTimeframes as timeframe}
@@ -92,7 +92,7 @@
 							/>
 						</div>
 						<button
-							class="pl-1 text-slate-500"
+							class="pl-1 text-muted-foreground"
 							type="button"
 							on:click|preventDefault={() => removeTimeframe(timeframe)}
 						>

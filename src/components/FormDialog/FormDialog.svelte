@@ -15,7 +15,7 @@
 <div
 	class="{open
 		? 'fixed'
-		: 'hidden'} bottom-0 left-0 right-0 top-0 z-50 flex flex-col overflow-x-hidden overflow-y-scroll bg-white p-4"
+		: 'hidden'} bottom-0 left-0 right-0 top-0 z-50 flex flex-col overflow-x-hidden overflow-y-scroll bg-background p-4"
 >
 	<div class="flex h-full flex-col gap-8">
 		<div class="flex w-full flex-row items-center justify-between">

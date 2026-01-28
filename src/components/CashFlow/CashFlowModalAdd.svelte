@@ -116,7 +116,7 @@
 			<InputWithLabel label="Budget">
 				<select
 					on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
-					class="select w-full border border-slate-200 p-2 text-base"
+					class="select w-full border border-input bg-background p-2 text-base"
 				>
 					{#each activeCashGroups as cashGroup}
 						<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
@@ -132,7 +132,7 @@
 					<InputWithLabel label="Ausgabe Für">
 						<select
 							on:change={(e) => oncfFriendChange(e?.currentTarget?.value)}
-							class="select w-full border border-slate-200 p-2 text-base"
+							class="select w-full border border-input bg-background p-2 text-base"
 						>
 							{#each [noFriend, ...friends] as friend}
 								<option value={friend.id} selected={friend.id === cfFriend?.id}
@@ -146,7 +146,9 @@
 							<Input inputType="number" bind:inputValue={cfFriendAmount} />
 						</InputWithLabel>
 						{#if totalAmountNumber >= friendAmountNumber}
-							<div class="inline-grid w-fit grid-cols-2 gap-x-3 gap-y-1 text-xs text-gray-600">
+							<div
+								class="inline-grid w-fit grid-cols-2 gap-x-3 gap-y-1 text-xs text-muted-foreground"
+							>
 								<span>Dein Anteil:</span>
 								<span>{displayCurrency({ amount: ownAmountNumber })}</span>
 								<span>{cfFriend.full_name}s Anteil:</span>

@@ -21,7 +21,7 @@
 			<Plus size={24} />
 		</button>
 		{#if activeCashGroups.length === 0}
-			<p class="mt-3 text-center text-slate-500">Keine aktiven Budgets vorhanden</p>
+			<p class="mt-3 text-center text-muted-foreground">Keine aktiven Budgets vorhanden</p>
 		{/if}
 		<div class="flex flex-col gap-2">
 			<span class="text-md block pl-1 text-start font-bold">Aktive Budgets</span>

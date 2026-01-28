@@ -79,7 +79,7 @@
 			<InputWithLabel label="Ausgabe Von">
 				<select
 					on:change={(e) => onFromChange(e?.currentTarget?.value)}
-					class="select w-full border border-slate-200 p-2 text-base"
+					class="select w-full border border-input bg-background p-2 text-base"
 				>
 					{#each [...friends] as friend}
 						<option value={friend.id} selected={friend.id === fromUser?.id}
@@ -91,7 +91,7 @@
 			<InputWithLabel label="Ausgabe Für">
 				<select
 					on:change={(e) => onForChange(e?.currentTarget?.value)}
-					class="select w-full border border-slate-200 p-2 text-base"
+					class="select w-full border border-input bg-background p-2 text-base"
 				>
 					{#each [...friends] as friend}
 						<option value={friend.id} selected={friend.id === forUser?.id}

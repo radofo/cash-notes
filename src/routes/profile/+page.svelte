@@ -49,7 +49,7 @@
 				<Button variant="error" on:btnclick={handleSignOut}>Ausloggen</Button>
 				<form class="flex max-w-full flex-1 flex-row items-end gap-2" on:submit={updatePassword}>
 					<div class="flex flex-1 flex-col gap-1">
-						<span class="text-sm text-slate-500">Neues Passwort</span>
+						<span class="text-sm text-muted-foreground">Neues Passwort</span>
 						<Input inputType="password" bind:inputValue={newPassword} />
 					</div>
 					<Button type="submit">

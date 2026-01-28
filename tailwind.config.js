@@ -47,6 +47,34 @@ const config = {
 				card: {
 					DEFAULT: 'hsl(var(--card) / <alpha-value>)',
 					foreground: 'hsl(var(--card-foreground) / <alpha-value>)'
+				},
+				// Semantic surface colors
+				surface: {
+					DEFAULT: 'hsl(var(--surface) / <alpha-value>)',
+					elevated: 'hsl(var(--surface-elevated) / <alpha-value>)',
+					hover: 'hsl(var(--surface-hover) / <alpha-value>)'
+				},
+				// Semantic text colors
+				'text-primary': 'hsl(var(--text-primary) / <alpha-value>)',
+				'text-secondary': 'hsl(var(--text-secondary) / <alpha-value>)',
+				'text-tertiary': 'hsl(var(--text-tertiary) / <alpha-value>)',
+				'text-inverted': 'hsl(var(--text-inverted) / <alpha-value>)',
+				// Interactive colors
+				interactive: {
+					DEFAULT: 'hsl(var(--interactive) / <alpha-value>)',
+					hover: 'hsl(var(--interactive-hover) / <alpha-value>)',
+					active: 'hsl(var(--interactive-active) / <alpha-value>)'
+				},
+				// Chip/filter colors
+				chip: {
+					DEFAULT: 'hsl(var(--chip) / <alpha-value>)',
+					active: 'hsl(var(--chip-active) / <alpha-value>)',
+					'active-foreground': 'hsl(var(--chip-active-foreground) / <alpha-value>)'
+				},
+				// Progress colors
+				progress: {
+					DEFAULT: 'hsl(var(--progress-bg) / <alpha-value>)',
+					border: 'hsl(var(--progress-border) / <alpha-value>)'
 				}
 			},
 			borderRadius: {

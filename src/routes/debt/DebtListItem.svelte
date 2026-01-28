@@ -15,13 +15,13 @@
 	<div class="flex items-center gap-1">
 		<div class="flex flex-col">
 			<span class="text-md w-8 font-medium">{date.day}</span>
-			<span class="text-md w-8 font-medium text-slate-400">{date.month}</span>
+			<span class="text-md w-8 font-medium text-text-tertiary">{date.month}</span>
 		</div>
 		<div class="flex flex-col">
 			<span class="text-md">
 				{debt.name}
 			</span>
-			<span class="text-slate-500">
+			<span class="text-muted-foreground">
 				{'von'}
 				{debt.from?.full_name ?? '?'}
 				{'/ für'}

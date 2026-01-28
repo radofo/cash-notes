@@ -92,7 +92,7 @@
 		<DebtStats debts={[...approved, ...unapproved, ...toApprove]} />
 		{#if allUnsettled.length === 0}
 			<div class="flex h-[70vh] w-full items-center justify-center">
-				<p class="text-slate-500">Keine Schulden vorhanden</p>
+				<p class="text-muted-foreground">Keine Schulden vorhanden</p>
 			</div>
 		{:else}
 			{#if toApprove.length > 0}
@@ -108,7 +108,7 @@
 		{/if}
 	</div>
 	<div
-		class="fixed bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-100 px-2 text-slate-700"
+		class="fixed bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-muted px-2 text-foreground"
 	>
 		<DebtActionButton text="Reagieren" clickHandler={reloadList}>
 			<RotateCw size={iconSize} class={isReloading ? 'animate-spin' : ''} />

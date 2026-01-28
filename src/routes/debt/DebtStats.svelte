@@ -10,7 +10,7 @@
 
 {#if debtStats}
 	<h2 class="flex flex-col">
-		<span class="text-slate-600">
+		<span class="text-muted-foreground">
 			{debtStats.for?.full_name}
 			{'schuldet'}
 			{debtStats.from?.full_name}

@@ -31,7 +31,7 @@
 		<div class="flex flex-col">
 			{#if showMonth}
 				<span class="text-md w-8 font-medium">{cfDate}</span>
-				<span class="text-md w-8 font-medium text-slate-400">{cfMonth}</span>
+				<span class="text-md w-8 font-medium text-text-tertiary">{cfMonth}</span>
 			{:else}
 				<span class="w-8 text-lg font-medium">{cfDate}</span>
 			{/if}
@@ -40,7 +40,7 @@
 			<span class="text-md">
 				{cashFlow.name}
 			</span>
-			<span class="text-slate-500">{cashFlow.cash_group?.name ?? 'Sonstige'}</span>
+			<span class="text-muted-foreground">{cashFlow.cash_group?.name ?? 'Sonstige'}</span>
 		</div>
 	</div>
 	<div class="flex items-center">
