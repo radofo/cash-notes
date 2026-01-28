@@ -108,7 +108,7 @@
 		{/if}
 	</div>
 	<div
-		class="absolute bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-100 px-2 text-slate-700"
+		class="fixed bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-100 px-2 text-slate-700"
 	>
 		<DebtActionButton text="Reagieren" clickHandler={reloadList}>
 			<RotateCw size={iconSize} class={isReloading ? 'animate-spin' : ''} />
