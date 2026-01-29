@@ -12,9 +12,16 @@
 	import type { CashFlow } from '../types/supabase';
 	import { cashFlowStore } from '../utils/cashFlow.store';
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
-	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
+	import {
+		getActiveTimeframe,
+		getIncomeForMonth,
+		getRecurringTotalForMonth
+	} from '../utils/recurring';
 	import type { PageData } from './$types';
 	import { Settings } from 'lucide-svelte';
+	import List from '../components/List.svelte';
+	import ListItem from '../components/ListItem.svelte';
+	import { displayCurrency } from '../utils/currency';
 
 	export let data: PageData;
 
@@ -148,11 +155,26 @@
 				{#if !filteredCashFlows.length}
 					<div class="mt-8 text-center">Noch keine Einträge für diese Kategorie</div>
 				{:else}
-					<ul class="w-full list-none">
+					<List>
+						{#each filteredCashFlows as cashFlow}
+							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
+								<div class="flex flex-col">
+									<span>{cashFlow.name}</span>
+									<span class="text-sm text-muted-foreground"
+										>{cashFlow.cash_group?.name ?? '-'}</span
+									>
+								</div>
+								<div class="relative flex items-center">
+									<span>{displayCurrency({ amount: cashFlow.amount })}</span>
+								</div>
+							</ListItem>
+						{/each}
+					</List>
+					<!-- <ul class="w-full list-none">
 						{#each filteredCashFlows as cashFlow}
 							<CashFlowItem editCashFlow={openCashFlowModal} {cashFlow} />
 						{/each}
-					</ul>
+					</ul> -->
 				{/if}
 			{/if}
 		</div>
