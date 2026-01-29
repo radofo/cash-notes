@@ -170,11 +170,6 @@
 							</ListItem>
 						{/each}
 					</List>
-					<!-- <ul class="w-full list-none">
-						{#each filteredCashFlows as cashFlow}
-							<CashFlowItem editCashFlow={openCashFlowModal} {cashFlow} />
-						{/each}
-					</ul> -->
 				{/if}
 			{/if}
 		</div>
