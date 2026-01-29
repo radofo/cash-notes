@@ -22,6 +22,7 @@
 	import List from '../components/List.svelte';
 	import ListItem from '../components/ListItem.svelte';
 	import { displayCurrency } from '../utils/currency';
+	import Badge from '../components/Badge.svelte';
 
 	export let data: PageData;
 
@@ -192,8 +193,8 @@
 				{:else}
 					<div class="flex flex-col gap-6">
 						{#each Object.entries(groupedCashFlows) as [date, cashFlowsForDay]}
-							<div class="flex flex-col items-center gap-1">
-								<span class="pl-1 text-sm font-medium">{formatDateHeading(date)}</span>
+							<div class="flex flex-col items-start gap-1">
+								<Badge>{formatDateHeading(date)}</Badge>
 								<List>
 									{#each cashFlowsForDay as cashFlow}
 										<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
