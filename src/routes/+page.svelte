@@ -114,6 +114,23 @@
 	// Format date for display
 	function formatDateHeading(dateStr: string): string {
 		const date = new Date(dateStr);
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+
+		// Compare year, month, and day
+		const isSameDay = (d1: Date, d2: Date) =>
+			d1.getFullYear() === d2.getFullYear() &&
+			d1.getMonth() === d2.getMonth() &&
+			d1.getDate() === d2.getDate();
+
+		if (isSameDay(date, today)) {
+			return 'Heute';
+		}
+		if (isSameDay(date, yesterday)) {
+			return 'Gestern';
+		}
+
 		const day = date.getDate().toString().padStart(2, '0');
 		const month = (date.getMonth() + 1).toString().padStart(2, '0');
 		return `${day}.${month}`;
