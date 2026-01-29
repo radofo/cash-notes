@@ -19,8 +19,11 @@
 			{info.limit !== null ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
 		>
 	</div>
-	<div class="relative h-3 w-full overflow-hidden rounded bg-progress">
-		<div class="absolute left-0 top-0 h-3 rounded bg-primary" style="width: {spendingProgress}%" />
+	<div class="relative h-2.5 w-full overflow-hidden rounded-full bg-progress">
+		<div
+			class="absolute left-0 top-0 h-2.5 rounded-full bg-primary"
+			style="width: {spendingProgress}%"
+		/>
 		<div
 			class="absolute bottom-0 top-0 z-10 border {monthProgress < spendingProgress
 				? 'border-primary-foreground/60'
