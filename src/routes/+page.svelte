@@ -101,6 +101,24 @@
 			? sortedCashFlows
 			: sortedCashFlows.filter((cf) => cf.cash_group?.name === selectedFilter);
 
+	// Group cash flows by date
+	$: groupedCashFlows = filteredCashFlows.reduce((groups, cashFlow) => {
+		const date = cashFlow.date;
+		if (!groups[date]) {
+			groups[date] = [];
+		}
+		groups[date].push(cashFlow);
+		return groups;
+	}, {} as Record<string, CashFlow[]>);
+
+	// Format date for display
+	function formatDateHeading(dateStr: string): string {
+		const date = new Date(dateStr);
+		const day = date.getDate().toString().padStart(2, '0');
+		const month = (date.getMonth() + 1).toString().padStart(2, '0');
+		return `${day}.${month}`;
+	}
+
 	async function getNewMonthData(month?: number, year?: number) {
 		if (month !== undefined && year !== undefined) {
 			selectedMonth = month;
@@ -155,21 +173,30 @@
 				{#if !filteredCashFlows.length}
 					<div class="mt-8 text-center">Noch keine Einträge für diese Kategorie</div>
 				{:else}
-					<List>
-						{#each filteredCashFlows as cashFlow}
-							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
-								<div class="flex flex-col">
-									<span>{cashFlow.name}</span>
-									<span class="text-sm text-muted-foreground"
-										>{cashFlow.cash_group?.name ?? '-'}</span
-									>
-								</div>
-								<div class="relative flex items-center">
-									<span>{displayCurrency({ amount: cashFlow.amount })}</span>
-								</div>
-							</ListItem>
+					<div class="flex flex-col gap-6">
+						{#each Object.entries(groupedCashFlows) as [date, cashFlowsForDay]}
+							<div class="flex flex-col">
+								<span class="text-sm font-medium text-muted-foreground"
+									>{formatDateHeading(date)}</span
+								>
+								<List>
+									{#each cashFlowsForDay as cashFlow}
+										<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
+											<div class="flex flex-col">
+												<span>{cashFlow.name}</span>
+												<span class="text-sm text-muted-foreground"
+													>{cashFlow.cash_group?.name ?? '-'}</span
+												>
+											</div>
+											<div class="relative flex items-center">
+												<span>{displayCurrency({ amount: cashFlow.amount })}</span>
+											</div>
+										</ListItem>
+									{/each}
+								</List>
+							</div>
 						{/each}
-					</List>
+					</div>
 				{/if}
 			{/if}
 		</div>
