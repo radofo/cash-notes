@@ -70,7 +70,7 @@
 		loading = false;
 	};
 
-	const tabElementClass = 'px-4 py-4';
+	const tabElementClass = 'px-4 py-4 text-muted-foreground';
 </script>
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
@@ -81,26 +81,33 @@
 			{#if cashFlowModalOpen}
 				<CashFlowModalAdd bind:open={cashFlowModalOpen} />
 			{/if}
-			<slot />
+			<div>
+				<slot />
+			</div>
 			<div class="fixed bottom-0 left-0 right-0 flex justify-center">
 				<div
-					class="flex w-[600px] max-w-full items-center justify-between border-t bg-background px-2 pb-5"
+					class="flex w-[600px] max-w-full items-center justify-between border-t border-border bg-background px-2 pb-5 pt-2"
 				>
-					<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? 'text-sky-700' : ''}">
+					<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? '!text-primary' : ''}">
 						<House size={iconSize} />
 					</a>
 					<a
 						href="/debt"
-						class="{tabElementClass} {$page.url.pathname === '/debt' ? 'text-sky-700' : ''}"
+						class="{tabElementClass} {$page.url.pathname === '/debt' ? '!text-primary' : ''}"
 					>
 						<Users size={iconSize} />
 					</a>
-					<Button on:click={() => (cashFlowModalOpen = true)} variant="ghost" size="icon">
+					<Button
+						on:click={() => (cashFlowModalOpen = true)}
+						variant="ghost"
+						size="icon"
+						class="text-foreground"
+					>
 						<Plus size={38} />
 					</Button>
 					<a
 						class="{tabElementClass} {$page.url.pathname.startsWith('/budgets')
-							? 'text-sky-700'
+							? '!text-primary'
 							: ''}"
 						href="/budgets"
 					>
@@ -108,7 +115,7 @@
 					</a>
 					<a
 						href="/insights"
-						class="{tabElementClass} {$page.url.pathname === '/insights' ? 'text-sky-700' : ''}"
+						class="{tabElementClass} {$page.url.pathname === '/insights' ? '!text-primary' : ''}"
 					>
 						<PieChart size={iconSize} />
 					</a>

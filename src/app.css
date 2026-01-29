@@ -16,105 +16,105 @@
 		--card: 0 0% 100%;
 		--card-foreground: 222.2 84% 4.9%;
 
-		--border: 214.3 31.8% 91.4%;
-		--input: 214.3 31.8% 91.4%;
+		--border: 150 20% 90%;
+		--input: 150 20% 90%;
 
-		--primary: 222.2 47.4% 11.2%;
-		--primary-foreground: 210 40% 98%;
+		--primary: 152 35% 28%;
+		--primary-foreground: 150 40% 98%;
 
-		--secondary: 210 40% 96.1%;
-		--secondary-foreground: 222.2 47.4% 11.2%;
+		--secondary: 150 20% 95%;
+		--secondary-foreground: 152 35% 28%;
 
-		--accent: 210 40% 96.1%;
-		--accent-foreground: 222.2 47.4% 11.2%;
+		--accent: 150 20% 95%;
+		--accent-foreground: 152 35% 28%;
 
 		--destructive: 0 72.2% 50.6%;
 		--destructive-foreground: 210 40% 98%;
 
-		--ring: 222.2 84% 4.9%;
+		--ring: 152 35% 28%;
 
 		--radius: 0.5rem;
 
 		/* Semantic surface colors */
-		--surface: 210 40% 98%;
+		--surface: 150 20% 97%;
 		--surface-elevated: 0 0% 100%;
-		--surface-hover: 210 40% 96.1%;
+		--surface-hover: 150 20% 95%;
 
 		/* Semantic text colors */
-		--text-primary: 222.2 47.4% 11.2%;
-		--text-secondary: 215.4 16.3% 46.9%;
-		--text-tertiary: 215 20.2% 65.1%;
+		--text-primary: 152 35% 20%;
+		--text-secondary: 150 16% 46%;
+		--text-tertiary: 150 14% 60%;
 		--text-inverted: 0 0% 100%;
 
 		/* Interactive element colors */
-		--interactive: 215 20.2% 65.1%;
-		--interactive-hover: 215 16.3% 46.9%;
-		--interactive-active: 222.2 47.4% 11.2%;
+		--interactive: 150 14% 60%;
+		--interactive-hover: 150 16% 46%;
+		--interactive-active: 152 35% 28%;
 
 		/* Filter/chip colors */
-		--chip: 210 40% 98%;
-		--chip-active: 215 16.3% 46.9%;
-		--chip-active-foreground: 210 40% 98%;
+		--chip: 150 20% 97%;
+		--chip-active: 152 30% 40%;
+		--chip-active-foreground: 150 40% 98%;
 
 		/* Progress/status colors */
-		--progress-bg: 214.3 31.8% 91.4%;
-		--progress-border: 215 20.2% 65.1%;
+		--progress-bg: 150 20% 90%;
+		--progress-border: 150 14% 60%;
 	}
 
 	.dark {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
+		--background: 160 20% 6%;
+		--foreground: 150 20% 95%;
 
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
+		--muted: 155 20% 15%;
+		--muted-foreground: 150 14% 60%;
 
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
+		--popover: 160 20% 6%;
+		--popover-foreground: 150 20% 95%;
 
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
+		--card: 160 20% 6%;
+		--card-foreground: 150 20% 95%;
 
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
+		--border: 155 20% 18%;
+		--input: 155 20% 18%;
 
-		--primary: 210 40% 98%;
-		--primary-foreground: 222.2 47.4% 11.2%;
+		--primary: 152 40% 55%;
+		--primary-foreground: 160 25% 8%;
 
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
+		--secondary: 155 20% 15%;
+		--secondary-foreground: 150 20% 95%;
 
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
+		--accent: 155 20% 15%;
+		--accent-foreground: 150 20% 95%;
 
 		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
+		--destructive-foreground: 150 20% 95%;
 
-		--ring: 212.7 26.8% 83.9%;
+		--ring: 152 40% 55%;
 
 		/* Semantic surface colors - dark */
-		--surface: 217.2 32.6% 12%;
-		--surface-elevated: 217.2 32.6% 17.5%;
-		--surface-hover: 217.2 32.6% 22%;
+		--surface: 155 20% 10%;
+		--surface-elevated: 155 20% 15%;
+		--surface-hover: 155 20% 20%;
 
 		/* Semantic text colors - dark */
-		--text-primary: 210 40% 98%;
-		--text-secondary: 215 20.2% 65.1%;
-		--text-tertiary: 215 16.3% 46.9%;
-		--text-inverted: 222.2 84% 4.9%;
+		--text-primary: 150 20% 95%;
+		--text-secondary: 150 14% 60%;
+		--text-tertiary: 150 12% 45%;
+		--text-inverted: 160 20% 6%;
 
 		/* Interactive element colors - dark */
-		--interactive: 215 20.2% 45.1%;
-		--interactive-hover: 215 20.2% 55.1%;
-		--interactive-active: 210 40% 98%;
+		--interactive: 150 14% 45%;
+		--interactive-hover: 150 16% 55%;
+		--interactive-active: 150 20% 95%;
 
 		/* Filter/chip colors - dark */
-		--chip: 217.2 32.6% 17.5%;
-		--chip-active: 215 20.2% 55.1%;
-		--chip-active-foreground: 222.2 84% 4.9%;
+		--chip: 155 20% 15%;
+		--chip-active: 152 35% 50%;
+		--chip-active-foreground: 160 20% 6%;
 
 		/* Progress/status colors - dark */
-		--progress-bg: 217.2 32.6% 22%;
-		--progress-border: 215 20.2% 45.1%;
+		--progress-bg: 155 20% 20%;
+		--progress-border: 150 14% 45%;
 	}
 }
 

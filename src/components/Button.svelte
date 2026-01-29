@@ -8,7 +8,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	let variantClasses = 'bg-blue-100 text-blue-900';
+	let variantClasses = 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100';
 	switch (variant) {
 		case 'success': {
 			variantClasses = 'bg-green-100 text-green-900';
