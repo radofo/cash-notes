@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import CashFlowModalEdit from '../components/CashFlow/CashFlowModalEdit.svelte';
-	import CashFlowItem from '../components/CashFlowItem.svelte';
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
 	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
@@ -12,11 +11,7 @@
 	import type { CashFlow } from '../types/supabase';
 	import { cashFlowStore } from '../utils/cashFlow.store';
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
-	import {
-		getActiveTimeframe,
-		getIncomeForMonth,
-		getRecurringTotalForMonth
-	} from '../utils/recurring';
+	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
 	import type { PageData } from './$types';
 	import { Settings } from 'lucide-svelte';
 	import List from '../components/List.svelte';
@@ -25,6 +20,20 @@
 	import Badge from '../components/Badge.svelte';
 
 	export let data: PageData;
+
+	// Date state for formatDateHeading (updated periodically)
+	let today = new Date();
+	let yesterday = new Date();
+	yesterday.setDate(today.getDate() - 1);
+
+	function updateDateState() {
+		today = new Date();
+		yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+	}
+
+	const dateUpdateInterval = setInterval(updateDateState, 5000);
+	onDestroy(() => clearInterval(dateUpdateInterval));
 
 	// Page
 	let { supabase, session } = data;
@@ -115,9 +124,6 @@
 	// Format date for display
 	function formatDateHeading(dateStr: string): string {
 		const date = new Date(dateStr);
-		const today = new Date();
-		const yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
 
 		// Compare year, month, and day
 		const isSameDay = (d1: Date, d2: Date) =>
