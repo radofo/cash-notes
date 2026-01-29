@@ -192,10 +192,8 @@
 				{:else}
 					<div class="flex flex-col gap-6">
 						{#each Object.entries(groupedCashFlows) as [date, cashFlowsForDay]}
-							<div class="flex flex-col items-center">
-								<span class="pl-1 text-sm font-medium text-muted-foreground"
-									>{formatDateHeading(date)}</span
-								>
+							<div class="flex flex-col items-center gap-1">
+								<span class="pl-1 text-sm font-medium">{formatDateHeading(date)}</span>
 								<List>
 									{#each cashFlowsForDay as cashFlow}
 										<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
