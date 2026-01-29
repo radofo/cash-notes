@@ -11,7 +11,7 @@
 	$: spendingProgress = Math.max(0, info.spent / (info.limit ?? 1)) * 100;
 </script>
 
-<li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-normal'}">
+<li class="flex w-full flex-col gap-1 {fontBold ? 'font-medium' : 'font-normal'}">
 	<div class="flex flex-row justify-between">
 		<span>{name}</span>
 		<span
