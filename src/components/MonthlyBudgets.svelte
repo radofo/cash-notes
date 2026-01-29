@@ -109,13 +109,11 @@
 						<ProgressElement {name} {info} />
 					{/each}
 				</ul>
-				<div class="border-t border-dashed py-2">
-					<ProgressElement
-						fontBold
-						name="Alle Budgets"
-						info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
-					/>
-				</div>
+				<ProgressElement
+					fontBold
+					name="Alle Budgets"
+					info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+				/>
 			</div>
 		</div>
 		<div id="item2" class="carousel-item box-border w-full p-1 py-2">
