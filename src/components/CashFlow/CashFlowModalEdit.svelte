@@ -7,7 +7,7 @@
 	import { cashFlowStore } from '../../utils/cashFlow.store';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
 	import { dateToDateString } from '../../utils/date';
-	import FormDialog from '../FormDialog/FormDialog.svelte';
+	import BottomSheet from '../BottomSheet.svelte';
 	import Input from '../Input.svelte';
 	import InputWithLabel from '../InputWithLabel.svelte';
 	import type { DebtWithProfile } from '../../types/debt';
@@ -210,8 +210,7 @@
 	}
 </script>
 
-<FormDialog bind:open on:submit={submitEditedCashFlow}>
-	<span slot="header">Ausgabe Bearbeiten</span>
+<BottomSheet bind:open on:submit={submitEditedCashFlow} title="Ausgabe Bearbeiten">
 	<div slot="content" class="flex h-full flex-col justify-between">
 		{#if !formInitLoading}
 			<div class="flex flex-col gap-3">
@@ -304,4 +303,4 @@
 			</div>
 		{/if}
 	</div>
-</FormDialog>
+</BottomSheet>
