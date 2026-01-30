@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { fly, fade } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { X } from 'lucide-svelte';
 
@@ -15,14 +14,41 @@
 	let isDragging = false;
 	let dragStartY = 0;
 	let currentDragY = 0;
-	let sheetElement: HTMLDivElement;
+	let isClosing = false;
+	let isVisible = false;
 
 	// Threshold to dismiss (in pixels)
 	const DISMISS_THRESHOLD = 150;
 
+	// Reactive style for the sheet
+	$: sheetTransform = `translateY(${currentDragY}px)`;
+	$: sheetTransition = isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+
+	// Handle open state changes
+	$: if (open && !isVisible && !isClosing) {
+		// Opening: start with sheet off-screen, then animate in
+		currentDragY = window?.innerHeight || 1000;
+		isVisible = true;
+		// Use requestAnimationFrame to ensure the initial position is rendered first
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				currentDragY = 0;
+			});
+		});
+	}
+
 	function close() {
-		open = false;
-		dispatch('close');
+		if (isClosing) return;
+		isClosing = true;
+		// Animate out
+		currentDragY = window?.innerHeight || 1000;
+		setTimeout(() => {
+			open = false;
+			isVisible = false;
+			isClosing = false;
+			currentDragY = 0;
+			dispatch('close');
+		}, 300);
 	}
 
 	function handleBackdropClick() {
@@ -30,7 +56,7 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Escape') {
+		if (event.key === 'Escape' && open) {
 			close();
 		}
 	}
@@ -41,12 +67,9 @@
 
 	// Touch events for mobile
 	function handleTouchStart(event: TouchEvent) {
+		if (isClosing) return;
 		isDragging = true;
 		dragStartY = event.touches[0].clientY;
-		currentDragY = 0;
-		if (sheetElement) {
-			sheetElement.style.transition = 'none';
-		}
 	}
 
 	function handleTouchMove(event: TouchEvent) {
@@ -55,42 +78,26 @@
 		const deltaY = touchY - dragStartY;
 		// Only allow dragging downward
 		currentDragY = Math.max(0, deltaY);
-		if (sheetElement) {
-			sheetElement.style.transform = `translateY(${currentDragY}px)`;
-		}
 	}
 
 	function handleTouchEnd() {
 		if (!isDragging) return;
 		isDragging = false;
 
-		if (sheetElement) {
-			sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-		}
-
 		if (currentDragY > DISMISS_THRESHOLD) {
 			// Dismiss the sheet
-			if (sheetElement) {
-				sheetElement.style.transform = 'translateY(100%)';
-			}
-			setTimeout(close, 300);
+			close();
 		} else {
 			// Snap back to original position
-			if (sheetElement) {
-				sheetElement.style.transform = 'translateY(0)';
-			}
+			currentDragY = 0;
 		}
-		currentDragY = 0;
 	}
 
 	// Mouse events for desktop
 	function handleMouseDown(event: MouseEvent) {
+		if (isClosing) return;
 		isDragging = true;
 		dragStartY = event.clientY;
-		currentDragY = 0;
-		if (sheetElement) {
-			sheetElement.style.transition = 'none';
-		}
 		// Prevent text selection while dragging
 		event.preventDefault();
 	}
@@ -100,48 +107,31 @@
 		const deltaY = event.clientY - dragStartY;
 		// Only allow dragging downward
 		currentDragY = Math.max(0, deltaY);
-		if (sheetElement) {
-			sheetElement.style.transform = `translateY(${currentDragY}px)`;
-		}
 	}
 
 	function handleMouseUp() {
 		if (!isDragging) return;
 		isDragging = false;
 
-		if (sheetElement) {
-			sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
-		}
-
 		if (currentDragY > DISMISS_THRESHOLD) {
 			// Dismiss the sheet
-			if (sheetElement) {
-				sheetElement.style.transform = 'translateY(100%)';
-			}
-			setTimeout(close, 300);
+			close();
 		} else {
 			// Snap back to original position
-			if (sheetElement) {
-				sheetElement.style.transform = 'translateY(0)';
-			}
+			currentDragY = 0;
 		}
-		currentDragY = 0;
-	}
-
-	// Reset transform when sheet opens
-	$: if (open && sheetElement) {
-		sheetElement.style.transform = 'translateY(0)';
-		sheetElement.style.transition = '';
 	}
 </script>
 
 <svelte:window
 	on:keydown={handleKeydown}
-	on:mousemove={isDragging ? handleMouseMove : undefined}
-	on:mouseup={isDragging ? handleMouseUp : undefined}
+	on:mousemove={handleMouseMove}
+	on:mouseup={handleMouseUp}
+	on:touchmove={handleTouchMove}
+	on:touchend={handleTouchEnd}
 />
 
-{#if open}
+{#if isVisible}
 	<!-- Backdrop -->
 	<div
 		class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
@@ -155,9 +145,8 @@
 
 	<!-- Bottom Sheet -->
 	<div
-		bind:this={sheetElement}
 		class="fixed inset-x-0 bottom-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-background shadow-xl"
-		transition:fly={{ y: '100%', duration: 300, easing: cubicOut }}
+		style="transform: {sheetTransform}; transition: {sheetTransition};"
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="bottom-sheet-title"
@@ -166,8 +155,6 @@
 		<div
 			class="flex cursor-grab touch-none select-none justify-center pb-2 pt-3 active:cursor-grabbing"
 			on:touchstart={handleTouchStart}
-			on:touchmove={handleTouchMove}
-			on:touchend={handleTouchEnd}
 			on:mousedown={handleMouseDown}
 			role="slider"
 			aria-label="Drag to dismiss"
