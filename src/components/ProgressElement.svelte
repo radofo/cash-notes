@@ -11,24 +11,30 @@
 	$: spendingProgress = Math.max(0, info.spent / (info.limit ?? 1)) * 100;
 </script>
 
-<li class="flex w-full flex-col gap-0.5 {fontBold ? 'font-medium' : 'font-normal'}">
-	<div class="flex flex-row justify-between">
-		<span>{name}</span>
-		<span
-			>{formatCurrency(info.spent)}
-			{info.limit !== null ? `/ ${displayCurrency({ amount: info.limit })}` : ''}</span
-		>
-	</div>
-	<div class="relative h-2.5 w-full overflow-hidden rounded-full bg-progress">
+<li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-normal'}">
+	<div class="relative w-full overflow-hidden rounded-xl bg-progress">
+		<!-- Progress fill -->
 		<div
-			class="absolute left-0 top-0 h-2.5 rounded-full bg-primary"
+			class="absolute inset-y-0 left-0 rounded-xl bg-primary transition-all duration-300"
 			style="width: {spendingProgress}%"
 		/>
+
+		<!-- Month progress indicator -->
 		<div
-			class="absolute bottom-0 top-0 z-10 border {monthProgress < spendingProgress
-				? 'border-primary-foreground/60'
-				: 'border-progress-border'}"
-			style="left: {monthProgress}%"
+			class="absolute bottom-0 h-1.5 {monthProgress < spendingProgress
+				? 'bg-primary-foreground/30'
+				: 'bg-progress-border/50'}"
+			style="left: {monthProgress}%; width: 3px;"
 		/>
+
+		<!-- Content inside the bar -->
+		<div class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5">
+			<span class="text-sm font-medium text-foreground">{name}</span>
+			<span class="text-sm font-medium tabular-nums text-foreground">
+				{formatCurrency(Math.round(info.spent))}{info.limit !== null
+					? ` / ${displayCurrency({ amount: Math.round(info.limit), forceDecimals: false })}`
+					: ''}
+			</span>
+		</div>
 	</div>
 </li>

@@ -19,7 +19,7 @@
 		--border: 150 20% 90%;
 		--input: 150 20% 90%;
 
-		--primary: 152 35% 40%;
+		--primary: 152 35% 55%;
 		--primary-foreground: 150 40% 98%;
 
 		--secondary: 150 20% 95%;
@@ -53,8 +53,8 @@
 
 		/* Filter/chip colors */
 		--chip: 150 20% 97%;
-		--chip-active: 152 30% 40%;
-		--chip-active-foreground: 150 40% 98%;
+		--chip-active: 152 35% 55%;
+		--chip-active-foreground: 0 0% 0%;
 
 		/* Progress/status colors */
 		--progress-bg: 150 20% 90%;
@@ -77,7 +77,7 @@
 		--border: 155 20% 18%;
 		--input: 155 20% 18%;
 
-		--primary: 152 40% 62%;
+		--primary: 152 34% 54%;
 		--primary-foreground: 160 25% 8%;
 
 		--secondary: 155 20% 15%;
@@ -109,8 +109,8 @@
 
 		/* Filter/chip colors - dark */
 		--chip: 155 20% 15%;
-		--chip-active: 152 35% 50%;
-		--chip-active-foreground: 160 20% 6%;
+		--chip-active: 152 34% 54%;
+		--chip-active-foreground: 0 0% 0%;
 
 		/* Progress/status colors - dark */
 		--progress-bg: 155 20% 20%;
