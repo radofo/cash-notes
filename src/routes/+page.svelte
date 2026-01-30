@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import CashFlowModalEdit from '../components/CashFlow/CashFlowModalEdit.svelte';
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
 	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
@@ -17,23 +17,8 @@
 	import List from '../components/List.svelte';
 	import ListItem from '../components/ListItem.svelte';
 	import { displayCurrency } from '../utils/currency';
-	import Badge from '../components/Badge.svelte';
 
 	export let data: PageData;
-
-	// Date state for formatDateHeading (updated periodically)
-	let today = new Date();
-	let yesterday = new Date();
-	yesterday.setDate(today.getDate() - 1);
-
-	function updateDateState() {
-		today = new Date();
-		yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
-	}
-
-	const dateUpdateInterval = setInterval(updateDateState, 5000);
-	onDestroy(() => clearInterval(dateUpdateInterval));
 
 	// Page
 	let { supabase, session } = data;
@@ -111,33 +96,9 @@
 			? sortedCashFlows
 			: sortedCashFlows.filter((cf) => cf.cash_group?.name === selectedFilter);
 
-	// Group cash flows by date
-	$: groupedCashFlows = filteredCashFlows.reduce((groups, cashFlow) => {
-		const date = cashFlow.date;
-		if (!groups[date]) {
-			groups[date] = [];
-		}
-		groups[date].push(cashFlow);
-		return groups;
-	}, {} as Record<string, CashFlow[]>);
-
-	// Format date for display
-	function formatDateHeading(dateStr: string): string {
+	// Format date for display in list items
+	function formatDateShort(dateStr: string): string {
 		const date = new Date(dateStr);
-
-		// Compare year, month, and day
-		const isSameDay = (d1: Date, d2: Date) =>
-			d1.getFullYear() === d2.getFullYear() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getDate() === d2.getDate();
-
-		if (isSameDay(date, today)) {
-			return 'Heute';
-		}
-		if (isSameDay(date, yesterday)) {
-			return 'Gestern';
-		}
-
 		const day = date.getDate().toString().padStart(2, '0');
 		const month = (date.getMonth() + 1).toString().padStart(2, '0');
 		return `${day}.${month}`;
@@ -197,28 +158,21 @@
 				{#if !filteredCashFlows.length}
 					<div class="mt-8 text-center">Noch keine Einträge für diese Kategorie</div>
 				{:else}
-					<div class="flex flex-col gap-6">
-						{#each Object.entries(groupedCashFlows) as [date, cashFlowsForDay]}
-							<div class="flex flex-col items-start gap-1">
-								<Badge>{formatDateHeading(date)}</Badge>
-								<List>
-									{#each cashFlowsForDay as cashFlow}
-										<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
-											<div class="flex flex-col">
-												<span>{cashFlow.name}</span>
-												<span class="text-sm text-muted-foreground"
-													>{cashFlow.cash_group?.name ?? '-'}</span
-												>
-											</div>
-											<div class="relative flex items-center">
-												<span>{displayCurrency({ amount: cashFlow.amount })}</span>
-											</div>
-										</ListItem>
-									{/each}
-								</List>
-							</div>
+					<List>
+						{#each filteredCashFlows as cashFlow}
+							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
+								<div class="flex flex-col">
+									<span>{cashFlow.name}</span>
+									<span class="text-sm text-muted-foreground"
+										>{formatDateShort(cashFlow.date)} • {cashFlow.cash_group?.name ?? '-'}</span
+									>
+								</div>
+								<div class="relative flex items-center">
+									<span>{displayCurrency({ amount: cashFlow.amount })}</span>
+								</div>
+							</ListItem>
 						{/each}
-					</div>
+					</List>
 				{/if}
 			{/if}
 		</div>
