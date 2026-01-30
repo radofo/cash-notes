@@ -29,6 +29,11 @@
 		// Opening: start with sheet off-screen, then animate in
 		currentDragY = window?.innerHeight || 1000;
 		isVisible = true;
+		// Lock body scroll
+		document.body.style.overflow = 'hidden';
+		document.body.style.position = 'fixed';
+		document.body.style.width = '100%';
+		document.body.style.top = `-${window.scrollY}px`;
 		// Use requestAnimationFrame to ensure the initial position is rendered first
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
@@ -37,12 +42,25 @@
 		});
 	}
 
+	// Handle external close (when parent sets open = false)
+	$: if (!open && isVisible && !isClosing) {
+		close();
+	}
+
 	function close() {
 		if (isClosing) return;
 		isClosing = true;
 		// Animate out
 		currentDragY = window?.innerHeight || 1000;
 		setTimeout(() => {
+			// Restore body scroll
+			const scrollY = document.body.style.top;
+			document.body.style.overflow = '';
+			document.body.style.position = '';
+			document.body.style.width = '';
+			document.body.style.top = '';
+			window.scrollTo(0, parseInt(scrollY || '0') * -1);
+
 			open = false;
 			isVisible = false;
 			isClosing = false;
@@ -52,6 +70,11 @@
 	}
 
 	function handleBackdropClick() {
+		close();
+	}
+
+	function handleCloseButtonClick(event: MouseEvent) {
+		event.stopPropagation();
 		close();
 	}
 
@@ -151,9 +174,9 @@
 		aria-modal="true"
 		aria-labelledby="bottom-sheet-title"
 	>
-		<!-- Handle bar (draggable) -->
+		<!-- Draggable header area (handle bar + title) -->
 		<div
-			class="flex cursor-grab touch-none select-none justify-center pb-2 pt-3 active:cursor-grabbing"
+			class="cursor-grab touch-none select-none active:cursor-grabbing"
 			on:touchstart={handleTouchStart}
 			on:mousedown={handleMouseDown}
 			role="slider"
@@ -163,23 +186,26 @@
 			aria-valuenow={Math.min(100, Math.round((currentDragY / DISMISS_THRESHOLD) * 100))}
 			tabindex="0"
 		>
-			<div class="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
-		</div>
+			<!-- Handle bar -->
+			<div class="flex justify-center pb-2 pt-3">
+				<div class="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
+			</div>
 
-		<!-- Header -->
-		<div class="flex items-center justify-between px-4 pb-4">
-			<h2 id="bottom-sheet-title" class="text-lg font-bold">
-				{#if title}
-					{title}
-				{:else}
-					<slot name="header" />
+			<!-- Header -->
+			<div class="flex items-center justify-between px-4 pb-4">
+				<h2 id="bottom-sheet-title" class="text-lg font-bold">
+					{#if title}
+						{title}
+					{:else}
+						<slot name="header" />
+					{/if}
+				</h2>
+				{#if showCloseButton}
+					<Button class="p-1" variant="ghost" on:click={handleCloseButtonClick}>
+						<X />
+					</Button>
 				{/if}
-			</h2>
-			{#if showCloseButton}
-				<Button class="p-1" variant="ghost" on:click={close}>
-					<X />
-				</Button>
-			{/if}
+			</div>
 		</div>
 
 		<!-- Content -->
