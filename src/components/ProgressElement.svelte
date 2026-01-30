@@ -21,7 +21,7 @@
 
 		<!-- Month progress indicator -->
 		<div
-			class="absolute bottom-0 h-1.5 {monthProgress < spendingProgress
+			class="absolute bottom-0 h-1.5 rounded-t {monthProgress < spendingProgress
 				? 'bg-primary-foreground/30'
 				: 'bg-progress-border/50'}"
 			style="left: {monthProgress}%; width: 3px;"
