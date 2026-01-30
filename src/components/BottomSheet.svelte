@@ -63,7 +63,7 @@
 	function handleTouchEnd() {
 		if (!isDragging) return;
 		isDragging = false;
-		
+
 		if (sheetElement) {
 			sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
 		}
@@ -135,8 +135,8 @@
 	}
 </script>
 
-<svelte:window 
-	on:keydown={handleKeydown} 
+<svelte:window
+	on:keydown={handleKeydown}
 	on:mousemove={isDragging ? handleMouseMove : undefined}
 	on:mouseup={isDragging ? handleMouseUp : undefined}
 />
@@ -163,8 +163,8 @@
 		aria-labelledby="bottom-sheet-title"
 	>
 		<!-- Handle bar (draggable) -->
-		<div 
-			class="flex cursor-grab justify-center pt-3 pb-2 active:cursor-grabbing touch-none select-none"
+		<div
+			class="flex cursor-grab touch-none select-none justify-center pb-2 pt-3 active:cursor-grabbing"
 			on:touchstart={handleTouchStart}
 			on:touchmove={handleTouchMove}
 			on:touchend={handleTouchEnd}
