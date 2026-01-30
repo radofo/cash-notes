@@ -16,30 +16,32 @@
 	let currentDragY = 0;
 	let isClosing = false;
 	let isVisible = false;
+	let isAnimatingIn = false;
 
 	// Threshold to dismiss (in pixels)
 	const DISMISS_THRESHOLD = 150;
 
 	// Reactive style for the sheet
-	$: sheetTransform = `translateY(${currentDragY}px)`;
-	$: sheetTransition = isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+	$: sheetTransform = isAnimatingIn ? 'translateY(100%)' : `translateY(${currentDragY}px)`;
+	$: sheetTransition =
+		isDragging || isAnimatingIn ? 'none' : 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)';
 
 	// Handle open state changes
 	$: if (open && !isVisible && !isClosing) {
-		// Opening: start with sheet off-screen, then animate in
-		currentDragY = window?.innerHeight || 1000;
+		// Opening: make visible first with sheet off-screen (no transition)
+		isAnimatingIn = true;
 		isVisible = true;
+		currentDragY = 0;
 		// Lock body scroll
 		document.body.style.overflow = 'hidden';
 		document.body.style.position = 'fixed';
 		document.body.style.width = '100%';
 		document.body.style.top = `-${window.scrollY}px`;
-		// Use requestAnimationFrame to ensure the initial position is rendered first
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				currentDragY = 0;
-			});
-		});
+		// Use a small timeout to ensure the browser has painted the initial state
+		// before enabling the transition and animating in
+		setTimeout(() => {
+			isAnimatingIn = false;
+		}, 20);
 	}
 
 	// Handle external close (when parent sets open = false)
@@ -50,7 +52,7 @@
 	function close() {
 		if (isClosing) return;
 		isClosing = true;
-		// Animate out
+		// Animate out by setting a large Y value
 		currentDragY = window?.innerHeight || 1000;
 		setTimeout(() => {
 			// Restore body scroll
@@ -64,9 +66,10 @@
 			open = false;
 			isVisible = false;
 			isClosing = false;
+			isAnimatingIn = false;
 			currentDragY = 0;
 			dispatch('close');
-		}, 300);
+		}, 350);
 	}
 
 	function handleBackdropClick() {
@@ -168,7 +171,7 @@
 
 	<!-- Bottom Sheet -->
 	<div
-		class="fixed inset-x-0 bottom-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-background shadow-xl"
+		class="fixed inset-x-0 bottom-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-background shadow-xl will-change-transform"
 		style="transform: {sheetTransform}; transition: {sheetTransition};"
 		role="dialog"
 		aria-modal="true"
