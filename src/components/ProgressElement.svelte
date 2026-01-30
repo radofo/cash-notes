@@ -29,7 +29,7 @@
 
 		<!-- Content inside the bar -->
 		<div
-			class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5 text-foreground/70"
+			class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5 text-sm text-foreground/70"
 		>
 			<span class="font-medium">{name}</span>
 			<span class="font-medium tabular-nums">

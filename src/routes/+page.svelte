@@ -178,7 +178,7 @@
 			{:else if !sortedCashFlows.length}
 				<div class="mt-8 text-center">Noch keine Einträge für diesen Monat</div>
 			{:else}
-				<div class="text-md flex flex-row items-center justify-start gap-2 overflow-x-auto py-4">
+				<div class="flex flex-row items-center justify-start gap-2 overflow-x-auto py-4 text-sm">
 					<button
 						on:click={() => (selectedFilter = null)}
 						class="whitespace-nowrap rounded-full bg-chip p-2 {!selectedFilter

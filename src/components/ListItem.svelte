@@ -10,7 +10,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <li
 	on:click={() => dispatch('itemClicked')}
-	class="flex w-full {itemType === 'main'
+	class="flex w-full text-sm {itemType === 'main'
 		? 'pl-1 font-medium'
 		: itemType === 'flat'
 		? 'pl-1'
