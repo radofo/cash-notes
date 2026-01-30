@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { X } from 'lucide-svelte';
@@ -16,32 +16,32 @@
 	let currentDragY = 0;
 	let isClosing = false;
 	let isVisible = false;
-	let isAnimatingIn = false;
+	let sheetElement: HTMLDivElement;
+	let contentElement: HTMLDivElement;
+	let shouldAnimate = false;
+	let isDraggingFromContent = false;
 
 	// Threshold to dismiss (in pixels)
 	const DISMISS_THRESHOLD = 150;
 
-	// Reactive style for the sheet
-	$: sheetTransform = isAnimatingIn ? 'translateY(100%)' : `translateY(${currentDragY}px)`;
-	$: sheetTransition =
-		isDragging || isAnimatingIn ? 'none' : 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)';
-
 	// Handle open state changes
 	$: if (open && !isVisible && !isClosing) {
-		// Opening: make visible first with sheet off-screen (no transition)
-		isAnimatingIn = true;
 		isVisible = true;
+		shouldAnimate = true;
 		currentDragY = 0;
 		// Lock body scroll
 		document.body.style.overflow = 'hidden';
 		document.body.style.position = 'fixed';
 		document.body.style.width = '100%';
 		document.body.style.top = `-${window.scrollY}px`;
-		// Use a small timeout to ensure the browser has painted the initial state
-		// before enabling the transition and animating in
-		setTimeout(() => {
-			isAnimatingIn = false;
-		}, 20);
+	}
+
+	// Called when the enter animation finishes - switch to JS-controlled mode
+	function handleAnimationEnd(event: AnimationEvent) {
+		if (event.animationName === 'slideUp' && sheetElement) {
+			shouldAnimate = false;
+			sheetElement.style.transform = 'translateY(0)';
+		}
 	}
 
 	// Handle external close (when parent sets open = false)
@@ -52,8 +52,12 @@
 	function close() {
 		if (isClosing) return;
 		isClosing = true;
-		// Animate out by setting a large Y value
-		currentDragY = window?.innerHeight || 1000;
+		// Animate out using JS transition
+		if (sheetElement) {
+			sheetElement.classList.remove('sheet-enter');
+			sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+			sheetElement.style.transform = `translateY(${window.innerHeight}px)`;
+		}
 		setTimeout(() => {
 			// Restore body scroll
 			const scrollY = document.body.style.top;
@@ -66,10 +70,10 @@
 			open = false;
 			isVisible = false;
 			isClosing = false;
-			isAnimatingIn = false;
+			shouldAnimate = false;
 			currentDragY = 0;
 			dispatch('close');
-		}, 350);
+		}, 300);
 	}
 
 	function handleBackdropClick() {
@@ -96,6 +100,11 @@
 		if (isClosing) return;
 		isDragging = true;
 		dragStartY = event.touches[0].clientY;
+		// Clear CSS animation to allow JS control
+		shouldAnimate = false;
+		if (sheetElement) {
+			sheetElement.style.transform = 'translateY(0)';
+		}
 	}
 
 	function handleTouchMove(event: TouchEvent) {
@@ -104,17 +113,26 @@
 		const deltaY = touchY - dragStartY;
 		// Only allow dragging downward
 		currentDragY = Math.max(0, deltaY);
+		if (sheetElement) {
+			sheetElement.style.transition = 'none';
+			sheetElement.style.transform = `translateY(${currentDragY}px)`;
+		}
 	}
 
 	function handleTouchEnd() {
 		if (!isDragging) return;
 		isDragging = false;
+		isDraggingFromContent = false;
 
 		if (currentDragY > DISMISS_THRESHOLD) {
 			// Dismiss the sheet
 			close();
 		} else {
 			// Snap back to original position
+			if (sheetElement) {
+				sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+				sheetElement.style.transform = 'translateY(0)';
+			}
 			currentDragY = 0;
 		}
 	}
@@ -124,6 +142,11 @@
 		if (isClosing) return;
 		isDragging = true;
 		dragStartY = event.clientY;
+		// Clear CSS animation to allow JS control
+		shouldAnimate = false;
+		if (sheetElement) {
+			sheetElement.style.transform = 'translateY(0)';
+		}
 		// Prevent text selection while dragging
 		event.preventDefault();
 	}
@@ -133,17 +156,89 @@
 		const deltaY = event.clientY - dragStartY;
 		// Only allow dragging downward
 		currentDragY = Math.max(0, deltaY);
+		if (sheetElement) {
+			sheetElement.style.transition = 'none';
+			sheetElement.style.transform = `translateY(${currentDragY}px)`;
+		}
 	}
 
 	function handleMouseUp() {
 		if (!isDragging) return;
 		isDragging = false;
+		isDraggingFromContent = false;
 
 		if (currentDragY > DISMISS_THRESHOLD) {
 			// Dismiss the sheet
 			close();
 		} else {
 			// Snap back to original position
+			if (sheetElement) {
+				sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+				sheetElement.style.transform = 'translateY(0)';
+			}
+			currentDragY = 0;
+		}
+	}
+
+	// Content area touch events - trigger drag when scrolled to top
+	function handleContentTouchStart(event: TouchEvent) {
+		if (isClosing) return;
+		// Store the start position, we'll decide if it's a drag on move
+		dragStartY = event.touches[0].clientY;
+		isDraggingFromContent = false;
+	}
+
+	function handleContentTouchMove(event: TouchEvent) {
+		if (isClosing) return;
+		const touchY = event.touches[0].clientY;
+		const deltaY = touchY - dragStartY;
+
+		// Check if content is scrolled to top and user is pulling down
+		if (contentElement && contentElement.scrollTop <= 0 && deltaY > 0) {
+			// Start dragging the sheet
+			if (!isDraggingFromContent) {
+				isDraggingFromContent = true;
+				isDragging = true;
+				dragStartY = touchY; // Reset start to current position
+				shouldAnimate = false;
+				if (sheetElement) {
+					sheetElement.style.transform = 'translateY(0)';
+				}
+			}
+			// Prevent the content from scrolling
+			event.preventDefault();
+
+			// Update sheet position
+			const newDeltaY = touchY - dragStartY;
+			currentDragY = Math.max(0, newDeltaY);
+			if (sheetElement) {
+				sheetElement.style.transition = 'none';
+				sheetElement.style.transform = `translateY(${currentDragY}px)`;
+			}
+		} else if (isDraggingFromContent && isDragging) {
+			// Continue dragging if we already started
+			event.preventDefault();
+			const newDeltaY = touchY - dragStartY;
+			currentDragY = Math.max(0, newDeltaY);
+			if (sheetElement) {
+				sheetElement.style.transition = 'none';
+				sheetElement.style.transform = `translateY(${currentDragY}px)`;
+			}
+		}
+	}
+
+	function handleContentTouchEnd() {
+		if (!isDraggingFromContent) return;
+		isDragging = false;
+		isDraggingFromContent = false;
+
+		if (currentDragY > DISMISS_THRESHOLD) {
+			close();
+		} else {
+			if (sheetElement) {
+				sheetElement.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+				sheetElement.style.transform = 'translateY(0)';
+			}
 			currentDragY = 0;
 		}
 	}
@@ -171,8 +266,10 @@
 
 	<!-- Bottom Sheet -->
 	<div
-		class="fixed inset-x-0 bottom-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-background shadow-xl will-change-transform"
-		style="transform: {sheetTransform}; transition: {sheetTransition};"
+		bind:this={sheetElement}
+		class="fixed inset-x-0 bottom-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-background shadow-xl"
+		class:sheet-enter={shouldAnimate}
+		on:animationend={handleAnimationEnd}
 		role="dialog"
 		aria-modal="true"
 		aria-labelledby="bottom-sheet-title"
@@ -212,7 +309,13 @@
 		</div>
 
 		<!-- Content -->
-		<div class="flex-1 overflow-y-auto px-4 pb-8">
+		<div
+			bind:this={contentElement}
+			class="flex-1 overflow-y-auto px-4 pb-8"
+			on:touchstart={handleContentTouchStart}
+			on:touchmove={handleContentTouchMove}
+			on:touchend={handleContentTouchEnd}
+		>
 			<form class="flex h-full flex-col" on:submit|preventDefault={handleSubmit}>
 				<slot name="content" />
 				<slot />
@@ -220,3 +323,19 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	@keyframes slideUp {
+		from {
+			transform: translateY(100%);
+		}
+		to {
+			transform: translateY(0);
+		}
+	}
+
+	.sheet-enter {
+		animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+		will-change: transform;
+	}
+</style>
