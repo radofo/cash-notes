@@ -28,9 +28,11 @@
 		/>
 
 		<!-- Content inside the bar -->
-		<div class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5">
-			<span class="text-sm font-medium text-foreground">{name}</span>
-			<span class="text-sm font-medium tabular-nums text-foreground">
+		<div
+			class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5 text-foreground/70"
+		>
+			<span class="font-medium">{name}</span>
+			<span class="font-medium tabular-nums">
 				{formatCurrency(Math.round(info.spent))}{info.limit !== null
 					? ` / ${displayCurrency({ amount: Math.round(info.limit), forceDecimals: false })}`
 					: ''}
