@@ -164,7 +164,7 @@
 								<div class="flex flex-col">
 									<span>{cashFlow.name}</span>
 									<span class="text-sm text-muted-foreground"
-										>{formatDateShort(cashFlow.date)} • {cashFlow.cash_group?.name ?? '-'}</span
+										>{cashFlow.cash_group?.name ?? '-'} • {formatDateShort(cashFlow.date)}</span
 									>
 								</div>
 								<div class="relative flex items-center">
