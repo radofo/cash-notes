@@ -38,7 +38,7 @@
 
 	function formatMonthYear(month: number | null, year: number | null): string {
 		if (month === null || year === null) return '-';
-		return `${shortMonths[month]} ${year}`;
+		return `${shortMonths[month]} ${String(year).slice(-2)}`;
 	}
 
 	function isMonthDisabled(month: number, year: number, isFromPicker: boolean): boolean {
@@ -168,7 +168,7 @@
 					>
 						<ChevronDown size={16} class="rotate-90" />
 					</button>
-					<span class="font-medium">{fromPickerYear}</span>
+					<span class="font-medium">{String(fromPickerYear).slice(-2)}</span>
 					<button
 						type="button"
 						class="rounded p-1 hover:bg-surface"
@@ -245,7 +245,7 @@
 					>
 						<ChevronDown size={16} class="rotate-90" />
 					</button>
-					<span class="font-medium">{toPickerYear}</span>
+					<span class="font-medium">{String(toPickerYear).slice(-2)}</span>
 					<button
 						type="button"
 						class="rounded p-1 hover:bg-surface"

@@ -70,11 +70,14 @@
 		year: monthRange.fromYear
 	} as Month;
 
+	// Short month names for header display
+	const shortMonths = months.map((m) => m.substring(0, 3));
+
 	// Format header title based on month range
 	$: headerTitle = isSingleMonth
-		? `${months[monthRange.fromMonth]} ${monthRange.fromYear}`
-		: `${months[monthRange.fromMonth]} ${monthRange.fromYear} - ${
-				months[monthRange.toMonth ?? monthRange.fromMonth]
+		? `${shortMonths[monthRange.fromMonth]} ${monthRange.fromYear}`
+		: `${shortMonths[monthRange.fromMonth]} ${monthRange.fromYear} - ${
+				shortMonths[monthRange.toMonth ?? monthRange.fromMonth]
 		  } ${monthRange.toYear ?? monthRange.fromYear}`;
 
 	// Selected budget data
