@@ -7,15 +7,20 @@
 	export let showMonth: boolean = false;
 
 	let cfDate: string = '';
+	let cfDayOfWeek: string = '';
 	let cfMonth: string = '';
+
+	const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 	$: {
 		if (cashFlow.date) {
-			let day = new Date(cashFlow.date).getDate().toString();
+			const date = new Date(cashFlow.date);
+			let day = date.getDate().toString();
 			if (day.length < 2) day = '0' + day;
-			let month = (new Date(cashFlow.date).getMonth() + 1).toString();
+			let month = (date.getMonth() + 1).toString();
 			if (month.length < 2) month = '0' + month;
 			cfDate = day;
+			cfDayOfWeek = dayNames[date.getDay()];
 			cfMonth = month;
 		}
 	}
@@ -27,14 +32,10 @@
 	on:click={() => editCashFlow(cashFlow)}
 	class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0"
 >
-	<div class="flex items-start gap-2">
-		<div class="flex flex-col">
-			{#if showMonth}
-				<span class="text-md w-8 font-medium">{cfDate}</span>
-				<span class="text-md w-8 font-medium text-text-tertiary">{cfMonth}</span>
-			{:else}
-				<span class="w-8 text-lg font-medium">{cfDate}</span>
-			{/if}
+	<div class="flex items-center gap-3">
+		<div class="flex h-10 w-8 flex-col items-center justify-center">
+			<span class="text-base font-semibold leading-tight">{cfDate}</span>
+			<span class="text-xs leading-tight text-text-tertiary">{cfDayOfWeek}</span>
 		</div>
 		<div class="flex flex-col">
 			<span class="text-md">

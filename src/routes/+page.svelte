@@ -97,11 +97,14 @@
 			: sortedCashFlows.filter((cf) => cf.cash_group?.name === selectedFilter);
 
 	// Format date for display in list items
-	function formatDateShort(dateStr: string): string {
+	const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+	function getDateParts(dateStr: string): { day: string; dayOfWeek: string } {
 		const date = new Date(dateStr);
-		const day = date.getDate().toString().padStart(2, '0');
-		const month = (date.getMonth() + 1).toString().padStart(2, '0');
-		return `${day}.${month}`;
+		return {
+			day: date.getDate().toString().padStart(2, '0'),
+			dayOfWeek: dayNames[date.getDay()]
+		};
 	}
 
 	async function getNewMonthData(month?: number, year?: number) {
@@ -160,12 +163,19 @@
 				{:else}
 					<List>
 						{#each filteredCashFlows as cashFlow}
+							{@const dateParts = getDateParts(cashFlow.date)}
 							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
-								<div class="flex flex-col">
-									<span>{cashFlow.name}</span>
-									<span class="text-muted-foreground"
-										>{cashFlow.cash_group?.name ?? '-'} • {formatDateShort(cashFlow.date)}</span
-									>
+								<div class="flex items-start gap-3">
+									<div class="flex w-8 translate-y-[0.5px] flex-col items-center">
+										<span class="text-lg font-semibold leading-tight">{dateParts.day}</span>
+										<span class="text-xs leading-tight text-text-tertiary"
+											>{dateParts.dayOfWeek}</span
+										>
+									</div>
+									<div class="flex flex-col">
+										<span>{cashFlow.name}</span>
+										<span class="text-muted-foreground">{cashFlow.cash_group?.name ?? '-'}</span>
+									</div>
 								</div>
 								<div class="relative flex items-center">
 									<span>{displayCurrency({ amount: cashFlow.amount })}</span>
