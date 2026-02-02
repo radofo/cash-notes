@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { IconLoader } from '@tabler/icons-svelte';
+	import { Settings } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import CashFlowModalEdit from '../components/CashFlow/CashFlowModalEdit.svelte';
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
+	import List from '../components/List.svelte';
+	import ListItem from '../components/ListItem.svelte';
 	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
 	import { getCashFlows } from '../network/cash_flow';
@@ -11,12 +14,9 @@
 	import type { CashFlow } from '../types/supabase';
 	import { cashFlowStore } from '../utils/cashFlow.store';
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
+	import { displayCurrency } from '../utils/currency';
 	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
 	import type { PageData } from './$types';
-	import { Settings } from 'lucide-svelte';
-	import List from '../components/List.svelte';
-	import ListItem from '../components/ListItem.svelte';
-	import { displayCurrency } from '../utils/currency';
 
 	export let data: PageData;
 
@@ -111,7 +111,7 @@
 		}
 	}
 
-	const activeFilterStyles = 'bg-chip-active text-chip-active-foreground';
+	const activeFilterStyles = 'bg-primary/40';
 </script>
 
 <DefaultPageContent>
@@ -163,7 +163,7 @@
 							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
 								<div class="flex flex-col">
 									<span>{cashFlow.name}</span>
-									<span class="text-sm text-muted-foreground"
+									<span class="text-muted-foreground"
 										>{cashFlow.cash_group?.name ?? '-'} • {formatDateShort(cashFlow.date)}</span
 									>
 								</div>

@@ -84,7 +84,8 @@ const config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans],
-				poppins: ['Poppins', 'Arial', 'sans-serif']
+				poppins: ['Poppins', 'Arial', 'sans-serif'],
+				mono: ['JetBrains Mono', 'Fira Code', 'SF Mono', 'Menlo', 'monospace']
 			}
 		}
 	},
