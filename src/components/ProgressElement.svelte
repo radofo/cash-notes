@@ -12,7 +12,7 @@
 </script>
 
 <li class="flex w-full flex-col {fontBold ? 'font-medium' : 'font-normal'}">
-	<div class="relative w-full overflow-hidden rounded-xl bg-progress">
+	<div class="relative w-full overflow-hidden rounded-lg bg-progress">
 		<!-- Progress fill -->
 		<div
 			class="absolute inset-y-0 left-0 bg-primary/40 transition-all duration-300"

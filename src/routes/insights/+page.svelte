@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { Chart, registerables } from 'chart.js';
-	import { CalendarDays } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import BudgetFilter from '../../components/BudgetFilter.svelte';
 	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
 	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
 	import { getCashGroups } from '../../network/cash_group';
@@ -11,26 +9,27 @@
 		CategorySpendingsStore,
 		DBSpendings,
 		MonthLabels,
-		TimeframeFilter
+		MonthRange
 	} from '../../types/analysis';
-	import type { CashGroup } from '../../types/supabase';
+	import type { Month } from '../../types/date';
 	import {
-		createTimeframeLabel,
 		getAllCashGroups,
 		getAllSpendingMonths,
 		getCategoriesMeta,
-		getFullSpendingYears,
+		getDefaultMonthRange,
+		getMonthRangeCategorySpendings,
 		getSpendingsMeta,
-		getTimeframeCategorySpendings,
-		getTimeframeFilters,
 		getTotalSpendings,
 		initCategorySpendingsStore
 	} from '../../utils/analysis';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
+	import { months } from '../../utils/date';
 	import type { PageData } from './$types';
 	import CostDevelopment from './CostDevelopment.svelte';
 	import CostDistribution from './CostDistribution.svelte';
 	import InsightFacts from './InsightFacts.svelte';
+	import InsightsFilterBar from './InsightsFilterBar.svelte';
+	import SingleMonthView from './SingleMonthView.svelte';
 	import TopSpendings from './TopSpendings.svelte';
 
 	Chart.register(...registerables);
@@ -45,39 +44,58 @@
 	// All Data
 	let categorySpendingsStore: CategorySpendingsStore = new Map();
 	$: cashGroups = $cashGroupStore;
-	// Filters
-	let timeFrames: TimeframeFilter[] = [];
-	let selectedTimeframe: TimeframeFilter | undefined;
+
+	// Month range filter
+	let monthRange: MonthRange = getDefaultMonthRange();
+	let availableMonths: string[] = [];
+
+	// Budget filter (multi-select)
 	let allCategories: string[] = [];
-	let selectedCategory: string | null = null;
+	let selectedBudgets: string[] = [];
+
 	// Timeframe Data
 	let xAxis: MonthLabels = [];
 	let categorySpendings: CategorySpendings = new Map();
 	$: categorySpendingsMeta = getCategoriesMeta(categorySpendings);
 	$: allSpendings = getTotalSpendings(categorySpendings);
-	// Selected Cash Group Data
-	$: selectedSpendings = selectedCategory
-		? categorySpendings.get(selectedCategory) ?? []
-		: allSpendings;
-	$: selectedSpendingsMeta = selectedCategory
-		? categorySpendingsMeta.get(selectedCategory)
-		: getSpendingsMeta(allSpendings);
 
-	$: selectedCashGroups = selectedCategory
-		? [cashGroups.find((cg) => cg.name === selectedCategory)].filter((cg): cg is CashGroup =>
-				Boolean(cg)
-		  )
-		: cashGroups;
+	// Check if it's a single month view
+	$: isSingleMonth =
+		monthRange.toMonth === null ||
+		(monthRange.fromMonth === monthRange.toMonth && monthRange.fromYear === monthRange.toYear);
+
+	// Get the single month as Month type for SingleMonthView
+	$: singleMonth = {
+		month: monthRange.fromMonth,
+		year: monthRange.fromYear
+	} as Month;
+
+	// Format header title based on month range
+	$: headerTitle = isSingleMonth
+		? `${months[monthRange.fromMonth]} ${monthRange.fromYear}`
+		: `${months[monthRange.fromMonth]} ${monthRange.fromYear} - ${
+				months[monthRange.toMonth ?? monthRange.fromMonth]
+		  } ${monthRange.toYear ?? monthRange.fromYear}`;
+
+	// Selected budget data
+	$: selectedSpendingsMeta = getSpendingsMeta(allSpendings);
+
+	$: selectedCashGroups =
+		selectedBudgets.length > 0
+			? cashGroups.filter((cg) => selectedBudgets.includes(cg.name))
+			: cashGroups;
+
 	$: selectedBudget = selectedCashGroups
 		.filter((cg) => cg.is_active)
 		.reduce((acc, cg) => acc + (cg?.budget ?? 0), 0);
 
 	$: {
-		if (selectedTimeframe) {
-			const { spending, monthLabels } = getTimeframeCategorySpendings(
+		if (categorySpendingsStore.size > 0) {
+			const { spending, monthLabels } = getMonthRangeCategorySpendings(
 				categorySpendingsStore,
-				selectedTimeframe,
-				allCategories
+				monthRange,
+				allCategories,
+				selectedBudgets
 			);
 			categorySpendings = spending;
 			xAxis = monthLabels;
@@ -87,62 +105,70 @@
 		}
 	}
 
+	function handleMonthRangeChange(
+		event: CustomEvent<{
+			fromMonth: number;
+			fromYear: number;
+			toMonth: number | null;
+			toYear: number | null;
+		}>
+	) {
+		monthRange = event.detail;
+	}
+
+	function handleBudgetChange(event: CustomEvent<{ selectedBudgets: string[] }>) {
+		selectedBudgets = event.detail.selectedBudgets;
+	}
+
 	onMount(async () => {
 		pageLoading = true;
 		const { data: rpcData, error } = await supabase.rpc('sum_cash_flows');
 		allCategories = getAllCashGroups(rpcData);
+		selectedBudgets = [...allCategories]; // Default: all budgets selected
 		categorySpendingsStore = initCategorySpendingsStore(rpcData as DBSpendings);
-		const fullSpendingYears = getFullSpendingYears(categorySpendingsStore);
-		const fullSpendingMonths = getAllSpendingMonths(categorySpendingsStore);
-		timeFrames = getTimeframeFilters(fullSpendingYears, fullSpendingMonths);
-		selectedTimeframe = timeFrames.find((timeframe) => timeframe.id === 'last_12') ?? timeFrames[0];
+		availableMonths = getAllSpendingMonths(categorySpendingsStore);
 		cashGroupStore.set(await getCashGroups(supabase));
 		pageLoading = false;
 	});
 </script>
 
-<div class="px-3 pb-10">
+<div class="px-3 pb-32">
 	<PageHeaderCore>
-		<PageHeaderHeading slot="text">Analyse</PageHeaderHeading>
-		<div slot="actions" class="dropdown dropdown-left">
-			<div tabindex="0" role="button" class="flex flex-row items-center gap-2">
-				<CalendarDays class="" size={16} />
-				<span class="mt-1 text-sm font-medium">{createTimeframeLabel(selectedTimeframe)}</span>
-			</div>
-			<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-			<ul tabindex="0" class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
-				{#each timeFrames as timeframe}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-					<li on:click={() => (selectedTimeframe = timeframe)}>
-						<!-- svelte-ignore a11y-missing-attribute -->
-						<a>{createTimeframeLabel(timeframe)}</a>
-					</li>
-				{/each}
-			</ul>
-		</div>
+		<PageHeaderHeading slot="text">{headerTitle}</PageHeaderHeading>
 	</PageHeaderCore>
-	<BudgetFilter
-		selectedFilter={selectedCategory}
-		cashFlowFilters={allCategories}
-		onFilterChange={(filter) => (selectedCategory = filter)}
-	/>
-	<div class="mt-8 flex flex-col gap-12">
-		{#if selectedSpendingsMeta}
-			<InsightFacts
-				isSingleMonth={selectedTimeframe?.id.startsWith('month_') ?? false}
-				totalSpendings={selectedSpendingsMeta.total}
-				averageSpendings={selectedSpendingsMeta.average}
-				averageSpendingsTotal={selectedSpendingsMeta.averageTotal}
-				budget={selectedBudget ?? 0}
-			/>
+
+	<div class="mt-4 flex flex-col gap-20">
+		{#if isSingleMonth}
+			<!-- Single month view: show home-page style layout -->
+			<SingleMonthView {supabase} month={singleMonth} {selectedBudgets} />
+		{:else}
+			<!-- Multi-month view: show charts and analytics -->
+			{#if selectedSpendingsMeta}
+				<InsightFacts
+					{isSingleMonth}
+					totalSpendings={selectedSpendingsMeta.total}
+					averageSpendings={selectedSpendingsMeta.average}
+					averageSpendingsTotal={selectedSpendingsMeta.averageTotal}
+					budget={selectedBudget ?? 0}
+				/>
+			{/if}
+			<CostDevelopment labels={xAxis} dataPoints={allSpendings} />
+			{#if selectedBudgets.length === allCategories.length || selectedBudgets.length === 0}
+				<CostDistribution spendingsMeta={categorySpendingsMeta} />
+			{/if}
+			<TopSpendings cashGroups={selectedCashGroups.map((cg) => cg.id)} months={xAxis} />
 		{/if}
-		{#if !selectedTimeframe?.id.startsWith('month_')}
-			<CostDevelopment labels={xAxis} dataPoints={selectedSpendings} />
-		{/if}
-		{#if selectedCategory === null}
-			<CostDistribution spendingsMeta={categorySpendingsMeta} />
-		{/if}
-		<TopSpendings cashGroups={selectedCashGroups.map((cg) => cg.id)} months={xAxis} />
 	</div>
 </div>
+
+<InsightsFilterBar
+	fromMonth={monthRange.fromMonth}
+	fromYear={monthRange.fromYear}
+	toMonth={monthRange.toMonth}
+	toYear={monthRange.toYear}
+	{availableMonths}
+	budgets={allCategories}
+	{selectedBudgets}
+	on:monthRangeChange={handleMonthRangeChange}
+	on:budgetChange={handleBudgetChange}
+/>

@@ -19,6 +19,7 @@
 	export let cashGroups: CashGroup[];
 	export let totalFixCost: number;
 	export let totalIncome: number;
+	export let stackedLayout: boolean = false;
 
 	let progressWithBudget: Map<string, BudgetProgress>;
 	let progressNoBudget: Map<string, BudgetProgress>;
@@ -101,8 +102,10 @@
 </script>
 
 {#if tableOpenStates}
-	<div class="carousel w-full">
-		<div id="item1" class="carousel-item box-border w-full py-2">
+	{#if stackedLayout}
+		<!-- Stacked layout for insights page -->
+		<div class="flex w-full flex-col gap-8">
+			<!-- Budget bars -->
 			<div class="w-full">
 				<ul class="flex flex-col gap-4 pb-4">
 					{#each [...progressWithBudget] as [name, info]}
@@ -115,8 +118,7 @@
 					info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
 				/>
 			</div>
-		</div>
-		<div id="item2" class="carousel-item box-border w-full p-1 py-2">
+			<!-- Income/Expense table -->
 			<div class="w-full">
 				<TotalSection bind:open={tableOpenStates.incomes}>
 					<div slot="title">Einnahmen</div>
@@ -197,5 +199,104 @@
 				</SumItem>
 			</div>
 		</div>
-	</div>
+	{:else}
+		<!-- Carousel layout for home page -->
+		<div class="carousel w-full">
+			<div id="item1" class="carousel-item box-border w-full py-2">
+				<div class="w-full">
+					<ul class="flex flex-col gap-4 pb-4">
+						{#each [...progressWithBudget] as [name, info]}
+							<ProgressElement {name} {info} />
+						{/each}
+					</ul>
+					<ProgressElement
+						fontBold
+						name="Alle Budgets"
+						info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+					/>
+				</div>
+			</div>
+			<div id="item2" class="carousel-item box-border w-full p-1 py-2">
+				<div class="w-full">
+					<TotalSection bind:open={tableOpenStates.incomes}>
+						<div slot="title">Einnahmen</div>
+						<span slot="total">
+							{displayCurrency({ amount: totalTableData.incomes, sign: '+' })}</span
+						>
+					</TotalSection>
+					<TotalSection bind:open={tableOpenStates.expenses}>
+						<div slot="title">Ausgaben</div>
+						<span slot="total">
+							{displayCurrency({ amount: totalTableData.expenses.total, sign: '-' })}</span
+						>
+						<span slot="content">
+							<TotalSection bind:open={tableOpenStates.fixedCosts}>
+								<div slot="title">Fixkosten</div>
+								<span slot="total">
+									{displayCurrency({
+										amount: totalTableData.expenses.fixedCosts.total,
+										sign: '-'
+									})}</span
+								>
+								<span slot="content">
+									{#each Array.from(totalTableData.expenses.fixedCosts.fixedBudgets) as [name, amount]}
+										<TotalItem>
+											<span>{name}</span>
+											<span>{displayCurrency({ amount, sign: '-' })}</span>
+										</TotalItem>
+									{/each}
+								</span>
+							</TotalSection>
+							<TotalSection bind:open={tableOpenStates.budgets}>
+								<div slot="title">In Budgets</div>
+								<span slot="total">
+									{displayCurrency({
+										amount: totalTableData.expenses.budgets.total,
+										sign: '-'
+									})}</span
+								>
+								<span slot="content">
+									{#each Array.from(totalTableData.expenses.budgets.budgets) as [name, amount]}
+										<TotalItem>
+											<span>{name}</span>
+											<span>{displayCurrency({ amount, sign: '-' })}</span>
+										</TotalItem>
+									{/each}
+								</span>
+							</TotalSection>
+							<TotalSection bind:open={tableOpenStates.noBudgets}>
+								<div slot="title">Ohne Budget</div>
+								<span slot="total">
+									{displayCurrency({
+										amount: totalTableData.expenses.noBudgets.total,
+										sign: '-'
+									})}</span
+								>
+								<span slot="content">
+									{#each Array.from(totalTableData.expenses.noBudgets.budgets) as [name, amount]}
+										<TotalItem>
+											<span>{name}</span>
+											<span>{displayCurrency({ amount, sign: '-' })}</span>
+										</TotalItem>
+									{/each}
+								</span>
+							</TotalSection>
+						</span>
+					</TotalSection>
+					<SumItem>
+						<div class="flex flex-row items-center gap-2">
+							<Equal class="h-5 w-5" />
+							<span>Total</span>
+						</div>
+						<span
+							>{displayCurrency({
+								amount: Math.abs(totalTableData.incomes - totalTableData.expenses.total),
+								sign: totalTableData.incomes - totalTableData.expenses.total < 0 ? '-' : '+'
+							})}</span
+						>
+					</SumItem>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}

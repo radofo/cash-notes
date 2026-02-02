@@ -3,16 +3,16 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { ArrowRightLeft, HandCoins, House, PieChart, Plus, Settings, Users } from 'lucide-svelte';
+	import { ArrowRightLeft, House, PieChart, Plus, Users } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import '../app.css';
 	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
-	import type { PageData } from './$types';
 	import { getFriendships } from '../network/friendship';
 	import { friendsStore } from '../stores/friends';
 	import { getProfilesFromFriendships } from '../utils/friends';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -86,7 +86,7 @@
 			</div>
 			<div class="fixed bottom-0 left-0 right-0 flex justify-center">
 				<div
-					class="flex w-[600px] max-w-full items-center justify-between border-t border-border bg-background px-2 pb-5 pt-2"
+					class="flex w-[600px] max-w-full items-center justify-between border-t border-border bg-background px-2 pb-5 pt-3"
 				>
 					<a href="/" class="{tabElementClass} {$page.url.pathname === '/' ? '!text-primary' : ''}">
 						<House size={iconSize} />

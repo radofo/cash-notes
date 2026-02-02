@@ -20,3 +20,10 @@ export type TimeframeFilter = {
 	id: string;
 	value: string;
 };
+
+export type MonthRange = {
+	fromMonth: number;
+	fromYear: number;
+	toMonth: number | null;
+	toYear: number | null;
+};

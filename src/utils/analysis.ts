@@ -1,12 +1,84 @@
 import type {
-	CategorySpendings,
-	CategorySpendingsMeta,
-	CategorySpendingsStore,
-	DBSpendings,
-	Spendings,
-	SpendingsMeta,
-	TimeframeFilter
+    CategorySpendings,
+    CategorySpendingsMeta,
+    CategorySpendingsStore,
+    DBSpendings,
+    MonthRange,
+    Spendings,
+    SpendingsMeta,
+    TimeframeFilter
 } from '../types/analysis';
+
+export function getMonthsInRange(range: MonthRange): string[] {
+	const { fromMonth, fromYear, toMonth, toYear } = range;
+	const months: string[] = [];
+
+	// If toMonth/toYear is null, just return the single from month
+	const endMonth = toMonth ?? fromMonth;
+	const endYear = toYear ?? fromYear;
+
+	let currentMonth = fromMonth;
+	let currentYear = fromYear;
+
+	while (
+		currentYear < endYear ||
+		(currentYear === endYear && currentMonth <= endMonth)
+	) {
+		const monthStr = (currentMonth + 1).toString().padStart(2, '0');
+		months.push(`${currentYear}-${monthStr}`);
+
+		currentMonth++;
+		if (currentMonth > 11) {
+			currentMonth = 0;
+			currentYear++;
+		}
+	}
+
+	return months;
+}
+
+export function getMonthRangeCategorySpendings(
+	categorySpendingsStore: CategorySpendingsStore,
+	monthRange: MonthRange,
+	allCashGroups: string[],
+	selectedBudgets: string[]
+): { spending: CategorySpendings; monthLabels: string[] } {
+	const categorySpendings: CategorySpendings = new Map();
+	const relevantMonths = getMonthsInRange(monthRange);
+	const budgetsToUse = selectedBudgets.length > 0 ? selectedBudgets : allCashGroups;
+
+	for (const cashGroup of budgetsToUse) {
+		for (const month of relevantMonths) {
+			const spendings = categorySpendingsStore.get(month)?.get(cashGroup) || 0;
+			const currentSpendings = categorySpendings.get(cashGroup) || [];
+			categorySpendings.set(cashGroup, [...currentSpendings, spendings]);
+		}
+	}
+
+	return { spending: categorySpendings, monthLabels: relevantMonths };
+}
+
+export function getDefaultMonthRange(): MonthRange {
+	const now = new Date();
+	const currentMonth = now.getMonth();
+	const currentYear = now.getFullYear();
+
+	// Calculate 6 months ago
+	let fromMonth = currentMonth - 5;
+	let fromYear = currentYear;
+
+	if (fromMonth < 0) {
+		fromMonth += 12;
+		fromYear -= 1;
+	}
+
+	return {
+		fromMonth,
+		fromYear,
+		toMonth: currentMonth,
+		toYear: currentYear
+	};
+}
 
 export function getTimeframeCategorySpendings(
 	categorySpendingsStore: CategorySpendingsStore,
