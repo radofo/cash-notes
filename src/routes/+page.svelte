@@ -165,8 +165,8 @@
 						{#each filteredCashFlows as cashFlow}
 							{@const dateParts = getDateParts(cashFlow.date)}
 							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
-								<div class="flex items-start gap-3">
-									<div class="flex w-8 translate-y-[0.5px] flex-col items-center">
+								<div class="flex items-start gap-4">
+									<div class="flex translate-y-[0.5px] flex-col items-center">
 										<span class="text-lg font-semibold leading-tight">{dateParts.day}</span>
 										<span class="text-xs leading-tight text-text-tertiary"
 											>{dateParts.dayOfWeek}</span
