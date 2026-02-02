@@ -16,7 +16,7 @@
 	$: allSelected = selectedBudgets.length === budgets.length && budgets.length > 0;
 	$: noneSelected = selectedBudgets.length === 0;
 	$: displayText = allSelected
-		? 'Alle Budgets'
+		? 'Alle'
 		: noneSelected
 		? 'Keine ausgewählt'
 		: selectedBudgets.length === 1

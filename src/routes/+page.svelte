@@ -122,6 +122,7 @@
 	<div class="flex w-[600px] max-w-full flex-col gap-6 px-4">
 		<div class="flex flex-row items-center justify-between">
 			<ModalMonthSelector
+				interactive={false}
 				on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
 			/>
 			<a href="/profile"> <Settings size={28} /></a>

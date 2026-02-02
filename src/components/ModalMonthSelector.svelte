@@ -8,6 +8,8 @@
 
 	const dispatch = createEventDispatcher();
 
+	export let interactive: boolean = true;
+
 	let showModal = false;
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
@@ -23,23 +25,30 @@
 	}
 </script>
 
-<div class="flex cursor-pointer items-center gap-2">
-	<button class="flex items-center text-xl font-semibold" on:click={() => (showModal = true)}>
-		{months[selectedMonth]}
-		{selectedYear}
-		<IconChevronDown />
-	</button>
-	<Modal bind:showModal>
-		<form on:submit={submitNewMonth} class="flex justify-center gap-4 text-lg">
-			<FullMonthSelector
-				on:monthChanged={(e) => (selectedMonth = e.detail)}
-				on:yearChanged={(e) => (selectedYear = e.detail)}
-				{selectedMonth}
-				{selectedYear}
-				{months}
-				years={getSurroundingYears(new Date().getFullYear())}
-			/>
-			<Button type="submit" variant="default">Wählen</Button>
-		</form>
-	</Modal>
+<div class="flex items-center gap-2" class:cursor-pointer={interactive}>
+	{#if interactive}
+		<button class="flex items-center text-xl font-semibold" on:click={() => (showModal = true)}>
+			{months[selectedMonth]}
+			{selectedYear}
+			<IconChevronDown />
+		</button>
+		<Modal bind:showModal>
+			<form on:submit={submitNewMonth} class="flex justify-center gap-4 text-lg">
+				<FullMonthSelector
+					on:monthChanged={(e) => (selectedMonth = e.detail)}
+					on:yearChanged={(e) => (selectedYear = e.detail)}
+					{selectedMonth}
+					{selectedYear}
+					{months}
+					years={getSurroundingYears(new Date().getFullYear())}
+				/>
+				<Button type="submit" variant="default">Wählen</Button>
+			</form>
+		</Modal>
+	{:else}
+		<span class="text-xl font-semibold">
+			{months[selectedMonth]}
+			{selectedYear}
+		</span>
+	{/if}
 </div>
