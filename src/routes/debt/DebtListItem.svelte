@@ -10,7 +10,7 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<li class="flex cursor-pointer items-center justify-between border-b py-2 last:border-0">
+<li class="flex cursor-pointer items-center justify-between border-b py-2 text-sm last:border-0">
 	<div class="flex items-center gap-1">
 		<div class="flex flex-col">
 			<span class="text-md w-8 font-medium">{date.day}</span>

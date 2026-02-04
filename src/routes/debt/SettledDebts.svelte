@@ -70,7 +70,7 @@
 	<div class="flex flex-col gap-2">
 		<h2 class="text-sm font-medium text-muted-foreground">Bereits Ausgeglichen</h2>
 
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2 text-sm">
 			{#each groupedArray as [settlementId, debts]}
 				<Collapsible class="w-full overflow-hidden rounded-lg border bg-card">
 					<CollapsibleTrigger class="flex w-full items-center justify-between p-3 text-left">

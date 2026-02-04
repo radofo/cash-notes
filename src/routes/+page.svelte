@@ -168,7 +168,9 @@
 							<ListItem on:itemClicked={() => openCashFlowModal(cashFlow)} itemType="main">
 								<div class="flex items-start gap-4">
 									<div class="flex translate-y-[0.5px] flex-col items-center">
-										<span class="text-lg font-semibold leading-tight">{dateParts.day}</span>
+										<span class="text-lg font-medium leading-tight text-foreground/80"
+											>{dateParts.day}</span
+										>
 										<span class="text-xs leading-tight text-text-tertiary"
 											>{dateParts.dayOfWeek}</span
 										>
