@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { HandCoins, Handshake, TicketPlus } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
 	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
@@ -10,7 +9,6 @@
 	import { debtReloadTrigger } from '../../utils/debt.store';
 	import type { PageData } from './$types';
 	import ApproveModal from './ApproveModal.svelte';
-	import DebtActionButton from './DebtActionButton.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
 	import DebtStats from './DebtStats.svelte';
 	import ProposalDebts from './ProposalDebts.svelte';
@@ -42,8 +40,6 @@
 	let showSettlementModal = false;
 	let showDebtAddModal = false;
 	let showDebtEditModal = false;
-
-	let iconSize = 22;
 
 	onMount(async () => {
 		reloadList();
@@ -117,21 +113,35 @@
 			<SettledDebts {settledDebtsGrouped} />
 		{/if}
 	</div>
-	<div
-		class="fixed bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-muted px-2 text-foreground"
-	>
-		{#if toApprove.length > 0}
-			<DebtActionButton text="Reagieren" clickHandler={openApproveModal}>
-				<Handshake size={iconSize} />
-			</DebtActionButton>
-		{/if}
-		{#if approved.length === allUnsettled.length && allUnsettled.length > 0}
-			<DebtActionButton text="Begleichen" clickHandler={openSettlementModal}>
-				<HandCoins size={iconSize} />
-			</DebtActionButton>
-		{/if}
-		<DebtActionButton text="Neue Schuld" clickHandler={() => (showDebtAddModal = true)}>
-			<TicketPlus size={iconSize} />
-		</DebtActionButton>
+	<div class="fixed bottom-[92px] left-0 right-0 z-40 flex justify-center">
+		<div
+			class="flex w-[600px] max-w-full items-center justify-center gap-3 border-b border-t border-border bg-background/95 backdrop-blur-sm"
+		>
+			<div class="flex w-full items-center justify-around">
+				{#if toApprove.length > 0}
+					<button
+						on:click={openApproveModal}
+						class="grow cursor-pointer border-r py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+					>
+						Akzeptieren
+					</button>
+				{/if}
+				{#if approved.length === allUnsettled.length && allUnsettled.length > 0}
+					<button
+						on:click={openSettlementModal}
+						class="grow cursor-pointer border-r py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+					>
+						Begleichen
+					</button>
+					<div class="h-full w-px self-stretch bg-border" />
+				{/if}
+				<button
+					on:click={() => (showDebtAddModal = true)}
+					class="grow cursor-pointer py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+				>
+					Neue Schuld
+				</button>
+			</div>
+		</div>
 	</div>
 </div>

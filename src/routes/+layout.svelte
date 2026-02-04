@@ -75,7 +75,7 @@
 
 <div class="flex items-center justify-center overflow-hidden font-poppins">
 	<div
-		class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-x-hidden pb-[100px] pt-8"
+		class="relative flex h-[calc(100dvh)] w-[600px] max-w-full flex-col overflow-x-hidden pb-[150px] pt-8"
 	>
 		{#if session}
 			{#if cashFlowModalOpen}
