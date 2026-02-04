@@ -44,7 +44,7 @@
 			<span class="text-muted-foreground">{cashFlow.cash_group?.name ?? 'Sonstige'}</span>
 		</div>
 	</div>
-	<div class="flex items-center">
+	<div class="flex items-center font-mono">
 		<span>
 			{formatCurrency(cashFlow.amount)} €
 		</span>

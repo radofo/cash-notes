@@ -7,11 +7,12 @@
 	import { getDebtsByUserId, getSettledDebtsGrouped } from '../../network/debt';
 	import type { DebtWithProfile } from '../../types/debt';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
+	import { displayCurrency } from '../../utils/currency';
+	import { debtOverview } from '../../utils/debt.helpers';
 	import { debtReloadTrigger } from '../../utils/debt.store';
 	import type { PageData } from './$types';
 	import ApproveModal from './ApproveModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
-	import DebtStats from './DebtStats.svelte';
 	import ProposalDebts from './ProposalDebts.svelte';
 	import RejectedDebts from './RejectedDebts.svelte';
 	import SettledDebts from './SettledDebts.svelte';
@@ -23,6 +24,7 @@
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 	$: myself = session?.user.id;
+	$: debtStats = debtOverview([...approved, ...unapproved, ...toApprove]);
 
 	let allUnsettled: DebtWithProfile[] = [];
 	let settledDebtsGrouped: Map<string, DebtWithProfile[]> = new Map();
@@ -90,10 +92,20 @@
 		bind:open={showSettlementModal}
 	/>
 	<PageHeaderCore>
-		<PageHeaderHeading slot="text">Schulden</PageHeaderHeading>
+		<PageHeaderHeading slot="text">
+			<div class="flex flex-col items-start">
+				{displayCurrency({ amount: debtStats?.total })}
+
+				<span class="text-sm text-muted-foreground">
+					{debtStats?.for?.full_name}
+					{'schuldet'}
+					{debtStats?.from?.full_name}
+				</span>
+			</div>
+		</PageHeaderHeading>
 	</PageHeaderCore>
 	<div class="flex flex-col gap-8 pb-7">
-		<DebtStats debts={[...approved, ...unapproved, ...toApprove]} />
+		<!-- <DebtStats debts={[...approved, ...unapproved, ...toApprove]} /> -->
 		{#if allUnsettled.length === 0}
 			<div class="flex h-[70vh] w-full items-center justify-center">
 				<p class="text-muted-foreground">Keine Schulden vorhanden</p>
@@ -134,7 +146,7 @@
 						class="flex grow cursor-pointer items-center justify-center gap-2 border-r py-4 text-center text-sm font-medium text-foreground hover:text-primary"
 					>
 						<HandCoins size={18} />
-						<span>Begleichen</span>
+						<span>Ausgleichen</span>
 					</button>
 					<div class="h-full w-px self-stretch bg-border" />
 				{/if}

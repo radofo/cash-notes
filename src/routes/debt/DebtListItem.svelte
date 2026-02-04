@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Badge from '../../components/Badge.svelte';
 	import type { DebtWithProfile } from '../../types/debt';
 	import { formatCurrency } from '../../utils/currency';
 	import { dateToDayAndMonthWithPadding } from '../../utils/date';
@@ -29,7 +28,7 @@
 			</span>
 		</div>
 	</div>
-	<div class="flex flex-col items-end">
+	<div class="flex flex-col items-end font-mono">
 		<span class="text-md">
 			{formatCurrency(debt.amount)} €
 		</span>

@@ -11,21 +11,6 @@
 
 	export let settledDebtsGrouped: Map<string, DebtWithProfile[]>;
 
-	function getLatestDate(debts: DebtWithProfile[]): string {
-		if (debts.length === 0) return '';
-		// Find the debt with the newest createdAt (when it was added to the database)
-		const latest = debts.reduce((latest, current) => {
-			return new Date(current.createdAt) > new Date(latest.createdAt) ? current : latest;
-		}, debts[0]);
-
-		// Format the date field (not createdAt) as DD.MM.YYYY
-		const date = new Date(latest.date);
-		const day = String(date.getDate()).padStart(2, '0');
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const year = date.getFullYear();
-		return `${day}.${month}.${year}`;
-	}
-
 	function calculateNetAmounts(
 		debts: DebtWithProfile[]
 	): Map<string, { name: string; amount: number }> {
@@ -83,39 +68,26 @@
 
 {#if groupedArray.length > 0}
 	<div class="flex flex-col gap-2">
-		<h2 class="text-sm font-medium text-muted-foreground">Bereits Beglichen</h2>
+		<h2 class="text-sm font-medium text-muted-foreground">Bereits Ausgeglichen</h2>
 
 		<div class="flex flex-col gap-2">
 			{#each groupedArray as [settlementId, debts]}
-				<Collapsible class="w-full">
-					<CollapsibleTrigger
-						class="flex w-full items-center justify-between rounded-lg border bg-card p-3 text-left hover:bg-accent"
-					>
-						<span class="font-medium">{getLatestDate(debts)}</span>
+				<Collapsible class="w-full overflow-hidden rounded-lg border bg-card">
+					<CollapsibleTrigger class="flex w-full items-center justify-between p-3 text-left">
+						<div class="flex flex-col gap-1">
+							<span class="font-mono font-medium">{formatCurrency(getTotalAmount(debts))} €</span>
+							<span class="text-sm text-muted-foreground">
+								{getSettlementSummary(debts)}
+							</span>
+						</div>
 						<ChevronDown
 							size={20}
 							class="transition-transform duration-200 [[data-state=open]_&]:rotate-180"
 						/>
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						<div class="mt-2 rounded-lg border bg-card p-2">
+						<div class="border-t p-2">
 							<ul class="w-full list-none">
-								<!-- Settlement summary item -->
-								<li class="flex items-center justify-between border-b py-2">
-									<div class="flex items-center gap-1">
-										<div class="flex flex-col">
-											<span class="text-md font-medium"> Ausgleich </span>
-											<span class="text-sm text-muted-foreground">
-												{getSettlementSummary(debts)}
-											</span>
-										</div>
-									</div>
-									<div class="flex flex-col items-end">
-										<span class="text-md font-medium">
-											{formatCurrency(getTotalAmount(debts))} €
-										</span>
-									</div>
-								</li>
 								<!-- Individual debts -->
 								{#each debts as debt}
 									<DebtListItem {debt} />
