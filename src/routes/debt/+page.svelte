@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { HandCoins, Handshake, Plus } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
 	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
@@ -121,25 +122,28 @@
 				{#if toApprove.length > 0}
 					<button
 						on:click={openApproveModal}
-						class="grow cursor-pointer border-r py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+						class="flex grow cursor-pointer items-center justify-center gap-2 border-r py-4 text-center text-sm font-medium text-foreground hover:text-primary"
 					>
-						Akzeptieren
+						<Handshake size={18} />
+						<span>Akzeptieren</span>
 					</button>
 				{/if}
 				{#if approved.length === allUnsettled.length && allUnsettled.length > 0}
 					<button
 						on:click={openSettlementModal}
-						class="grow cursor-pointer border-r py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+						class="flex grow cursor-pointer items-center justify-center gap-2 border-r py-4 text-center text-sm font-medium text-foreground hover:text-primary"
 					>
-						Begleichen
+						<HandCoins size={18} />
+						<span>Begleichen</span>
 					</button>
 					<div class="h-full w-px self-stretch bg-border" />
 				{/if}
 				<button
 					on:click={() => (showDebtAddModal = true)}
-					class="grow cursor-pointer py-3 text-center text-sm font-medium text-foreground hover:text-primary"
+					class="flex grow cursor-pointer items-center justify-center gap-2 py-4 text-center text-sm font-medium text-foreground hover:text-primary"
 				>
-					Neue Schuld
+					<Plus size={18} />
+					<span>Neue Schuld</span>
 				</button>
 			</div>
 		</div>

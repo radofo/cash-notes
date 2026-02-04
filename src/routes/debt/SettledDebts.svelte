@@ -31,7 +31,7 @@
 
 {#if groupedArray.length > 0}
 	<div class="flex flex-col gap-2">
-		<h2 class="font-medium text-muted-foreground">Beglichene Schulden</h2>
+		<h2 class="text-sm font-medium text-muted-foreground">Bereits Beglichen</h2>
 
 		<div class="flex flex-col gap-2">
 			{#each groupedArray as [settlementId, debts]}
