@@ -1,17 +1,18 @@
 <script lang="ts">
-	import FormDialog from '../../components/FormDialog/FormDialog.svelte';
-	import Input from '../../components/Input.svelte';
-	import { friendsStore, noFriend } from '../../stores/friends';
-	import InputWithLabel from '../../components/InputWithLabel.svelte';
-	import type { Profile } from '../../types/friendship';
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
-	import { toFloat } from '../../utils/currency';
-	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import FormDialog from '../../components/FormDialog/FormDialog.svelte';
+	import Input from '../../components/Input.svelte';
+	import InputWithLabel from '../../components/InputWithLabel.svelte';
 	import { insertDebtSupabase } from '../../network/debt';
-	import { dateToDateString } from '../../utils/date';
+	import { friendsStore } from '../../stores/friends';
 	import type { DebtWithProfile } from '../../types/debt';
+	import type { Profile } from '../../types/friendship';
+	import { toFloat } from '../../utils/currency';
+	import { dateToDateString } from '../../utils/date';
+	import { debtReloadTrigger } from '../../utils/debt.store';
 
 	export let open: boolean;
 	export let onDebtAdded: (debt: DebtWithProfile) => void;
@@ -53,6 +54,7 @@
 				supabase
 			);
 			onDebtAdded(debt);
+			debtReloadTrigger.triggerReload();
 		}
 		modalAddLoading = false;
 		open = false;

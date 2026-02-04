@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { HandCoins, Handshake, RotateCw, TicketPlus } from 'lucide-svelte';
+	import { HandCoins, Handshake, TicketPlus } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
 	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
@@ -7,6 +7,7 @@
 	import { getDebtsByUserId, getSettledDebtsGrouped } from '../../network/debt';
 	import type { DebtWithProfile } from '../../types/debt';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
+	import { debtReloadTrigger } from '../../utils/debt.store';
 	import type { PageData } from './$types';
 	import ApproveModal from './ApproveModal.svelte';
 	import DebtActionButton from './DebtActionButton.svelte';
@@ -41,7 +42,6 @@
 	let showSettlementModal = false;
 	let showDebtAddModal = false;
 	let showDebtEditModal = false;
-	let isReloading = false;
 
 	let iconSize = 22;
 
@@ -50,15 +50,19 @@
 		cashGroupStore.set(await getCashGroups(supabase));
 	});
 
+	// Auto-reload when debt store triggers a reload
+	$: if ($debtReloadTrigger) {
+		reloadList();
+	}
+
 	async function reloadList() {
-		isReloading = true;
+		console.log('Reloading debt list...');
 		const userId = session?.user.id;
 		if (!userId) {
 			return;
 		}
 		allUnsettled = await getDebtsByUserId(userId, supabase);
 		settledDebtsGrouped = await getSettledDebtsGrouped(userId, supabase, 50);
-		isReloading = false;
 	}
 
 	function debtAdded() {
@@ -107,16 +111,15 @@
 			{#if unapproved.length > 0}
 				<ProposalDebts openDebts={unapproved} />
 			{/if}
-			<UnsettledDebts unsettledDebts={approved} />
+			{#if approved.length > 0}
+				<UnsettledDebts unsettledDebts={approved} />
+			{/if}
 			<SettledDebts {settledDebtsGrouped} />
 		{/if}
 	</div>
 	<div
 		class="fixed bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-4 rounded-full bg-muted px-2 text-foreground"
 	>
-		<DebtActionButton text="Reagieren" clickHandler={reloadList}>
-			<RotateCw size={iconSize} class={isReloading ? 'animate-spin' : ''} />
-		</DebtActionButton>
 		{#if toApprove.length > 0}
 			<DebtActionButton text="Reagieren" clickHandler={openApproveModal}>
 				<Handshake size={iconSize} />

@@ -4,17 +4,18 @@
 	import { IconLoader } from '@tabler/icons-svelte';
 	import { onMount } from 'svelte';
 	import { insertCashFlow, isInMonth } from '../../network/cash_flow';
+	import { insertDebtSupabase } from '../../network/debt';
+	import { friendsStore, noFriend } from '../../stores/friends';
+	import type { Profile } from '../../types/friendship';
 	import type { CashGroup } from '../../types/supabase';
 	import { cashFlowStore } from '../../utils/cashFlow.store';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
+	import { displayCurrency } from '../../utils/currency';
 	import { dateToDateString } from '../../utils/date';
+	import { debtReloadTrigger } from '../../utils/debt.store';
 	import FormDialog from '../FormDialog/FormDialog.svelte';
 	import Input from '../Input.svelte';
 	import InputWithLabel from '../InputWithLabel.svelte';
-	import { friendsStore, noFriend } from '../../stores/friends';
-	import type { Profile } from '../../types/friendship';
-	import { displayCurrency } from '../../utils/currency';
-	import { insertDebtSupabase } from '../../network/debt';
 
 	export let open: boolean;
 
@@ -73,6 +74,9 @@
 				supabase
 			);
 			debtId = debt?.id;
+			if (debt) {
+				debtReloadTrigger.triggerReload();
+			}
 		}
 		// Insert Cash Flow
 		if (ownAmountNumber > 0) {

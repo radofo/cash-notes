@@ -3,14 +3,6 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
 	import { deleteCashFlow, updateCashFlow } from '../../network/cash_flow';
-	import type { CashFlow, CashFlowUpdate, CashGroup } from '../../types/supabase';
-	import { cashFlowStore } from '../../utils/cashFlow.store';
-	import { cashGroupStore } from '../../utils/cashGroup.store';
-	import { dateToDateString } from '../../utils/date';
-	import BottomSheet from '../BottomSheet.svelte';
-	import Input from '../Input.svelte';
-	import InputWithLabel from '../InputWithLabel.svelte';
-	import type { DebtWithProfile } from '../../types/debt';
 	import {
 		deleteDebtSupabase,
 		getDebtById,
@@ -18,9 +10,18 @@
 		updateDebtSupabase
 	} from '../../network/debt';
 	import { friendsStore, noFriend } from '../../stores/friends';
-	import { formatCurrency, toFloat } from '../../utils/currency';
+	import type { DebtWithProfile } from '../../types/debt';
 	import type { Profile } from '../../types/friendship';
+	import type { CashFlow, CashFlowUpdate, CashGroup } from '../../types/supabase';
+	import { cashFlowStore } from '../../utils/cashFlow.store';
+	import { cashGroupStore } from '../../utils/cashGroup.store';
+	import { formatCurrency, toFloat } from '../../utils/currency';
+	import { dateToDateString } from '../../utils/date';
 	import { getDebtAction } from '../../utils/debt.helpers';
+	import { debtReloadTrigger } from '../../utils/debt.store';
+	import BottomSheet from '../BottomSheet.svelte';
+	import Input from '../Input.svelte';
+	import InputWithLabel from '../InputWithLabel.svelte';
 	import DebtStatusLabel from './DebtStatusLabel.svelte';
 
 	export let open: boolean;
@@ -131,18 +132,25 @@
 					case 'addDebt': {
 						insertResult = await insertDebt();
 						newDebtId = insertResult?.id ?? null;
+						if (insertResult) {
+							debtReloadTrigger.triggerReload();
+						}
 						break;
 					}
 					case 'deleteDebt': {
 						deleteResult = await deleteDebt();
 						if (deleteResult) {
 							newDebtId = null;
+							debtReloadTrigger.triggerReload();
 						}
 						break;
 					}
 					case 'updateDebt': {
 						updateResult = await updateDebt();
 						newDebtId = updateResult?.id ?? null;
+						if (updateResult) {
+							debtReloadTrigger.triggerReload();
+						}
 						break;
 					}
 				}
