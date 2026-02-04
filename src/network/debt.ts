@@ -203,3 +203,91 @@ export async function settleDebt(
 		return false;
 	}
 }
+
+/**
+ * Get settled debts grouped by settlement_id with complete groups
+ * @param userId The user ID
+ * @param supabase The Supabase client
+ * @param initialLimit Number of debts to fetch initially (default 50)
+ * @returns Map of settlement_id to array of debts, with complete groups ordered by most recent
+ */
+export async function getSettledDebtsGrouped(
+	userId: string,
+	supabase: SupabaseClient,
+	initialLimit = 50
+): Promise<Map<string, DebtWithProfile[]>> {
+	// Step 1: Fetch first N settled debts (ordered by created_at descending)
+	const { data: initialDebts } = await supabase
+		.from('debt')
+		.select(
+			`
+		*,
+		from:from_id(*),
+		for:for_id(*)
+	`
+		)
+		.or(`from_id.eq.${userId},for_id.eq.${userId}`)
+		.not('settlement_id', 'is', null)
+		.order('created_at', { ascending: false })
+		.limit(initialLimit);
+
+	if (!initialDebts || initialDebts.length === 0) {
+		return new Map();
+	}
+
+	// Step 2: Group debts by settlement_id in order of appearance
+	const grouped = new Map<string, DebtWithProfile[]>();
+	const settlementOrder: string[] = [];
+	
+	for (const debt of initialDebts) {
+		if (debt.settlement_id) {
+			if (!grouped.has(debt.settlement_id)) {
+				grouped.set(debt.settlement_id, []);
+				settlementOrder.push(debt.settlement_id);
+			}
+			const group = grouped.get(debt.settlement_id);
+			if (group) {
+				group.push(debt);
+			}
+		}
+	}
+
+	// Step 3: Get the last (oldest) settlement_id to check if it's complete
+	if (settlementOrder.length > 0 && initialDebts.length === initialLimit) {
+		const lastSettlementId = settlementOrder[settlementOrder.length - 1];
+		
+		// Fetch all debts for the last settlement_id to ensure we have the complete group
+		const { data: remainingDebts } = await supabase
+			.from('debt')
+			.select(
+				`
+			*,
+			from:from_id(*),
+			for:for_id(*)
+		`
+			)
+			.or(`from_id.eq.${userId},for_id.eq.${userId}`)
+			.eq('settlement_id', lastSettlementId);
+
+		if (remainingDebts) {
+			// Replace the potentially incomplete group with the complete one
+			grouped.set(lastSettlementId, remainingDebts);
+		}
+	}
+
+	// Step 4: Sort debts within each group by date descending
+	for (const [, groupDebts] of grouped) {
+		groupDebts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+	}
+
+	// Return groups in the correct order (as they appeared in settlementOrder)
+	const orderedGrouped = new Map<string, DebtWithProfile[]>();
+	for (const settlementId of settlementOrder) {
+		const group = grouped.get(settlementId);
+		if (group) {
+			orderedGrouped.set(settlementId, group);
+		}
+	}
+
+	return orderedGrouped;
+}

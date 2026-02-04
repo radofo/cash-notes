@@ -1,22 +1,23 @@
 <script lang="ts">
+	import { HandCoins, Handshake, RotateCw, TicketPlus } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import PageHeaderCore from '../../components/PageHeader/PageHeaderCore.svelte';
 	import PageHeaderHeading from '../../components/PageHeader/PageHeaderHeading.svelte';
-	import { getDebtsByUserId } from '../../network/debt';
-	import type { PageData } from './$types';
-	import UnsettledDebts from './UnsettledDebts.svelte';
-	import ToApproveDebts from './ToApproveDebts.svelte';
-	import type { DebtWithProfile } from '../../types/debt';
-	import ProposalDebts from './ProposalDebts.svelte';
-	import RejectedDebts from './RejectedDebts.svelte';
-	import ApproveModal from './ApproveModal.svelte';
 	import { getCashGroups } from '../../network/cash_group';
+	import { getDebtsByUserId, getSettledDebtsGrouped } from '../../network/debt';
+	import type { DebtWithProfile } from '../../types/debt';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
-	import { HandCoins, Handshake, RotateCw, TicketPlus } from 'lucide-svelte';
+	import type { PageData } from './$types';
+	import ApproveModal from './ApproveModal.svelte';
 	import DebtActionButton from './DebtActionButton.svelte';
-	import SettlementModal from './SettlementModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
 	import DebtStats from './DebtStats.svelte';
+	import ProposalDebts from './ProposalDebts.svelte';
+	import RejectedDebts from './RejectedDebts.svelte';
+	import SettledDebts from './SettledDebts.svelte';
+	import SettlementModal from './SettlementModal.svelte';
+	import ToApproveDebts from './ToApproveDebts.svelte';
+	import UnsettledDebts from './UnsettledDebts.svelte';
 
 	export let data: PageData;
 	let { supabase, session } = data;
@@ -24,6 +25,7 @@
 	$: myself = session?.user.id;
 
 	let allUnsettled: DebtWithProfile[] = [];
+	let settledDebtsGrouped: Map<string, DebtWithProfile[]> = new Map();
 	$: toApprove = allUnsettled.filter(
 		(debt) => debt.is_accepted === 'pending' && debt.for_id === myself
 	);
@@ -55,6 +57,7 @@
 			return;
 		}
 		allUnsettled = await getDebtsByUserId(userId, supabase);
+		settledDebtsGrouped = await getSettledDebtsGrouped(userId, supabase, 50);
 		isReloading = false;
 	}
 
@@ -105,6 +108,7 @@
 				<ProposalDebts openDebts={unapproved} />
 			{/if}
 			<UnsettledDebts unsettledDebts={approved} />
+			<SettledDebts {settledDebtsGrouped} />
 		{/if}
 	</div>
 	<div
