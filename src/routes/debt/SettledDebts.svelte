@@ -75,7 +75,7 @@
 				<Collapsible class="w-full overflow-hidden rounded-lg border bg-card">
 					<CollapsibleTrigger class="flex w-full items-center justify-between p-3 text-left">
 						<div class="flex flex-col gap-1">
-							<span class="font-mono font-medium">{formatCurrency(getTotalAmount(debts))} €</span>
+							<span class="font-medium">{formatCurrency(getTotalAmount(debts))} €</span>
 							<span class="text-sm text-muted-foreground">
 								{getSettlementSummary(debts)}
 							</span>

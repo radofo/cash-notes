@@ -28,7 +28,7 @@
 			</span>
 		</div>
 	</div>
-	<div class="flex flex-col items-end font-mono">
+	<div class="flex flex-col items-end">
 		<span class="text-md">
 			{formatCurrency(debt.amount)} €
 		</span>

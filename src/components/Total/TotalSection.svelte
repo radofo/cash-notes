@@ -8,7 +8,7 @@
 
 <Collapsible.Root bind:open>
 	<Collapsible.Trigger
-		class="flex w-full flex-row items-center justify-between border-b border-dashed py-2 pr-0 font-mono text-sm font-medium tracking-tight"
+		class="flex w-full flex-row items-center justify-between border-b border-dashed py-2 pr-0 text-sm font-medium tracking-tight"
 	>
 		<span class="text-md flex flex-row items-center gap-2 text-start">
 			{#if !open}

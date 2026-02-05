@@ -130,7 +130,7 @@
 
 <DefaultPageContent>
 	<CashFlowModalEdit {cashFlowToEdit} bind:open={showEditModal} />
-	<div class="flex w-[600px] max-w-full flex-col gap-6 px-4">
+	<div class="flex w-[600px] max-w-full flex-col px-4">
 		<PageHeaderCore>
 			<PageHeaderHeading slot="text">{monthYearDisplay}</PageHeaderHeading>
 			<a slot="actions" href="/profile">
@@ -145,7 +145,7 @@
 			month={{ month: selectedMonth, year: selectedYear }}
 			cashGroups={activeCashGroups}
 		/>
-		<div class="flex flex-col items-stretch justify-between gap-4">
+		<div class="mt-6 flex flex-col items-stretch justify-between gap-4">
 			{#if pageLoading}
 				<div class="mt-8 grid place-items-center">
 					<IconLoader class="animate-spin text-center" />

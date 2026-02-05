@@ -30,7 +30,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <li
 	on:click={() => editCashFlow(cashFlow)}
-	class="flex cursor-pointer items-center justify-between border-b border-dashed py-2 font-mono text-sm tracking-tight last:border-0"
+	class="flex cursor-pointer items-center justify-between border-b border-dashed py-2 text-sm tracking-tight last:border-0"
 >
 	<div class="flex items-center gap-3">
 		<div class="flex h-10 w-8 flex-col items-center justify-center">
@@ -44,7 +44,7 @@
 			<span class="text-muted-foreground">{cashFlow.cash_group?.name ?? 'Sonstige'}</span>
 		</div>
 	</div>
-	<div class="flex items-center font-mono">
+	<div class="flex items-center">
 		<span>
 			{formatCurrency(cashFlow.amount)} €
 		</span>
