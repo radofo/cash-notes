@@ -68,7 +68,7 @@
 
 {#if groupedArray.length > 0}
 	<div class="flex flex-col gap-2">
-		<h2 class="text-sm font-medium text-muted-foreground">Bereits Ausgeglichen</h2>
+		<h2 class="pl-1 text-sm text-muted-foreground">Bereits Ausgeglichen</h2>
 
 		<div class="flex flex-col gap-2 text-sm">
 			{#each groupedArray as [settlementId, debts]}

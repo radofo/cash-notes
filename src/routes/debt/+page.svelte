@@ -13,18 +13,36 @@
 	import type { PageData } from './$types';
 	import ApproveModal from './ApproveModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
-	import ProposalDebts from './ProposalDebts.svelte';
-	import RejectedDebts from './RejectedDebts.svelte';
+	import DebtChatItem from './DebtChatItem.svelte';
 	import SettledDebts from './SettledDebts.svelte';
 	import SettlementModal from './SettlementModal.svelte';
-	import ToApproveDebts from './ToApproveDebts.svelte';
-	import UnsettledDebts from './UnsettledDebts.svelte';
 
 	export let data: PageData;
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
 	$: myself = session?.user.id;
 	$: debtStats = debtOverview([...approved, ...unapproved, ...toApprove]);
+
+	// Get other user from settled debts if no unsettled debts exist
+	$: firstSettledDebt =
+		settledDebtsGrouped.size > 0 ? Array.from(settledDebtsGrouped.values())[0]?.[0] : null;
+	$: fallbackOtherPerson = firstSettledDebt
+		? firstSettledDebt.from_id === myself
+			? firstSettledDebt.for
+			: firstSettledDebt.from
+		: null;
+
+	// Check if current user is owing (is "for" person)
+	$: currentUserOwes = debtStats?.for?.id === myself;
+	$: displayAmount = currentUserOwes ? -(debtStats?.total ?? 0) : debtStats?.total ?? 0;
+	$: otherPerson = currentUserOwes ? debtStats?.from : debtStats?.for;
+	$: finalOtherPerson = otherPerson ?? fallbackOtherPerson;
+	$: debtText =
+		displayAmount === 0
+			? 'alles ausgeglichen'
+			: currentUserOwes
+			? `du schuldest ${finalOtherPerson?.full_name}`
+			: `${finalOtherPerson?.full_name} schuldet dir`;
 
 	let allUnsettled: DebtWithProfile[] = [];
 	let settledDebtsGrouped: Map<string, DebtWithProfile[]> = new Map();
@@ -38,6 +56,14 @@
 		(debt) => debt.is_accepted === 'rejected' && debt.from_id === myself
 	);
 	$: approved = allUnsettled.filter((debt) => debt.is_accepted === 'accepted');
+
+	// Group and sort debts for chat-like display
+	$: pendingDebts = [...toApprove, ...rejected, ...unapproved].sort(
+		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+	);
+	$: unsettledDebts = approved.sort(
+		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+	);
 
 	let showApproveModal = false;
 	let showSettlementModal = false;
@@ -55,13 +81,13 @@
 	}
 
 	async function reloadList() {
-		console.log('Reloading debt list...');
 		const userId = session?.user.id;
 		if (!userId) {
 			return;
 		}
 		allUnsettled = await getDebtsByUserId(userId, supabase);
 		settledDebtsGrouped = await getSettledDebtsGrouped(userId, supabase, 50);
+		console.log('settledDebtsGrouped', settledDebtsGrouped);
 	}
 
 	function debtAdded() {
@@ -93,38 +119,49 @@
 	/>
 	<PageHeaderCore>
 		<PageHeaderHeading slot="text">
-			<div class="flex flex-col items-start">
-				{displayCurrency({ amount: debtStats?.total })}
+			{#if displayAmount !== undefined}
+				<div class="flex flex-col items-start">
+					{displayCurrency({ amount: displayAmount })}
 
-				<span class="text-sm text-muted-foreground">
-					{debtStats?.for?.full_name}
-					{'schuldet'}
-					{debtStats?.from?.full_name}
-				</span>
-			</div>
+					<span class="text-sm text-muted-foreground">
+						{debtText}
+					</span>
+				</div>
+			{/if}
 		</PageHeaderHeading>
 	</PageHeaderCore>
 	<div class="flex flex-col gap-8 pb-7">
-		<!-- <DebtStats debts={[...approved, ...unapproved, ...toApprove]} /> -->
 		{#if allUnsettled.length === 0}
-			<div class="flex h-[70vh] w-full items-center justify-center">
-				<p class="text-muted-foreground">Keine Schulden vorhanden</p>
+			<div class="flex w-full items-center justify-center py-10">
+				<p class="text-sm text-muted-foreground">Keine aktuellen Schulden</p>
 			</div>
 		{:else}
-			{#if toApprove.length > 0}
-				<ToApproveDebts toApproveDebts={toApprove} />
-			{/if}
-			{#if rejected.length > 0}
-				<RejectedDebts rejectedDebts={rejected} />
-			{/if}
-			{#if unapproved.length > 0}
-				<ProposalDebts openDebts={unapproved} />
-			{/if}
-			{#if approved.length > 0}
-				<UnsettledDebts unsettledDebts={approved} />
-			{/if}
-			<SettledDebts {settledDebtsGrouped} />
+			<div class="flex flex-col">
+				<!-- Pending debts (toApprove, rejected, unapproved) -->
+				{#each pendingDebts as debt}
+					{@const isCurrentUser = debt.from_id === myself}
+					{@const status =
+						debt.is_accepted === 'pending' && debt.for_id === myself
+							? 'toApprove'
+							: debt.is_accepted === 'rejected'
+							? 'rejected'
+							: 'unapproved'}
+					<DebtChatItem {debt} {isCurrentUser} {status} />
+				{/each}
+
+				<!-- Unsettled (approved) debts -->
+				{#each unsettledDebts as debt}
+					{@const isCurrentUser = debt.from_id === myself}
+					<DebtChatItem {debt} {isCurrentUser} status="unsettled" />
+				{/each}
+			</div>
 		{/if}
+
+		{#if settledDebtsGrouped.size > 0}
+			<div class="my-8 border-t border-border" />
+		{/if}
+
+		<SettledDebts {settledDebtsGrouped} />
 	</div>
 	<div class="fixed bottom-[92px] left-0 right-0 z-40 flex justify-center">
 		<div
