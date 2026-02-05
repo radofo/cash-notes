@@ -157,10 +157,6 @@
 			</div>
 		{/if}
 
-		{#if settledDebtsGrouped.size > 0}
-			<div class="my-8 border-t border-border" />
-		{/if}
-
 		<SettledDebts {settledDebtsGrouped} />
 	</div>
 	<div class="fixed bottom-[92px] left-0 right-0 z-40 flex justify-center">
