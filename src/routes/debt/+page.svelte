@@ -60,12 +60,12 @@
 	// Update the pending approvals count in the store
 	$: pendingApprovalsCount.set(toApprove.length);
 
-	// Group and sort debts for chat-like display
+	// Group and sort debts for chat-like display (newest first)
 	$: pendingDebts = [...toApprove, ...rejected, ...unapproved].sort(
-		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 	);
 	$: unsettledDebts = approved.sort(
-		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+		(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
 	);
 
 	let showApproveModal = false;
