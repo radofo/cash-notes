@@ -9,8 +9,10 @@
 	import CashFlowModalAdd from '../components/CashFlow/CashFlowModalAdd.svelte';
 	import Input from '../components/Input.svelte';
 	import InputWithLabel from '../components/InputWithLabel.svelte';
+	import { getDebtsByUserId } from '../network/debt';
 	import { getFriendships } from '../network/friendship';
 	import { friendsStore } from '../stores/friends';
+	import { debtReloadTrigger, pendingApprovalsCount } from '../utils/debt.store';
 	import { getProfilesFromFriendships } from '../utils/friends';
 	import type { PageData } from './$types';
 
@@ -36,9 +38,15 @@
 			}
 		});
 		setupFriendsStore();
+		loadPendingApprovals();
 
 		return () => subscription.unsubscribe();
 	});
+
+	// Auto-reload pending approvals when debt store triggers a reload
+	$: if ($debtReloadTrigger) {
+		loadPendingApprovals();
+	}
 
 	async function setupFriendsStore() {
 		const userId = session?.user.id;
@@ -49,6 +57,19 @@
 		const friendships = await getFriendships(supabase);
 		const profiles = getProfilesFromFriendships(friendships, userId);
 		friendsStore.set(profiles);
+	}
+
+	async function loadPendingApprovals() {
+		const userId = session?.user.id;
+		if (!userId) {
+			pendingApprovalsCount.set(0);
+			return;
+		}
+		const debts = await getDebtsByUserId(userId, supabase);
+		const toApprove = debts.filter(
+			(debt) => debt.is_accepted === 'pending' && debt.for_id === userId
+		);
+		pendingApprovalsCount.set(toApprove.length);
 	}
 
 	const handleSignIn = async () => {
@@ -93,9 +114,18 @@
 					</a>
 					<a
 						href="/debt"
-						class="{tabElementClass} {$page.url.pathname === '/debt' ? '!text-primary' : ''}"
+						class="relative {tabElementClass} {$page.url.pathname === '/debt'
+							? '!text-primary'
+							: ''}"
 					>
 						<Users size={iconSize} />
+						{#if $pendingApprovalsCount > 0}
+							<span
+								class="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white"
+							>
+								{$pendingApprovalsCount}
+							</span>
+						{/if}
 					</a>
 					<Button
 						on:click={() => (cashFlowModalOpen = true)}

@@ -9,7 +9,7 @@
 	import { cashGroupStore } from '../../utils/cashGroup.store';
 	import { displayCurrency } from '../../utils/currency';
 	import { debtOverview } from '../../utils/debt.helpers';
-	import { debtReloadTrigger } from '../../utils/debt.store';
+	import { debtReloadTrigger, pendingApprovalsCount } from '../../utils/debt.store';
 	import type { PageData } from './$types';
 	import ApproveModal from './ApproveModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
@@ -57,6 +57,9 @@
 	);
 	$: approved = allUnsettled.filter((debt) => debt.is_accepted === 'accepted');
 
+	// Update the pending approvals count in the store
+	$: pendingApprovalsCount.set(toApprove.length);
+
 	// Group and sort debts for chat-like display
 	$: pendingDebts = [...toApprove, ...rejected, ...unapproved].sort(
 		(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -87,7 +90,6 @@
 		}
 		allUnsettled = await getDebtsByUserId(userId, supabase);
 		settledDebtsGrouped = await getSettledDebtsGrouped(userId, supabase, 50);
-		console.log('settledDebtsGrouped', settledDebtsGrouped);
 	}
 
 	function debtAdded() {
@@ -132,11 +134,11 @@
 	</PageHeaderCore>
 	<div class="flex flex-col gap-8 pb-7">
 		{#if allUnsettled.length === 0}
-			<div class="flex w-full items-center justify-center py-10 min-h-[calc(100vh-200px)]">
+			<div class="flex min-h-[calc(100vh-200px)] w-full items-center justify-center py-10">
 				<p class="text-sm text-muted-foreground">Keine aktuellen Schulden</p>
 			</div>
 		{:else}
-			<div class="flex flex-col min-h-[calc(100vh-200px)]">
+			<div class="flex min-h-[calc(100vh-200px)] flex-col">
 				<!-- Pending debts (toApprove, rejected, unapproved) -->
 				{#each pendingDebts as debt}
 					{@const isCurrentUser = debt.from_id === myself}

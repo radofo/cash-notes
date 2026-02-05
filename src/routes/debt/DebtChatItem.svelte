@@ -18,7 +18,7 @@
 				? 'items-end pl-3 pr-3'
 				: 'items-start pl-3 pr-3'}"
 		>
-			<div class="flex {!isCurrentUser && 'flex-row-reverse'} items-baseline gap-2 text-sm">
+			<div class="flex items-baseline gap-2 text-sm">
 				<span class="font-normal">{debt.name}</span>
 				<span class="font-normal text-muted-foreground">
 					{formatCurrency(debt.amount)} €

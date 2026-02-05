@@ -18,4 +18,9 @@ const debtReloadTrigger = (() => {
 	};
 })();
 
-export { debtReloadTrigger };
+/**
+ * Store for the count of pending debt approvals
+ */
+const pendingApprovalsCount = writable(0);
+
+export { debtReloadTrigger, pendingApprovalsCount };
