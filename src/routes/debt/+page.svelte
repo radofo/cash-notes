@@ -132,11 +132,11 @@
 	</PageHeaderCore>
 	<div class="flex flex-col gap-8 pb-7">
 		{#if allUnsettled.length === 0}
-			<div class="flex w-full items-center justify-center py-10">
+			<div class="flex w-full items-center justify-center py-10 min-h-[calc(100vh-200px)]">
 				<p class="text-sm text-muted-foreground">Keine aktuellen Schulden</p>
 			</div>
 		{:else}
-			<div class="flex flex-col">
+			<div class="flex flex-col min-h-[calc(100vh-200px)]">
 				<!-- Pending debts (toApprove, rejected, unapproved) -->
 				{#each pendingDebts as debt}
 					{@const isCurrentUser = debt.from_id === myself}
