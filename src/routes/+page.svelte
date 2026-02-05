@@ -6,8 +6,9 @@
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
 	import List from '../components/List.svelte';
 	import ListItem from '../components/ListItem.svelte';
-	import ModalMonthSelector from '../components/ModalMonthSelector.svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
+	import PageHeaderCore from '../components/PageHeader/PageHeaderCore.svelte';
+	import PageHeaderHeading from '../components/PageHeader/PageHeaderHeading.svelte';
 	import { getCashFlows } from '../network/cash_flow';
 	import { getCashGroups } from '../network/cash_group';
 	import { getRecCashFlows } from '../network/rec_cash_flow';
@@ -34,6 +35,23 @@
 	// Month Selector
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
+
+	const monthNames = [
+		'Januar',
+		'Februar',
+		'März',
+		'April',
+		'Mai',
+		'Juni',
+		'Juli',
+		'August',
+		'September',
+		'Oktober',
+		'November',
+		'Dezember'
+	];
+
+	$: monthYearDisplay = `${monthNames[selectedMonth]} ${selectedYear}`;
 
 	// Cash Flow Filters
 	let selectedFilter: string | null = null;
@@ -107,26 +125,18 @@
 		};
 	}
 
-	async function getNewMonthData(month?: number, year?: number) {
-		if (month !== undefined && year !== undefined) {
-			selectedMonth = month;
-			selectedYear = year;
-		}
-	}
-
 	const activeFilterStyles = 'bg-primary/40';
 </script>
 
 <DefaultPageContent>
 	<CashFlowModalEdit {cashFlowToEdit} bind:open={showEditModal} />
 	<div class="flex w-[600px] max-w-full flex-col gap-6 px-4">
-		<div class="flex flex-row items-center justify-between">
-			<ModalMonthSelector
-				interactive={false}
-				on:monthChanged={(e) => getNewMonthData(e.detail?.selectedMonth, e.detail?.selectedYear)}
-			/>
-			<a href="/profile"> <Settings size={28} /></a>
-		</div>
+		<PageHeaderCore>
+			<PageHeaderHeading slot="text">{monthYearDisplay}</PageHeaderHeading>
+			<a slot="actions" href="/profile">
+				<Settings size={20} class="cursor-pointer" />
+			</a>
+		</PageHeaderCore>
 		<MonthlyBudgets
 			{totalIncome}
 			{totalFixCost}
