@@ -30,10 +30,10 @@
 
 		<!-- Content inside the bar -->
 		<div
-			class="relative z-20 flex flex-row items-center justify-between px-3 py-2.5 text-sm text-foreground/70"
+			class="text-md relative z-20 flex flex-row items-center justify-between px-3 py-2.5 text-foreground/70"
 		>
-			<span class="font-medium">{name}</span>
-			<span class="font-medium tabular-nums">
+			<span class="font-normal">{name}</span>
+			<span class="font-normal tabular-nums">
 				{formatCurrency(Math.round(info.spent))}{info.limit !== null
 					? ` / ${displayCurrency({ amount: Math.round(info.limit), forceDecimals: false })}`
 					: ''}
