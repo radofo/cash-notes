@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Equal } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { budgetViewMode } from '../stores/preferences';
 	import type { BudgetProgress, BudgetProgressMap } from '../types/budget';
 	import type { Month } from '../types/date';
 	import type { TableOpenState } from '../types/recurring';
@@ -11,6 +12,10 @@
 	import SumItem from './Total/SumItem.svelte';
 	import TotalItem from './Total/TotalItem.svelte';
 	import TotalSection from './Total/TotalSection.svelte';
+
+	function toggleViewMode() {
+		budgetViewMode.toggle();
+	}
 
 	export let recurring: RecCashFlow[];
 	export let cashFlows: CashFlow[];
@@ -109,14 +114,19 @@
 			<div class="w-full">
 				<ul class="flex flex-col gap-4 pb-4">
 					{#each [...progressWithBudget] as [name, info]}
-						<ProgressElement {name} {info} />
+						<ProgressElement {name} {info} viewMode={$budgetViewMode} onClick={toggleViewMode} />
 					{/each}
 				</ul>
 				<ProgressElement
 					fontBold
 					name="Alle Budgets"
 					info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+					viewMode={$budgetViewMode}
+					onClick={toggleViewMode}
 				/>
+				{#if $budgetViewMode === 'remaining'}
+					<div class="mt-1 text-right text-xs text-muted-foreground">übrig</div>
+				{/if}
 			</div>
 			<!-- Income/Expense table -->
 			<div class="w-full">
@@ -206,14 +216,19 @@
 				<div class="w-full">
 					<ul class="flex flex-col gap-4 pb-4">
 						{#each [...progressWithBudget] as [name, info]}
-							<ProgressElement {name} {info} />
+							<ProgressElement {name} {info} viewMode={$budgetViewMode} onClick={toggleViewMode} />
 						{/each}
 					</ul>
 					<ProgressElement
 						fontBold
 						name="Alle Budgets"
 						info={{ limit: budgetProgress.limit, spent: budgetProgress.spent }}
+						viewMode={$budgetViewMode}
+						onClick={toggleViewMode}
 					/>
+					{#if $budgetViewMode === 'remaining'}
+						<div class="mt-1 text-right text-xs text-muted-foreground">übrig</div>
+					{/if}
 				</div>
 			</div>
 			<div id="item2" class="carousel-item box-border w-full p-1 py-2">
