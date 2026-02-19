@@ -5,6 +5,7 @@
 	export let variant: ButtonType = 'default';
 	export let type: 'submit' | 'button' = 'button';
 	export let fullWidth: boolean = false;
+	export let disabled: boolean = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -26,8 +27,9 @@
 
 <button
 	{type}
+	{disabled}
 	class="{variantClasses} {fullWidth
 		? 'flex-1'
-		: 'flex-shrink'} text-md flex items-center justify-center gap-2 rounded-lg p-2 pl-3 pr-3 font-poppins font-medium leading-7"
+		: 'flex-shrink'} text-md flex items-center justify-center gap-2 rounded-lg p-2 pl-3 pr-3 font-poppins font-medium leading-7 disabled:cursor-not-allowed disabled:opacity-50"
 	on:click={() => dispatch('btnclick')}><slot /></button
 >
