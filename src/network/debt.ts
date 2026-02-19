@@ -78,7 +78,11 @@ export async function getDebtsByUserId(
 		.is('settlement_id', null)
 		.order('date', { ascending: false });
 
-	return data ?? [];
+	// Parse receipt field if it's a string
+	return (data ?? []).map((debt) => ({
+		...debt,
+		receipt: typeof debt.receipt === 'string' ? JSON.parse(debt.receipt) : debt.receipt
+	}));
 }
 
 export async function reactToDebt(
@@ -238,7 +242,7 @@ export async function getSettledDebtsGrouped(
 	// Step 2: Group debts by settlement_id in order of appearance
 	const grouped = new Map<string, DebtWithProfile[]>();
 	const settlementOrder: string[] = [];
-	
+
 	for (const debt of initialDebts) {
 		if (debt.settlement_id) {
 			if (!grouped.has(debt.settlement_id)) {
@@ -255,7 +259,7 @@ export async function getSettledDebtsGrouped(
 	// Step 3: Get the last (oldest) settlement_id to check if it's complete
 	if (settlementOrder.length > 0 && initialDebts.length === initialLimit) {
 		const lastSettlementId = settlementOrder[settlementOrder.length - 1];
-		
+
 		// Fetch all debts for the last settlement_id to ensure we have the complete group
 		const { data: remainingDebts } = await supabase
 			.from('debt')

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { CheckCheck, Clock, X } from 'lucide-svelte';
+	import { CheckCheck, Clock, Receipt, X } from 'lucide-svelte';
+	import { createEventDispatcher } from 'svelte';
 	import type { DebtWithProfile } from '../../types/debt';
 	import { formatCurrency } from '../../utils/currency';
 	import { dateToDayAndMonthWithPadding } from '../../utils/date';
@@ -8,21 +9,40 @@
 	export let isCurrentUser: boolean;
 	export let status: 'unsettled' | 'toApprove' | 'unapproved' | 'rejected';
 
+	const dispatch = createEventDispatcher<{
+		click: DebtWithProfile;
+	}>();
+
 	$: date = dateToDayAndMonthWithPadding(debt.date);
+	$: hasReceipt = !!debt.receipt;
+	$: isClickable = hasReceipt;
+
+	function handleClick() {
+		if (isClickable) {
+			dispatch('click', debt);
+		}
+	}
 </script>
 
 <div class="flex w-full {isCurrentUser ? 'justify-end' : 'justify-start'} mb-3">
 	<div class="flex flex-col gap-1">
+		<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 		<div
+			on:click={handleClick}
 			class="flex flex-col gap-1 rounded-xl bg-muted py-3 {isCurrentUser
 				? 'items-end pl-3 pr-3'
-				: 'items-start pl-3 pr-3'}"
+				: 'items-start pl-3 pr-3'} {isClickable
+				? 'cursor-pointer transition-colors hover:bg-muted/80'
+				: ''}"
 		>
-			<div class="flex items-baseline gap-2 text-sm">
+			<div class="flex items-center gap-2 text-sm">
 				<span class="font-normal">{debt.name}</span>
 				<span class="font-normal text-muted-foreground">
 					{formatCurrency(debt.amount)} €
 				</span>
+				{#if hasReceipt}
+					<Receipt size={14} class="text-muted-foreground" />
+				{/if}
 			</div>
 		</div>
 		<div

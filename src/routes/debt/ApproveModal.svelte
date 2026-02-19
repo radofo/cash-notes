@@ -7,11 +7,12 @@
 	import type { CashGroup } from '../../types/supabase';
 	import { dateToDateString } from '../../utils/date';
 	import type { DebtWithProfile } from '../../types/debt';
-	import { toFloat } from '../../utils/currency';
+	import { displayCurrency, toFloat } from '../../utils/currency';
 	import { insertCashFlow } from '../../network/cash_flow';
 	import { reactToDebt } from '../../network/debt';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { IconLoader } from '@tabler/icons-svelte';
+	import type { ReceiptItemWithSplit } from '../../types/receipt';
 
 	export let toApproveDebts: DebtWithProfile[];
 	export let open: boolean;
@@ -21,6 +22,21 @@
 	$: user = $page.data.session.user;
 	$: supabase = $page.data.supabase;
 	$: activeDebt = toApproveDebts[0];
+
+	// Receipt display - user approving is the "for" person (debtor)
+	$: receipt = activeDebt?.receipt;
+	$: hasReceipt = !!receipt;
+	$: receiptItems = receipt?.items ?? [];
+	$: otherPersonName = activeDebt?.from?.full_name ?? 'Freund';
+
+	// For the debtor viewing: friendAmount is "Du", ownAmount is theirs
+	function getMyAmount(item: ReceiptItemWithSplit): number {
+		return item.friendAmount;
+	}
+
+	function getTheirAmount(item: ReceiptItemWithSplit): number {
+		return item.ownAmount;
+	}
 
 	let formInitLoading: boolean = false;
 	let approvingLoading: boolean = false;
@@ -131,9 +147,46 @@
 				<InputWithLabel label="Datum">
 					<Input inputType="date" bind:inputValue={cfDate} />
 				</InputWithLabel>
+
+				{#if hasReceipt}
+					<div class="mt-4">
+						<div>
+							<!-- Table header -->
+							<div
+								class="flex border-b border-dashed border-muted-foreground p-3 text-sm font-medium"
+							>
+								<span class="flex-1">Artikel</span>
+								<span class="w-16 text-right">{otherPersonName}</span>
+								<span class="w-16 text-right">Du</span>
+								<span class="w-16 text-right">Total</span>
+							</div>
+
+							<!-- Table rows -->
+							{#each receiptItems as item, index}
+								<div
+									class="flex w-full items-center p-3 text-sm {index < receiptItems.length - 1
+										? 'border-b border-dashed border-muted-foreground'
+										: ''}"
+								>
+									<span class="flex-1">{item.name}</span>
+									<span class="w-16 text-right">
+										{getTheirAmount(item) === 0
+											? '-'
+											: displayCurrency({ amount: getTheirAmount(item) })}
+									</span>
+									<span class="w-16 text-right">
+										{getMyAmount(item) === 0 ? '-' : displayCurrency({ amount: getMyAmount(item) })}
+									</span>
+									<span class="w-16 text-right">{displayCurrency({ amount: item.totalPrice })}</span
+									>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
 			</div>
 		{/if}
-		<div class="flex flex-col gap-2">
+		<div class="mt-4 flex flex-col gap-2">
 			<Button
 				on:click={rejectDebt}
 				class="bg-red-100 py-6 text-red-800 hover:bg-red-200"
