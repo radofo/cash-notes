@@ -95,21 +95,22 @@
 			parsedReceipt = data.receipt;
 
 			// Validate that total matches sum of items
-			if (parsedReceipt) {
-				const itemsSum = parsedReceipt.items.reduce((sum, item) => sum + item.totalPrice, 0);
-				const receiptTotal = parsedReceipt.total ?? 0;
-				const tolerance = 0.02; // Allow 2 cent tolerance for rounding
+			// Commented out: Allow user to proceed even if validation fails
+			// if (parsedReceipt) {
+			// 	const itemsSum = parsedReceipt.items.reduce((sum, item) => sum + item.totalPrice, 0);
+			// 	const receiptTotal = parsedReceipt.total ?? 0;
+			// 	const tolerance = 0.02; // Allow 2 cent tolerance for rounding
 
-				if (Math.abs(itemsSum - receiptTotal) > tolerance) {
-					toastMessage = 'Der Kassenbon wurde nicht korrekt erkannt. Bitte erneut scannen.';
-					capturedImage = null;
-					currentStep = 'camera';
-					setTimeout(() => {
-						toastMessage = null;
-					}, 4000);
-					return;
-				}
-			}
+			// 	if (Math.abs(itemsSum - receiptTotal) > tolerance) {
+			// 		toastMessage = 'Der Kassenbon wurde nicht korrekt erkannt. Bitte erneut scannen.';
+			// 		capturedImage = null;
+			// 		currentStep = 'camera';
+			// 		setTimeout(() => {
+			// 			toastMessage = null;
+			// 		}, 4000);
+			// 		return;
+			// 	}
+			// }
 
 			currentStep = 'overview';
 		} catch (err) {
