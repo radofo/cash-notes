@@ -152,7 +152,7 @@
 	</div>
 
 	<!-- Bottom Section: Split Controls -->
-	<div class="p-4">
+	<div class="p-4 pb-10">
 		<SplitSlider
 			percentage={currentItem.friendPercentage}
 			{friendName}

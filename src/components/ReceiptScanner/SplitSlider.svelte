@@ -24,7 +24,7 @@
 
 <div class="flex flex-col gap-4">
 	<!-- Slider -->
-	<div class="flex flex-col gap-2">
+	<div class="flex flex-col gap-2 px-1.5">
 		<input
 			type="range"
 			min="0"
@@ -32,7 +32,7 @@
 			step="1"
 			value={percentage}
 			on:input={handleSliderChange}
-			class="slider h-4 w-full cursor-pointer appearance-none rounded-md bg-muted accent-primary"
+			class="slider h-6 w-full cursor-pointer appearance-none rounded-md bg-muted accent-primary"
 			aria-label="Anteil für Freund"
 		/>
 		<div class="flex justify-between text-xs">

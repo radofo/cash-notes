@@ -106,7 +106,7 @@
 	</div>
 
 	<!-- Shutter button -->
-	<div class="flex items-center justify-center bg-black p-6">
+	<div class="flex items-center justify-center bg-black p-6 pb-10">
 		<button
 			on:click={capturePhoto}
 			disabled={!!error}

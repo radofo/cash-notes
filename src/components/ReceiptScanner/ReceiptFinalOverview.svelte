@@ -89,7 +89,7 @@
 	</div>
 
 	<!-- Action buttons -->
-	<div class="flex gap-3 border-t p-4">
+	<div class="flex gap-3 border-t p-4 pb-10">
 		<Button fullWidth variant="dashed" on:btnclick={() => dispatch('close')}>Abbrechen</Button>
 		<Button fullWidth on:btnclick={() => dispatch('done')}>Fertig</Button>
 	</div>

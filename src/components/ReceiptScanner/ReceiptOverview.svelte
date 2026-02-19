@@ -121,7 +121,7 @@
 	</div>
 
 	<!-- Action button -->
-	<div class="flex justify-end border-t p-4">
+	<div class="flex justify-end border-t p-4 pb-10">
 		<Button on:btnclick={handleContinue}>Weiter</Button>
 	</div>
 </div>
