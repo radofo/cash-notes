@@ -14,6 +14,7 @@
 	import ApproveModal from './ApproveModal.svelte';
 	import DebtAddModal from './DebtAddModal.svelte';
 	import DebtChatItem from './DebtChatItem.svelte';
+	import ReceiptDetailModal from './ReceiptDetailModal.svelte';
 	import SettledDebts from './SettledDebts.svelte';
 	import SettlementModal from './SettlementModal.svelte';
 
@@ -72,6 +73,16 @@
 	let showSettlementModal = false;
 	let showDebtAddModal = false;
 	let showDebtEditModal = false;
+	let showReceiptDetailModal = false;
+	let selectedDebtForReceipt: DebtWithProfile | null = null;
+
+	function handleDebtClick(event: CustomEvent<DebtWithProfile>) {
+		const debt = event.detail;
+		if (debt.receipt) {
+			selectedDebtForReceipt = debt;
+			showReceiptDetailModal = true;
+		}
+	}
 
 	onMount(async () => {
 		reloadList();
@@ -89,6 +100,7 @@
 			return;
 		}
 		allUnsettled = await getDebtsByUserId(userId, supabase);
+		console.log('Debts loaded:', allUnsettled);
 		settledDebtsGrouped = await getSettledDebtsGrouped(userId, supabase, 50);
 	}
 
@@ -119,6 +131,11 @@
 		toSettleDebts={approved}
 		bind:open={showSettlementModal}
 	/>
+	<ReceiptDetailModal
+		bind:open={showReceiptDetailModal}
+		debt={selectedDebtForReceipt}
+		currentUserId={myself ?? ''}
+	/>
 	<PageHeaderCore>
 		<PageHeaderHeading slot="text">
 			{#if displayAmount !== undefined}
@@ -148,13 +165,13 @@
 							: debt.is_accepted === 'rejected'
 							? 'rejected'
 							: 'unapproved'}
-					<DebtChatItem {debt} {isCurrentUser} {status} />
+					<DebtChatItem {debt} {isCurrentUser} {status} on:click={handleDebtClick} />
 				{/each}
 
 				<!-- Unsettled (approved) debts -->
 				{#each unsettledDebts as debt}
 					{@const isCurrentUser = debt.from_id === myself}
-					<DebtChatItem {debt} {isCurrentUser} status="unsettled" />
+					<DebtChatItem {debt} {isCurrentUser} status="unsettled" on:click={handleDebtClick} />
 				{/each}
 			</div>
 		{/if}

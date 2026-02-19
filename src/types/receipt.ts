@@ -27,8 +27,8 @@ export interface ReceiptWithSplits {
 	storeName: string;
 	date: string;
 	total: number;
-	budgetId: string;
-	friendId: string;
+	budgetId?: string;
+	friendId?: string;
 	items: ReceiptItemWithSplit[];
 	ownTotal: number;
 	friendTotal: number;

@@ -24,6 +24,7 @@ export type DebtWithProfile = DebtBase & {
 	for_id: string | null;
 	from: Profile | null;
 	for: Profile | null;
+	receipt?: ReceiptWithSplits;
 };
 
 export type DebtInsert = {

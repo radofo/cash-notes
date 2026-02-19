@@ -28,63 +28,26 @@
 	$: cashGroups = $cashGroupStore;
 	$: friends = $friendsStore;
 
-	// Development mode - set to true to skip camera and use mock data
-	const DEV_MODE = true;
-	const DEV_MOCK_RECEIPT: ParsedReceipt = {
-		storeName: 'REWE',
-		date: '2026-02-18',
-		items: [
-			{ name: 'HA-OBERSCHENKEL', quantity: 1, unitPrice: 5.4, totalPrice: 5.4 },
-			{ name: 'HA-OBERSCHENKEL', quantity: 1, unitPrice: 5.76, totalPrice: 5.76 },
-			{ name: 'CLASSIC ROLLE', quantity: 1, unitPrice: 8.37, totalPrice: 8.37 },
-			{ name: 'LAUCHZWIEBELN', quantity: 1, unitPrice: 0.55, totalPrice: 0.55 },
-			{ name: 'SALATGURKE', quantity: 1, unitPrice: 1.29, totalPrice: 1.29 },
-			{ name: 'EIER FL OKT 10ER', quantity: 1, unitPrice: 3.79, totalPrice: 3.79 },
-			{ name: 'COLLEZ TORTI', quantity: 1, unitPrice: 3.38, totalPrice: 3.38 },
-			{ name: 'SUSHI REIS', quantity: 1, unitPrice: 2.49, totalPrice: 2.49 },
-			{ name: 'GR. PAPIERTASCHE', quantity: 1, unitPrice: 0.25, totalPrice: 0.25 }
-		],
-		subtotal: null,
-		tax: null,
-		total: 31.28
-	};
-
 	// State
 	let showApiKeyModal = false;
-	let currentStep: ReceiptScannerStep = DEV_MODE ? 'split' : 'camera';
+	let currentStep: ReceiptScannerStep = 'camera';
 	let capturedImage: string | null = null;
-	let parsedReceipt: ParsedReceipt | null = DEV_MODE ? DEV_MOCK_RECEIPT : null;
+	let parsedReceipt: ParsedReceipt | null = null;
 	let error: string | null = null;
 	let isLoading = false;
 	let toastMessage: string | null = null;
 
 	// Edited receipt data
-	let editedReceipt = DEV_MODE
-		? {
-				name: DEV_MOCK_RECEIPT.storeName ?? '',
-				total: DEV_MOCK_RECEIPT.total ?? 0,
-				budgetId: '',
-				date: DEV_MOCK_RECEIPT.date ?? '',
-				friendId: ''
-		  }
-		: {
-				name: '',
-				total: 0,
-				budgetId: '',
-				date: '',
-				friendId: ''
-		  };
+	let editedReceipt = {
+		name: '',
+		total: 0,
+		budgetId: '',
+		date: '',
+		friendId: ''
+	};
 
 	// Item splits
-	let itemSplits: ReceiptItemWithSplit[] = DEV_MODE
-		? DEV_MOCK_RECEIPT.items.map((item) => ({
-				name: item.name,
-				totalPrice: item.totalPrice,
-				friendPercentage: 0,
-				friendAmount: 0,
-				ownAmount: item.totalPrice
-		  }))
-		: [];
+	let itemSplits: ReceiptItemWithSplit[] = [];
 	let currentItemIndex = 0;
 
 	// Selected friend name for display
@@ -92,8 +55,7 @@
 	$: friendName = selectedFriend?.full_name || 'Freund';
 
 	onMount(() => {
-		// Skip API key check in dev mode
-		if (!DEV_MODE && !$geminiApiKey) {
+		if (!$geminiApiKey) {
 			showApiKeyModal = true;
 		}
 	});
@@ -125,8 +87,6 @@
 			});
 
 			const data = await response.json();
-
-			console.log('Receipt parsing result:', data);
 
 			if (!response.ok) {
 				throw new Error(data.error || 'Fehler beim Parsen des Kassenbons');
@@ -220,15 +180,16 @@
 		isLoading = true;
 
 		try {
-			const friendTotal = itemSplits.reduce((sum, item) => sum + item.friendAmount, 0);
-			const ownTotal = itemSplits.reduce((sum, item) => sum + item.ownAmount, 0);
+			const friendTotal =
+				Math.round(itemSplits.reduce((sum, item) => sum + item.friendAmount, 0) * 100) / 100;
+			const ownTotal =
+				Math.round(itemSplits.reduce((sum, item) => sum + item.ownAmount, 0) * 100) / 100;
 
-			const receiptJson: ReceiptWithSplits = {
+			// Receipt for debt without friendId and budgetId
+			const receiptForDebt: ReceiptWithSplits = {
 				storeName: editedReceipt.name,
 				date: editedReceipt.date,
 				total: editedReceipt.total,
-				budgetId: editedReceipt.budgetId,
-				friendId: editedReceipt.friendId,
 				items: itemSplits,
 				ownTotal,
 				friendTotal
@@ -244,7 +205,7 @@
 						date: editedReceipt.date,
 						for_id: editedReceipt.friendId,
 						from_id: user.id,
-						receipt: receiptJson
+						receipt: receiptForDebt
 					},
 					supabase
 				);
