@@ -1,4 +1,5 @@
 import type { Profile } from './friendship';
+import type { ReceiptWithSplits } from './receipt';
 
 // Debt
 export type DebtAgreement = 'accepted' | 'rejected' | 'pending';
@@ -32,6 +33,7 @@ export type DebtInsert = {
 	from_id: string;
 	for_id: string;
 	is_accepted?: DebtAgreement;
+	receipt?: ReceiptWithSplits;
 };
 
 export type DebtUpdate = {

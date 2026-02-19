@@ -3,6 +3,11 @@
 	import { page } from '$app/stores';
 	import { Loader2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import ApiKeyModal from '../../components/ReceiptScanner/ApiKeyModal.svelte';
+	import ReceiptCameraView from '../../components/ReceiptScanner/ReceiptCameraView.svelte';
+	import ReceiptFinalOverview from '../../components/ReceiptScanner/ReceiptFinalOverview.svelte';
+	import ReceiptItemSplit from '../../components/ReceiptScanner/ReceiptItemSplit.svelte';
+	import ReceiptOverview from '../../components/ReceiptScanner/ReceiptOverview.svelte';
 	import { insertCashFlow, isInMonth } from '../../network/cash_flow';
 	import { insertDebtSupabase } from '../../network/debt';
 	import { friendsStore } from '../../stores/friends';
@@ -16,11 +21,6 @@
 	import { cashFlowStore } from '../../utils/cashFlow.store';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
 	import { debtReloadTrigger } from '../../utils/debt.store';
-	import ApiKeyModal from '../../components/ReceiptScanner/ApiKeyModal.svelte';
-	import ReceiptCameraView from '../../components/ReceiptScanner/ReceiptCameraView.svelte';
-	import ReceiptFinalOverview from '../../components/ReceiptScanner/ReceiptFinalOverview.svelte';
-	import ReceiptItemSplit from '../../components/ReceiptScanner/ReceiptItemSplit.svelte';
-	import ReceiptOverview from '../../components/ReceiptScanner/ReceiptOverview.svelte';
 
 	// Stores
 	$: supabase = $page.data.supabase;
@@ -243,7 +243,8 @@
 						name: editedReceipt.name,
 						date: editedReceipt.date,
 						for_id: editedReceipt.friendId,
-						from_id: user.id
+						from_id: user.id,
+						receipt: receiptJson
 					},
 					supabase
 				);
@@ -338,6 +339,8 @@
 		items={itemSplits}
 		total={editedReceipt.total}
 		{friendName}
+		storeName={editedReceipt.name}
+		date={editedReceipt.date}
 		on:done={handleFinalDone}
 		on:editItem={handleEditItem}
 		on:close={closeFlow}

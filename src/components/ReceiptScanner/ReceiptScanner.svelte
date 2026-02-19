@@ -216,7 +216,8 @@
 						name: editedReceipt.name,
 						date: editedReceipt.date,
 						for_id: editedReceipt.friendId,
-						from_id: user.id
+						from_id: user.id,
+						receipt: receiptJson
 					},
 					supabase
 				);
@@ -308,6 +309,8 @@
 		currentIndex={currentItemIndex}
 		total={editedReceipt.total}
 		{friendName}
+		storeName={editedReceipt.name}
+		date={editedReceipt.date}
 		on:update={handleItemUpdate}
 		on:done={handleItemsDone}
 		on:showSummary={handleShowSummary}
@@ -320,6 +323,8 @@
 		items={itemSplits}
 		total={editedReceipt.total}
 		{friendName}
+		storeName={editedReceipt.name}
+		date={editedReceipt.date}
 		on:done={handleFinalDone}
 		on:editItem={handleEditItem}
 		on:close={closeFlow}

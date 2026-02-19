@@ -32,12 +32,11 @@
 			step="1"
 			value={percentage}
 			on:input={handleSliderChange}
-			class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-muted accent-primary"
+			class="slider h-4 w-full cursor-pointer appearance-none rounded-md bg-muted accent-primary"
 			aria-label="Anteil für Freund"
 		/>
-		<div class="flex justify-between text-xs text-muted-foreground">
+		<div class="flex justify-between text-xs">
 			<span>Ich</span>
-			<span>{percentage}%</span>
 			<span>{friendName}</span>
 		</div>
 	</div>
@@ -58,3 +57,24 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	.slider::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: hsl(var(--primary));
+		cursor: pointer;
+	}
+
+	.slider::-moz-range-thumb {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: hsl(var(--primary));
+		cursor: pointer;
+		border: none;
+	}
+</style>

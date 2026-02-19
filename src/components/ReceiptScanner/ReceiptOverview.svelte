@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { X } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
+	import type { Profile } from '../../types/friendship';
 	import type { ParsedReceipt, ReceiptItem } from '../../types/receipt';
 	import type { CashGroup } from '../../types/supabase';
-	import type { Profile } from '../../types/friendship';
 	import { displayCurrency } from '../../utils/currency';
 	import Button from '../Button.svelte';
 	import Input from '../Input.svelte';
@@ -35,6 +35,15 @@
 	$: totalNumber = Number.parseFloat(totalAmount) || 0;
 	$: activeCashGroups = cashGroups.filter((cg) => cg.is_active);
 
+	// Format date as dd.mm.yyyy
+	$: formattedDate = (() => {
+		const d = new Date(date);
+		const day = d.getDate().toString().padStart(2, '0');
+		const month = (d.getMonth() + 1).toString().padStart(2, '0');
+		const year = d.getFullYear();
+		return `${day}.${month}.${year}`;
+	})();
+
 	function handleContinue() {
 		dispatch('continue', {
 			name,
@@ -49,11 +58,24 @@
 
 <div class="fixed inset-0 z-50 flex flex-col bg-background">
 	<!-- Header -->
-	<div class="flex items-center justify-between border-b p-4">
-		<h2 class="text-lg font-semibold">Kassenbon Übersicht</h2>
-		<button on:click={() => dispatch('close')} class="rounded-full p-1" aria-label="Schließen">
-			<X size={20} />
-		</button>
+	<div class="flex w-full items-start justify-between border-b px-4 py-4">
+		<!-- Left: Store name and date -->
+		<div class="flex flex-col gap-1">
+			<span class="text-2xl font-bold">{name || 'Kassenbon'}</span>
+			<span class="text-sm text-muted-foreground">{formattedDate}</span>
+		</div>
+		<!-- Right: Total and close button -->
+		<div class="flex items-start gap-4">
+			<div class="flex flex-col items-end gap-1">
+				<div class="flex items-center gap-2">
+					<span class="text-sm text-muted-foreground">Gesamt</span>
+					<span class="font-medium">{displayCurrency({ amount: totalNumber })}</span>
+				</div>
+			</div>
+			<button on:click={() => dispatch('close')} class="rounded-full p-1" aria-label="Schließen">
+				<X size={20} />
+			</button>
+		</div>
 	</div>
 
 	<!-- Content -->

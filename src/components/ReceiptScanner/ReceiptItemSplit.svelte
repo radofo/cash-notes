@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronRight, X } from 'lucide-svelte';
+	import { ChevronRight } from 'lucide-svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { ReceiptItemWithSplit } from '../../types/receipt';
 	import { displayCurrency } from '../../utils/currency';
@@ -132,12 +132,12 @@
 			<div class="mt-2 grid w-fit grid-cols-[auto_auto] gap-x-2 gap-y-1 font-bold">
 				<span class="text-xl font-bold">{displayCurrency({ amount: currentItem.totalPrice })}</span>
 				<span class="text-xl text-muted-foreground">Gesamt</span>
-				<span class="text-xl font-bold">{displayCurrency({ amount: currentItem.ownAmount })}</span>
-				<span class="text-xl text-muted-foreground">Du</span>
 				<span class="text-xl font-bold"
 					>{displayCurrency({ amount: currentItem.friendAmount })}</span
 				>
 				<span class="text-xl text-muted-foreground">{friendName}</span>
+				<span class="text-xl font-bold">{displayCurrency({ amount: currentItem.ownAmount })}</span>
+				<span class="text-xl text-muted-foreground">Du</span>
 			</div>
 		</div>
 
@@ -152,7 +152,7 @@
 	</div>
 
 	<!-- Bottom Section: Split Controls -->
-	<div class="border-t p-4">
+	<div class="p-4">
 		<SplitSlider
 			percentage={currentItem.friendPercentage}
 			{friendName}
