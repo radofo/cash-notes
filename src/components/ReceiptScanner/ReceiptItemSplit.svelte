@@ -41,6 +41,7 @@
 
 	function handleTouchStart(e: TouchEvent) {
 		touchStartX = e.touches[0].clientX;
+		touchEndX = touchStartX;
 	}
 
 	function handleTouchMove(e: TouchEvent) {
@@ -51,9 +52,7 @@
 		const diff = touchStartX - touchEndX;
 		const threshold = 50;
 
-		if (diff > threshold && !isLastItem) {
-			goNext();
-		} else if (diff < -threshold && !isFirstItem) {
+		if (diff < -threshold && !isFirstItem) {
 			goPrevious();
 		}
 	}

@@ -22,7 +22,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-6">
 	<!-- Slider -->
 	<div class="flex flex-col gap-2 px-1.5">
 		<input
@@ -35,10 +35,6 @@
 			class="slider h-6 w-full cursor-pointer appearance-none rounded-md bg-muted accent-primary"
 			aria-label="Anteil für Freund"
 		/>
-		<div class="flex justify-between text-xs">
-			<span>Ich</span>
-			<span>{friendName}</span>
-		</div>
 	</div>
 
 	<!-- Preset buttons -->

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Button from '../../components/Button.svelte';
+	import GenericGridTable from '../../components/GenericGridTable.svelte';
 	import type { DebtWithProfile } from '../../types/debt';
 	import type { ReceiptItemWithSplit } from '../../types/receipt';
 	import { displayCurrency } from '../../utils/currency';
@@ -32,6 +33,18 @@
 	// Column headers based on perspective
 	$: myColumnHeader = 'Du';
 	$: theirColumnHeader = otherPersonName ?? 'Freund';
+	$: tableColumns = [
+		{ key: 'item', label: 'Artikel', align: 'left' as const, truncate: true },
+		{ key: 'their', label: theirColumnHeader, align: 'right' as const, truncate: true },
+		{ key: 'my', label: myColumnHeader, align: 'right' as const },
+		{ key: 'total', label: 'Total', align: 'right' as const }
+	];
+	$: tableRows = items.map((item) => ({
+		item: item.name,
+		their: getTheirAmount(item) === 0 ? '-' : displayCurrency({ amount: getTheirAmount(item) }),
+		my: getMyAmount(item) === 0 ? '-' : displayCurrency({ amount: getMyAmount(item) }),
+		total: displayCurrency({ amount: item.totalPrice })
+	}));
 
 	// Get item amounts based on perspective
 	function getMyAmount(item: ReceiptItemWithSplit): number {
@@ -97,37 +110,11 @@
 
 			<!-- Items table -->
 			<div class="flex-1 overflow-y-auto p-4">
-				<div>
-					<!-- Table header -->
-					<div class="flex border-b border-dashed border-muted-foreground p-3 text-sm font-medium">
-						<span class="flex-1">Artikel</span>
-						<span class="w-20 text-right">{theirColumnHeader}</span>
-						<span class="w-20 text-right">{myColumnHeader}</span>
-						<span class="w-20 text-right">Total</span>
-					</div>
-
-					<!-- Table rows -->
-					{#each items as item, index}
-						<div
-							class="flex w-full items-center p-3 {index < items.length - 1
-								? 'border-b border-dashed border-muted-foreground'
-								: ''}"
-						>
-							<span class="flex-1 text-sm">{item.name}</span>
-							<span class="w-20 text-right text-sm">
-								{getTheirAmount(item) === 0
-									? '-'
-									: displayCurrency({ amount: getTheirAmount(item) })}
-							</span>
-							<span class="w-20 text-right text-sm">
-								{getMyAmount(item) === 0 ? '-' : displayCurrency({ amount: getMyAmount(item) })}
-							</span>
-							<span class="w-20 text-right text-sm"
-								>{displayCurrency({ amount: item.totalPrice })}</span
-							>
-						</div>
-					{/each}
-				</div>
+				<GenericGridTable
+					columns={tableColumns}
+					rows={tableRows}
+					gridTemplate="minmax(0,1fr) 5.5rem 5.5rem 5.5rem"
+				/>
 			</div>
 
 			<!-- Action button -->

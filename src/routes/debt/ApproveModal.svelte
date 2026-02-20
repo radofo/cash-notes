@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import FormDialog from '../../components/FormDialog/FormDialog.svelte';
+	import GenericGridTable from '../../components/GenericGridTable.svelte';
 	import Input from '../../components/Input.svelte';
 	import InputWithLabel from '../../components/InputWithLabel.svelte';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
@@ -28,6 +29,18 @@
 	$: hasReceipt = !!receipt;
 	$: receiptItems = receipt?.items ?? [];
 	$: otherPersonName = activeDebt?.from?.full_name ?? 'Freund';
+	$: tableColumns = [
+		{ key: 'item', label: 'Artikel', align: 'left' as const, truncate: true },
+		{ key: 'their', label: otherPersonName, align: 'right' as const, truncate: true },
+		{ key: 'my', label: 'Du', align: 'right' as const },
+		{ key: 'total', label: 'Total', align: 'right' as const }
+	];
+	$: tableRows = receiptItems.map((item) => ({
+		item: item.name,
+		their: getTheirAmount(item) === 0 ? '-' : displayCurrency({ amount: getTheirAmount(item) }),
+		my: getMyAmount(item) === 0 ? '-' : displayCurrency({ amount: getMyAmount(item) }),
+		total: displayCurrency({ amount: item.totalPrice })
+	}));
 
 	// For the debtor viewing: friendAmount is "Du", ownAmount is theirs
 	function getMyAmount(item: ReceiptItemWithSplit): number {
@@ -150,38 +163,11 @@
 
 				{#if hasReceipt}
 					<div class="mt-4">
-						<div>
-							<!-- Table header -->
-							<div
-								class="flex border-b border-dashed border-muted-foreground p-3 text-sm font-medium"
-							>
-								<span class="flex-1">Artikel</span>
-								<span class="w-16 text-right">{otherPersonName}</span>
-								<span class="w-16 text-right">Du</span>
-								<span class="w-16 text-right">Total</span>
-							</div>
-
-							<!-- Table rows -->
-							{#each receiptItems as item, index}
-								<div
-									class="flex w-full items-center p-3 text-sm {index < receiptItems.length - 1
-										? 'border-b border-dashed border-muted-foreground'
-										: ''}"
-								>
-									<span class="flex-1">{item.name}</span>
-									<span class="w-16 text-right">
-										{getTheirAmount(item) === 0
-											? '-'
-											: displayCurrency({ amount: getTheirAmount(item) })}
-									</span>
-									<span class="w-16 text-right">
-										{getMyAmount(item) === 0 ? '-' : displayCurrency({ amount: getMyAmount(item) })}
-									</span>
-									<span class="w-16 text-right">{displayCurrency({ amount: item.totalPrice })}</span
-									>
-								</div>
-							{/each}
-						</div>
+						<GenericGridTable
+							columns={tableColumns}
+							rows={tableRows}
+							gridTemplate="minmax(0,1fr) 5.5rem 5.5rem 5.5rem"
+						/>
 					</div>
 				{/if}
 			</div>

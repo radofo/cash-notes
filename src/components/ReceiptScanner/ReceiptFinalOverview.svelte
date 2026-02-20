@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import GenericGridTable from '../GenericGridTable.svelte';
 	import type { ReceiptItemWithSplit } from '../../types/receipt';
 	import { displayCurrency } from '../../utils/currency';
 	import Button from '../Button.svelte';
@@ -19,6 +20,18 @@
 	// Calculate totals
 	$: friendTotal = items.reduce((sum, item) => sum + item.friendAmount, 0);
 	$: ownTotal = items.reduce((sum, item) => sum + item.ownAmount, 0);
+	$: tableColumns = [
+		{ key: 'item', label: 'Artikel', align: 'left' as const, truncate: true },
+		{ key: 'friend', label: friendName, align: 'right' as const, truncate: true },
+		{ key: 'own', label: 'Du', align: 'right' as const },
+		{ key: 'total', label: 'Total', align: 'right' as const }
+	];
+	$: tableRows = items.map((item) => ({
+		item: `${item.name} and some more text to see`,
+		friend: item.friendAmount === 0 ? '-' : displayCurrency({ amount: item.friendAmount }),
+		own: displayCurrency({ amount: item.ownAmount }),
+		total: displayCurrency({ amount: item.totalPrice })
+	}));
 
 	// Format date as dd.mm.yyyy
 	$: formattedDate = (() => {
@@ -57,35 +70,14 @@
 
 	<!-- Items table -->
 	<div class="flex-1 overflow-y-auto p-4">
-		<div>
-			<!-- Table header -->
-			<div class="flex border-b border-dashed border-muted-foreground p-3 text-sm font-medium">
-				<span class="flex-1">Artikel</span>
-				<span class="w-20 text-right">{friendName}</span>
-				<span class="w-20 text-right">Du</span>
-				<span class="w-20 text-right">Total</span>
-			</div>
-
-			<!-- Table rows (clickable) -->
-			{#each items as item, index}
-				<button
-					on:click={() => dispatch('editItem', index)}
-					class="flex w-full items-center p-3 text-left transition-colors hover:bg-muted/30 {index <
-					items.length - 1
-						? 'border-b border-dashed border-muted-foreground'
-						: ''}"
-					aria-label="Artikel {item.name} bearbeiten"
-				>
-					<span class="flex-1 text-sm">{item.name}</span>
-					<span class="w-20 text-right text-sm"
-						>{item.friendAmount === 0 ? '-' : displayCurrency({ amount: item.friendAmount })}</span
-					>
-					<span class="w-20 text-right text-sm">{displayCurrency({ amount: item.ownAmount })}</span>
-					<span class="w-20 text-right text-sm">{displayCurrency({ amount: item.totalPrice })}</span
-					>
-				</button>
-			{/each}
-		</div>
+		<GenericGridTable
+			columns={tableColumns}
+			rows={tableRows}
+			gridTemplate="minmax(0,1fr) 5.5rem 5.5rem 5.5rem"
+			clickableRows={true}
+			getRowAriaLabel={(row) => `Artikel ${row.item} bearbeiten`}
+			on:rowClick={(event) => dispatch('editItem', event.detail.index)}
+		/>
 	</div>
 
 	<!-- Action buttons -->

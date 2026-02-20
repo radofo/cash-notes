@@ -71,7 +71,10 @@
 	}
 </script>
 
-<div class="fixed inset-0 z-50 flex flex-col bg-black">
+<div
+	class="fixed inset-0 z-50 flex h-[100dvh] flex-col bg-black"
+	style="padding-bottom: env(safe-area-inset-bottom);"
+>
 	<!-- Close button -->
 	<button
 		on:click={handleClose}
@@ -106,7 +109,10 @@
 	</div>
 
 	<!-- Shutter button -->
-	<div class="flex items-center justify-center bg-black p-6 pb-10">
+	<div
+		class="flex items-center justify-center bg-black p-6"
+		style="padding-bottom: calc(env(safe-area-inset-bottom) + 1.5rem);"
+	>
 		<button
 			on:click={capturePhoto}
 			disabled={!!error}
