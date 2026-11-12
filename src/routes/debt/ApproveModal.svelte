@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import BudgetChips from '../../components/BudgetChips.svelte';
 	import FormDialog from '../../components/FormDialog/FormDialog.svelte';
 	import GenericGridTable from '../../components/GenericGridTable.svelte';
 	import Input from '../../components/Input.svelte';
@@ -131,9 +132,6 @@
 		rejectLoading = false;
 	}
 
-	function oncfGroupChange(newGroupName: string) {
-		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
-	}
 </script>
 
 <FormDialog bind:open on:submit={approveDebt}>
@@ -148,14 +146,7 @@
 					<Input inputType="number" bind:inputValue={cfTotalAmount} />
 				</InputWithLabel>
 				<InputWithLabel label="Budget">
-					<select
-						on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
-						class="select w-full border border-input bg-background p-2 text-base"
-					>
-						{#each cashGroups as cashGroup}
-							<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
-						{/each}
-					</select>
+					<BudgetChips {cashGroups} bind:selected={cfGroup} />
 				</InputWithLabel>
 				<InputWithLabel label="Datum">
 					<Input inputType="date" bind:inputValue={cfDate} />

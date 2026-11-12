@@ -89,7 +89,10 @@ const config = {
 			}
 		}
 	},
-	plugins: [require('daisyui')]
+	plugins: [require('daisyui')],
+	daisyui: {
+		logs: false
+	}
 };
 
 export default config;

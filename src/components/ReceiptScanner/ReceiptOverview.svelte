@@ -5,6 +5,7 @@
 	import type { ParsedReceipt, ReceiptItem } from '../../types/receipt';
 	import type { CashGroup } from '../../types/supabase';
 	import { displayCurrency } from '../../utils/currency';
+	import BudgetChips from '../BudgetChips.svelte';
 	import Button from '../Button.svelte';
 	import Input from '../Input.svelte';
 	import InputWithLabel from '../InputWithLabel.svelte';
@@ -28,7 +29,7 @@
 	// Form values
 	let name = parsedReceipt.storeName || '';
 	let totalAmount = parsedReceipt.total?.toString() || '0';
-	let selectedBudgetId = cashGroups[0]?.id || '';
+	let selectedBudget: CashGroup | undefined = cashGroups[0];
 	let date = parsedReceipt.date || new Date().toISOString().split('T')[0];
 	let selectedFriendId = friends[0]?.id || '';
 
@@ -39,7 +40,7 @@
 		dispatch('continue', {
 			name,
 			total: totalNumber,
-			budgetId: selectedBudgetId,
+			budgetId: selectedBudget?.id ?? '',
 			date,
 			friendId: selectedFriendId,
 			items: parsedReceipt.items
@@ -68,14 +69,7 @@
 			</InputWithLabel>
 
 			<InputWithLabel label="Budget">
-				<select
-					bind:value={selectedBudgetId}
-					class="w-full rounded-lg border border-input bg-background p-2 text-base"
-				>
-					{#each activeCashGroups as cashGroup}
-						<option value={cashGroup.id}>{cashGroup.name}</option>
-					{/each}
-				</select>
+				<BudgetChips cashGroups={activeCashGroups} bind:selected={selectedBudget} />
 			</InputWithLabel>
 
 			<InputWithLabel label="Datum">

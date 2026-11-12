@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ApiTokenSection from '../../components/ApiTokenSection.svelte';
 	import Button from '../../components/Button.svelte';
 	import DefaultPageContent from '../../components/DefaultPageContent.svelte';
 	import H1 from '../../components/H1.svelte';
@@ -60,6 +61,7 @@
 						{/if}
 					</Button>
 				</form>
+				<ApiTokenSection {supabase} />
 			</div>
 		</div>
 		{#if toastState === 'error'}

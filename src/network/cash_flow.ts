@@ -9,7 +9,8 @@ export async function insertCashFlow(
 	dto: CashFlowInsert,
 	supabase: SupabaseClient
 ): Promise<CashFlow> {
-	const { data } = await supabase.from('cash_flow').insert([dto]).select('*, cash_group (*)');
+	const { data, error } = await supabase.from('cash_flow').insert([dto]).select('*, cash_group (*)');
+	if (error) console.error('[insertCashFlow] error', error, dto);
 	return data?.[0];
 }
 
@@ -79,5 +80,6 @@ export function isInMonth(cashFlow: CashFlow, month: number, year: number): bool
 	const nextMonthDate = thisMonthDate.add(1, 'M');
 	const cashFlowDate = dayjs(cashFlow.date);
 
-	return cashFlowDate.isAfter(thisMonthDate) && cashFlowDate.isBefore(nextMonthDate);
+	// The 1st of the month counts as inside the month
+	return !cashFlowDate.isBefore(thisMonthDate) && cashFlowDate.isBefore(nextMonthDate);
 }

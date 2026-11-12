@@ -2,14 +2,15 @@
 	import { IconLoader } from '@tabler/icons-svelte';
 	import { Settings } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import { Camera } from 'lucide-svelte';
 	import CashFlowModalEdit from '../components/CashFlow/CashFlowModalEdit.svelte';
 	import DefaultPageContent from '../components/DefaultPageContent.svelte';
 	import List from '../components/List.svelte';
 	import ListItem from '../components/ListItem.svelte';
 	import MonthlyBudgets from '../components/MonthlyBudgets.svelte';
 	import PageHeaderCore from '../components/PageHeader/PageHeaderCore.svelte';
+	import SuggestionApproveModal from '../components/ApproveQueue/SuggestionApproveModal.svelte';
 	import PageHeaderHeading from '../components/PageHeader/PageHeaderHeading.svelte';
+	import SuggestionInboxButton from '../components/SuggestionInboxButton.svelte';
 	import { getCashFlows } from '../network/cash_flow';
 	import { getCashGroups } from '../network/cash_group';
 	import { getRecCashFlows } from '../network/rec_cash_flow';
@@ -18,6 +19,7 @@
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
 	import { displayCurrency } from '../utils/currency';
 	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
+	import { suggestionStore } from '../utils/suggestion.store';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -25,7 +27,7 @@
 	// Page
 	let { supabase, session } = data;
 	$: ({ supabase, session } = data);
-	let pageLoading: boolean = true;
+	let pageLoading = true;
 
 	$: cashFlows = $cashFlowStore;
 	$: cashGroups = $cashGroupStore;
@@ -62,7 +64,7 @@
 
 	// Cash Flow Edit Modal
 	let cashFlowToEdit: CashFlow | undefined = undefined;
-	let showEditModal: boolean = false;
+	let showEditModal = false;
 	function openCashFlowModal(cashFlow: CashFlow) {
 		cashFlowToEdit = cashFlow;
 		showEditModal = true;
@@ -73,11 +75,15 @@
 		}
 	}
 
+	// Suggestion Approve Modal
+	let showSuggestionModal = false;
+
 	onMount(async () => {
 		pageLoading = true;
 		cashGroupStore.set(await getCashGroups(supabase));
 		recCashFlowStore.set(await getRecCashFlows(supabase));
 		pageLoading = false;
+		suggestionStore.load(supabase);
 	});
 
 	$: {
@@ -131,6 +137,7 @@
 
 <DefaultPageContent>
 	<CashFlowModalEdit {cashFlowToEdit} bind:open={showEditModal} />
+	<SuggestionApproveModal bind:open={showSuggestionModal} />
 	<div class="flex w-[600px] max-w-full flex-col px-4">
 		<PageHeaderCore>
 			<PageHeaderHeading slot="text">{monthYearDisplay}</PageHeaderHeading>
@@ -202,12 +209,6 @@
 		</div>
 	</div>
 	{#if !showEditModal}
-		<a
-			href="/receipt"
-			class="fixed bottom-28 right-2 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 active:scale-95"
-			aria-label="Kassenbon scannen"
-		>
-			<Camera size={24} />
-		</a>
+		<SuggestionInboxButton on:click={() => (showSuggestionModal = true)} />
 	{/if}
 </DefaultPageContent>

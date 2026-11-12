@@ -5,17 +5,18 @@
 	import { onMount } from 'svelte';
 	import { insertCashFlow, isInMonth } from '../../network/cash_flow';
 	import { insertDebtSupabase } from '../../network/debt';
-	import { friendsStore, noFriend } from '../../stores/friends';
+	import { noFriend } from '../../stores/friends';
 	import type { Profile } from '../../types/friendship';
 	import type { CashGroup } from '../../types/supabase';
 	import { cashFlowStore } from '../../utils/cashFlow.store';
 	import { cashGroupStore } from '../../utils/cashGroup.store';
-	import { displayCurrency } from '../../utils/currency';
 	import { dateToDateString } from '../../utils/date';
 	import { debtReloadTrigger } from '../../utils/debt.store';
+	import BudgetChips from '../BudgetChips.svelte';
 	import FormDialog from '../FormDialog/FormDialog.svelte';
 	import Input from '../Input.svelte';
 	import InputWithLabel from '../InputWithLabel.svelte';
+	import DebtSplitFields from './DebtSplitFields.svelte';
 
 	export let open: boolean;
 
@@ -24,7 +25,6 @@
 	$: activeCashGroups = cashGroups.filter((cashGroup) => cashGroup.is_active);
 	$: supabase = $page.data.supabase;
 	$: user = $page.data.session.user;
-	$: friends = $friendsStore;
 
 	// Form Variables
 	let cfName: string = '';
@@ -38,7 +38,6 @@
 	$: ownAmountNumber = totalAmountNumber - friendAmountNumber;
 
 	// Helper Variables
-	$: friendAmountLabel = `Anteil ${cfFriend?.full_name}`;
 	let selectedMonth = new Date().getMonth();
 	let selectedYear = new Date().getFullYear();
 	let modalCreateLoading: boolean = false;
@@ -99,12 +98,6 @@
 		open = false;
 	}
 
-	function oncfGroupChange(newGroupName: string) {
-		cfGroup = activeCashGroups.find((cashGroup) => cashGroup.name === newGroupName);
-	}
-	function oncfFriendChange(newFriendId: string) {
-		cfFriend = friends.find((friend) => friend.id === newFriendId);
-	}
 </script>
 
 <FormDialog bind:open on:submit={submitNewCashFlow}>
@@ -118,56 +111,16 @@
 				<Input inputType="number" bind:inputValue={cfTotalAmount} />
 			</InputWithLabel>
 			<InputWithLabel label="Budget">
-				<select
-					on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
-					class="select w-full border border-input bg-background p-2 text-base"
-				>
-					{#each activeCashGroups as cashGroup}
-						<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
-					{/each}
-				</select>
+				<BudgetChips cashGroups={activeCashGroups} bind:selected={cfGroup} />
 			</InputWithLabel>
 			<InputWithLabel label="Datum">
 				<Input inputType="date" bind:inputValue={cfDate} />
 			</InputWithLabel>
-			<!-- DEBT	-->
-			{#if friends.length > 0}
-				<div class="mt-5 flex flex-col gap-3 border-t border-dashed pt-5">
-					<InputWithLabel label="Ausgabe Für">
-						<select
-							on:change={(e) => oncfFriendChange(e?.currentTarget?.value)}
-							class="select w-full border border-input bg-background p-2 text-base"
-						>
-							{#each [noFriend, ...friends] as friend}
-								<option value={friend.id} selected={friend.id === cfFriend?.id}
-									>{friend.full_name}</option
-								>
-							{/each}
-						</select>
-					</InputWithLabel>
-					{#if cfFriend && cfFriend?.id !== noFriend.id}
-						<InputWithLabel label={friendAmountLabel}>
-							<Input inputType="number" bind:inputValue={cfFriendAmount} />
-						</InputWithLabel>
-						{#if totalAmountNumber >= friendAmountNumber}
-							<div
-								class="inline-grid w-fit grid-cols-2 gap-x-3 gap-y-1 text-xs text-muted-foreground"
-							>
-								<span>Dein Anteil:</span>
-								<span>{displayCurrency({ amount: ownAmountNumber })}</span>
-								<span>{cfFriend.full_name}s Anteil:</span>
-								<span>{displayCurrency({ amount: friendAmountNumber })}</span>
-								<span class="font-medium">Gesamt:</span>
-								<span class="font-medium">{displayCurrency({ amount: totalAmountNumber })}</span>
-							</div>
-						{:else}
-							<div class="text-xs text-red-500">
-								Der Betrag für {cfFriend.full_name} darf nicht größer sein als der Gesamtbetrag.
-							</div>
-						{/if}
-					{/if}
-				</div>
-			{/if}
+			<DebtSplitFields
+				totalAmount={totalAmountNumber}
+				bind:friend={cfFriend}
+				bind:friendAmount={cfFriendAmount}
+			/>
 		</div>
 		<div class="mt-7 flex flex-col gap-2">
 			<Button class="py-6" variant="default" type="submit">

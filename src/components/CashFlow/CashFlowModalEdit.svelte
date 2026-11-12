@@ -20,6 +20,7 @@
 	import { getDebtAction } from '../../utils/debt.helpers';
 	import { debtReloadTrigger } from '../../utils/debt.store';
 	import BottomSheet from '../BottomSheet.svelte';
+	import BudgetChips from '../BudgetChips.svelte';
 	import Input from '../Input.svelte';
 	import InputWithLabel from '../InputWithLabel.svelte';
 	import DebtStatusLabel from './DebtStatusLabel.svelte';
@@ -207,9 +208,6 @@
 		return debt;
 	}
 
-	function oncfGroupChange(newGroupName: string) {
-		cfGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
-	}
 	function oncfFriendChange(newFriendId: string) {
 		cfFriend = friends.find((friend) => friend.id === newFriendId);
 		if (cfFriend?.id === noFriend.id) {
@@ -229,14 +227,7 @@
 					<Input inputType="number" bind:inputValue={cfTotalAmount} />
 				</InputWithLabel>
 				<InputWithLabel label="Budget">
-					<select
-						on:change={(e) => oncfGroupChange(e?.currentTarget?.value)}
-						class="select w-full border border-input bg-background p-2 text-base"
-					>
-						{#each cashGroups as cashGroup}
-							<option selected={cashGroup.id === cfGroup?.id}>{cashGroup.name}</option>
-						{/each}
-					</select>
+					<BudgetChips {cashGroups} bind:selected={cfGroup} />
 				</InputWithLabel>
 				<InputWithLabel label="Datum">
 					<Input inputType="date" bind:inputValue={cfDate} />

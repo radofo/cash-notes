@@ -52,6 +52,17 @@ export type CashFlowUpdate = {
 	created_from_debt_id?: string | null;
 };
 
+/** Cash Flow Suggestion (created by the iOS Shortcuts automation) */
+export type CashFlowSuggestion = {
+	id: string;
+	owner: string;
+	name: string | null;
+	amount: number | null;
+	currency: string | null;
+	date: string;
+	created_at: string;
+};
+
 /** Recurring Cash Flow */
 export type RecCashFlow = {
 	id: string;

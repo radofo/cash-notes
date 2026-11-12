@@ -5,6 +5,7 @@
 	import type { CashGroup } from '../../../types/supabase';
 	import { cashGroupStore } from '../../../utils/cashGroup.store';
 	import { getSurroundingYears, months } from '../../../utils/date';
+	import BudgetChips from '../../BudgetChips.svelte';
 	import FullMonthSelector from '../../FullMonthSelector.svelte';
 	import Input from '../../Input.svelte';
 	import InputWithLabel from '../../InputWithLabel.svelte';
@@ -22,10 +23,6 @@
 		const bDate = new Date(b.startYear, b.startMonth);
 		return aDate.getTime() - bDate.getTime();
 	});
-
-	function onCashGroupChange(newGroupName: string) {
-		formCashGroup = cashGroups.find((cashGroup) => cashGroup.name === newGroupName);
-	}
 
 	function addTimeframe() {
 		formTimeframes = [
@@ -56,17 +53,7 @@
 	</InputWithLabel>
 	{#if !formIsIncome}
 		<InputWithLabel label="Budget">
-			<select
-				on:change={(e) => onCashGroupChange(e?.currentTarget?.value)}
-				class="select w-full border border-input bg-background p-2 text-base"
-			>
-				<option class="text-muted-foreground" selected={!formCashGroup?.id} disabled
-					>-- Budget wählen --</option
-				>
-				{#each cashGroups as cashGroup}
-					<option selected={cashGroup.id === formCashGroup?.id}>{cashGroup.name}</option>
-				{/each}
-			</select>
+			<BudgetChips {cashGroups} bind:selected={formCashGroup} />
 		</InputWithLabel>
 	{/if}
 	<div class="flex w-full flex-col gap-1">

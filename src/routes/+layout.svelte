@@ -24,10 +24,10 @@
 
 	let email: string;
 	let password: string;
-	let loading: boolean = false;
+	let loading = false;
 	let toastState: 'error' | 'idle' = 'idle';
 
-	let cashFlowModalOpen: boolean = false;
+	let cashFlowModalOpen = false;
 
 	onMount(() => {
 		const {
