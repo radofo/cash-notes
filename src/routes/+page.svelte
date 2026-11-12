@@ -19,7 +19,7 @@
 	import { cashGroupStore, recCashFlowStore } from '../utils/cashGroup.store';
 	import { displayCurrency } from '../utils/currency';
 	import { getIncomeForMonth, getRecurringTotalForMonth } from '../utils/recurring';
-	import { suggestionStore } from '../utils/suggestion.store';
+	import { suggestionCount, suggestionStore } from '../utils/suggestion.store';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -208,7 +208,7 @@
 			{/if}
 		</div>
 	</div>
-	{#if !showEditModal}
+	{#if !showEditModal && $suggestionCount > 0}
 		<SuggestionInboxButton on:click={() => (showSuggestionModal = true)} />
 	{/if}
 </DefaultPageContent>
